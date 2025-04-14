@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NextGen Hardware - Products</title>
+
+    <!-- Embedded CSS -->
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #060606;
+            
+        }
+
+        /* Header */
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo a {
+            color: #ff7f50;
+            text-decoration: none;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-left: 21px;
+            margin-right: 21px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: #ff7f50;
+        }
+
+        /* Header buttons container */
+        .header-buttons {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Cart Button */
+        .cart-btn {
+            background-color: #ff7f50;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        .cart-btn:hover {
+            background-color: #ff5722;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            background-color: #d32f2f;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background-color: #c62828;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            max-width: 600px;
+            margin: 15px auto;
+            padding: 10px;
+            border-radius: 30px;
+            border: 2px solid #ff7f50;
+            display: flex;
+            justify-content: space-between;
+            background-color: white;
+        }
+
+        .search-bar input {
+            width: 86%;
+            padding: 8px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            background-color: #ff7f50;
+            padding: 8px 8px;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: #ff5722;
+        }
+
+         /* Search Modal */
+         #search-modal {
+           position: fixed;
+           top: 180px;
+           left: 50%;
+           transform: translateX(-50%);
+           width: 600px;
+           max-height: 400px;
+           overflow-y: auto;
+           padding: 10px;
+           background-color: white;
+           border-radius: 8px;
+           box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+           z-index: 1000;
+           display: none;
+        }
+
+         .search-suggestion {
+          padding: 12px 20px;
+          border-bottom: 1px solid #eee;
+          cursor: pointer;
+          color: #333;
+          text-align: justify;
+          transition: background 0.2s;
+        }
+
+         .search-suggestion:hover {
+          background: #f5f5f5;
+        }
+        
+
+        /* Products Section */
+        .products-section {
+            padding: 60px 20px;
+            text-align: center;
+            background-color:  #ebf1fc;
+        }
+
+        .products-section h1 {
+            font-size: 2.8rem;
+            color: #3f37c9;
+            font-weight: 700;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+          
+           .col-md-4 {
+            display: flex;
+            justify-content: center;
+            }
+
+
+        /* Category Section */
+        .category-section {
+            margin-bottom: 40px;
+        }
+
+        .category-title {
+            font-size: 36px;
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .products-grid {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+            padding: 0 10px;
+        }
+
+        .product-card {
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 500px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            
+            transition: transform 0.3s;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .product-card h3 {
+            font-size: 20px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .product-card p {
+            font-size: 16px;
+            margin-top: 10px;
+            color: #ff7f50;
+        }
+
+        .product-card .quantity-control {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .product-card .quantity-control button {
+            background-color: #1E3A8A;
+            color: white;
+            font-size: 18px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .product-card .quantity-control button:hover {
+            background-color: #1e2b7d;
+        }
+
+        /* Buy Now Button (Green) */
+       .buy-now-btn {
+        background-color: #28a745;  /* Green color */
+        padding: 10px 20px;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.buy-now-btn:hover {
+    background-color: #218838;  /* Darker green for hover */
+}
+
+.view-more-btn {
+    background: linear-gradient(90deg, #ff7f50, #ff5722); /* Gradient background */
+    color: white;
+    padding: 12px 24px; /* Increased padding for a larger button */
+    border: none;
+    border-radius: 30px; /* Rounded corners */
+    font-size: 18px; /* Larger font size */
+    font-weight: bold; /* Bold text */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    text-transform: uppercase; /* Uppercase text for emphasis */
+}
+
+.view-more-btn:hover {
+    background: linear-gradient(90deg, #ff5722, #ff7f50); /* Reverse gradient on hover */
+    transform: translateY(-3px); /* Lift effect on hover */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
+}
+
+.view-more-btn:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 4px rgba(255, 127, 80, 0.5); /* Focus ring */
+}
+/* Add to Cart Button (Orange) */
+.product-card .add-to-cart-btn {
+    background-color: #ff7f50;  /* Orange color for "Add to Cart" */
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 20px 5px 0 0;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.product-card .add-to-cart-btn:hover {
+    background-color: #ff5722;  /* Darker orange for hover */
+    transform: translateY(-2px);
+}
+
+/* Review Button (Blue) */
+.product-card .review-btn {
+    background-color: #1E3A8A;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 20px 0 0 5px;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.product-card .review-btn:hover {
+    background-color: #1e2b7d;
+    transform: translateY(-2px);
+}
+
+/* Button container */
+.product-card .action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.product-card .action-buttons > div {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.product-card .review-btn {
+    margin-top: 0;
+    align-self: center;
+}
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            width: 90%; /* Responsive width */
+            max-width: 400px; /* Maximum width */
+            position: relative;
+            margin: 20px auto;
+        }
+
+        @media (max-width: 480px) {
+            .product-card {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            .quantity-control button {
+                padding: 12px 18px !important;
+            }
+            .action-buttons button {
+                padding: 12px 15px !important;
+                font-size: 14px !important;
+            }
+        }
+
+.modal-content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #ff5722;
+}
+
+.modal-content .form-group {
+    margin-bottom: 15px;
+}
+
+.modal-content .form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.modal-content .form-group input, .modal-content .form-group select {
+    width: 100%; /* Adjusted to take full width of the container */
+    padding: 8px;
+    text-align: justify;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.modal-content button {
+    background-color: #ff3c00; 
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    width: 100%; 
+    font-size: 16px; 
+}
+
+.modal-content button:hover {
+    background-color: #e6481c; 
+}
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+       
+        footer a {
+            color:  #4895ef;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color:  #f72585;
+        }
+
+       /* Confirmation Modal styles */
+.confirmation-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it's on top when visible */
+}
+
+.confirmation-modal .modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Confirmation Modal specific styling */
+.confirmation-modal .modal-content h3 {
+    font-size: 24px;
+    color: #4CAF50; /* Green to indicate success */
+    margin-bottom: 15px;
+}
+
+.confirmation-modal .modal-content p {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#closeModalButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#closeModalButton:hover {
+    background-color: #45a049;
+}
+
+    </style>
+  </head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <a href="index.html">NextGen Hardware</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="about.html"><i class="fa-solid fa-user"></i> About</a></li>
+                <li><a href="products.html" class="active"><i class="fa-solid fa-box-open"></i> Products</a></li>
+                <li><a href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                <li><a href="track-order.html"><i class="fa-solid fa-truck"></i> Track Order</a></li>
+
+                            <li class="header-buttons">
+                                <button class="cart-btn" onclick="window.location.href='cart.html'">
+                                    <i class="fa-solid fa-cart-shopping"></i> Cart (<span id="cart-count">0</span>)
+                                </button>
+                                <button class="logout-btn" onclick="logout()">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                    <section class="search-bar">
+                      <input type="text" placeholder="Search products..." oninput="searchProducts()">
+                      <button>Search</button>
+                      <!-- Modal for search suggestions -->
+                      <div id="search-modal" class="search-modal"></div>
+                  </section>
+                </header>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Products Section --><section class="products-section py-5" style="height: auto;">
+  <div class="container">
+    <h1 class="text-center mb-5">Our Products</h1>
+
+   
+    <div class="category-section mb-5">
+      <h2 class="category-title mb-4">Processors</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="product-card h-100">
+            <img src="images/processor1.jpg" alt="Intel Core i9-13900K">
+            <h3> Intel Core i9-13900K</h3>
+            <p>$1,299.99</p>
+            <div class="rating-display">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span class="review-count">(0 reviews)</span>
+            </div>
+            <div class="quantity-control">
+              <button onclick="decreaseQuantity('intel-core-i9-13900k')" style="padding: 10px 15px; font-size: 18px;">-</button>
+              <input type="number" id="intel-core-i9-13900k" value="1" min="1" style="width: 50px; text-align: center; padding: 8px; font-size: 16px;">
+              <button onclick="increaseQuantity('intel-core-i9-13900k')" style="padding: 10px 15px; font-size: 18px;">+</button>
+            </div>
+            <div class="action-buttons">
+              <div style="display: flex; justify-content: center; gap: 10px;">
+                <button class="buy-now-btn" onclick="openBuyNowModal('Intel Core i9-13900K', 1299.99, document.getElementById('intel-core-i9-13900k').value)">Buy Now</button>
+                <button class="add-to-cart-btn" onclick="openAddToCartModal('Intel Core i9-13900K', 1299.99, document.getElementById('intel-core-i9-13900k').value)">Add to Cart</button>
+              </div>
+              <button class="review-btn" onclick="openReviewModal('Intel Core i9-13900K')">Write Review</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="product-card h-100">
+            <img src="images/processor2.jpg" alt="AMD Ryzen 9 7950X">
+            <h3>AMD Ryzen 9 7950X</h3>
+            <p>$1,699.99</p>
+            <div class="rating-display">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span class="review-count">(0 reviews)</span>
+            </div>
+            <div class="quantity-control">
+              <button onclick="decreaseQuantity('amd-ryzen-9-7950x')">-</button>
+              <input type="number" id="amd-ryzen-9-7950x" value="1" min="1" style="width: 40px; text-align: center;">
+              <button onclick="increaseQuantity('amd-ryzen-9-7950x')">+</button>
+            </div>
+            <div class="action-buttons">
+              <div style="display: flex; justify-content: center; gap: 10px;">
+                <button class="buy-now-btn" onclick="openBuyNowModal('AMD Ryzen 9 7950X', 1699.99, document.getElementById('amd-ryzen-9-7950x').value)">Buy Now</button>
+                <button class="add-to-cart-btn" onclick="openAddToCartModal('AMD Ryzen 9 7950X', 1699.99, document.getElementById('amd-ryzen-9-7950x').value)">Add to Cart</button>
+              </div>
+              <button class="review-btn" style="margin-top: 10px;" onclick="openReviewModal('AMD Ryzen 9 7950X')">Write Review</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="product-card h-100">
+              <img src="images/processor3.jpg" alt="Intel Core i7-13700K">
+              <h3>Intel Core i7-13700K</h3>
+              <p>$1,899.99</p>
+              <div class="rating-display">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span class="review-count">(0 reviews)</span>
+            </div>
+              <div class="quantity-control">
+                  <button onclick="decreaseQuantity('intel-core-i7-13700k')">-</button>
+                  <input type="number" id="intel-core-i7-13700k" value="1" min="1" style="width: 40px; text-align: center;">
+                  <button onclick="increaseQuantity('intel-core-i7-13700k')">+</button>
+              </div>
+              <div class="action-buttons">
+                <div style="display: flex; justify-content: center; gap: 10px;">
+                  <button class="buy-now-btn" onclick="openBuyNowModal('Intel Core i7-13700K', 1899.99, document.getElementById('intel-core-i7-13700k').value)">Buy Now</button>
+                  <button class="add-to-cart-btn" onclick="openAddToCartModal('Intel Core i7-13700K', 1899.99, document.getElementById('intel-core-i7-13700k').value)">Add to Cart</button>
+                </div>
+                <button class="review-btn" onclick="openReviewModal('Intel Core i7-13700K')">Write Review</button>
+              </div>
+          </div>
+      </div>
+
+    <div class="category-section mb-5">
+      <h2 class="category-title mb-4">Graphics Cards</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="product-card h-100">
+            <img src="images/gc1.jpg" alt="NVIDIA GeForce RTX 4090">
+            <h3>NVIDIA GeForce RTX 4090</h3>
+            <p>$199.99</p>
+            <div class="rating-display">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span class="review-count">(0 reviews)</span>
+            </div>
+            <div class="quantity-control">
+              <button onclick="decreaseQuantity('nvidia-geforce-rtx-4090')">-</button>
+              <input type="number" id="nvidia-geforce-rtx-4090" value="1" min="1" style="width: 40px; text-align: center;">
+              <button onclick="increaseQuantity('nvidia-geforce-rtx-4090')">+</button>
+            </div>
+            <div class="action-buttons">
+              <div style="display: flex; justify-content: center; gap: 10px;">
+                <button class="buy-now-btn" onclick="openBuyNowModal('NVIDIA GeForce RTX 4090', 199.99, document.getElementById('nvidia-geforce-rtx-4090').value)">Buy Now</button>
+                <button class="add-to-cart-btn" onclick="openAddToCartModal('NVIDIA GeForce RTX 4090', 199.99, document.getElementById('nvidia-geforce-rtx-4090').value)">Add to Cart</button>
+              </div>
+              <button class="review-btn" onclick="openReviewModal('NVIDIA GeForce RTX 4090')">Write Review</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="product-card h-100">
+            <img src="images/gc2.jpg" alt="AMD Radeon RX 7900 XTX">
+            <h3>AMD Radeon RX 7900 XTX</h3>
+            <p>$159.99</p>
+            <div class="rating-display">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span class="review-count">(0 reviews)</span>
+            </div>
+            <div class="quantity-control">
+              <button onclick="decreaseQuantity('amd-radeon-rx-7900-xtx')">-</button>
+              <input type="number" id="amd-radeon-rx-7900-xtx" value="1" min="1" style="width: 40px; text-align: center;">
+              <button onclick="increaseQuantity('amd-radeon-rx-7900-xtx')">+</button>
+            </div>
+            <div class="action-buttons">
+              <div style="display: flex; justify-content: center; gap: 10px;">
+                <button class="buy-now-btn" onclick="openBuyNowModal('AMD Radeon RX 7900 XTX', 159.99, document.getElementById('amd-radeon-rx-7900-xtx').value)">Buy Now</button>
+                <button class="add-to-cart-btn" onclick="openAddToCartModal('AMD Radeon RX 7900 XTX', 159.99, document.getElementById('amd-radeon-rx-7900-xtx').value)">Add to Cart</button>
+              </div>
+              <button class="review-btn" onclick="openReviewModal('AMD Radeon RX 7900 XTX')">Write Review</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="product-card h-100">
+            <img src="images/gc3.jpg" alt="NVIDIA GeForce RTX 3080 Ti">
+            <h3>NVIDIA GeForce RTX 3080 Ti</h3>
+            <p>$249.99</p>
+            <div class="rating-display">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span class="review-count">(0 reviews)</span>
+            </div>
+            <div class="quantity-control">
+              <button onclick="decreaseQuantity('nvidia-geforce-rtx-3080-ti')">-</button>
+              <input type="number" id="nvidia-geforce-rtx-3080-ti" value="1" min="1" style="width: 40px; text-align: center;">
+              <button onclick="increaseQuantity('nvidia-geforce-rtx-3080-ti')">+</button>
+            </div>
+            <div class="action-buttons">
+              <div style="display: flex; justify-content: center; gap: 10px;">
+                <button class="buy-now-btn" onclick="openBuyNowModal('NVIDIA GeForce RTX 3080 Ti', 249.99, document.getElementById('nvidia-geforce-rtx-3080-ti').value)">Buy Now</button>
+                <button class="add-to-cart-btn" onclick="openAddToCartModal('NVIDIA GeForce RTX 3080 Ti', 249.99, document.getElementById('nvidia-geforce-rtx-3080-ti').value)">Add to Cart</button>
+              </div>
+              <button class="review-btn" style="margin-top: 10px;" onclick="openReviewModal('NVIDIA GeForce RTX 3080 Ti')">Write Review</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+    <div class="category-section">
+      <h2 class="category-title mb-4">PC Case</h2>
+      <div class="row">
+        <div class="col-md-4 mb-4">
+          <div class="product-card h-100">
+            <img src="images/case1.jpg" alt="NZXT H510 Elite">
+            <h3>NZXT H510 Elite</h3>
+            <p>$89.99</p>
+            <div class="rating-display">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span class="review-count">(0 reviews)</span>
+            </div>
+            <div class="quantity-control">
+              <button onclick="decreaseQuantity('nzxt-h510-elite')">-</button>
+              <input type="number" id="nzxt-h510-elite" value="1" min="1" style="width: 40px; text-align: center;">
+              <button onclick="increaseQuantity('nzxt-h510-elite')">+</button>
+            </div>
+            <div class="action-buttons">
+              <div style="display: flex; justify-content: center; gap: 10px;">
+                <button class="buy-now-btn" onclick="openBuyNowModal('NZXT H510 Elite', 89.99, document.getElementById('nzxt-h510-elite').value)">Buy Now</button>
+                <button class="add-to-cart-btn" onclick="openAddToCartModal('NZXT H510 Elite', 89.99, document.getElementById('nzxt-h510-elite').value)">Add to Cart</button>
+              </div>
+              <button class="review-btn" style="margin-top: 10px;" onclick="openReviewModal('NZXT H510 Elite')">Write Review</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="product-card h-100">
+            <img src="images/case2.jpg" alt="Corsair iCUE 4000X RGB">
+            <h3>Corsair iCUE 4000X RGB</h3>
+            <p>$129.99</p>
+            <div class="rating-display">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span class="review-count">(0 reviews)</span>
+            </div>
+            <div class="quantity-control">
+              <button onclick="decreaseQuantity('corsair-icue-4000x-rgb')">-</button>
+              <input type="number" id="corsair-icue-4000x-rgb" value="1" min="1" style="width: 40px; text-align: center;">
+              <button onclick="increaseQuantity('corsair-icue-4000x-rgb')">+</button>
+            </div>
+            <div class="action-buttons">
+              <div style="display: flex; justify-content: center; gap: 10px;">
+                <button class="buy-now-btn" onclick="openBuyNowModal('Corsair iCUE 4000X RGB', 129.99, document.getElementById('corsair-icue-4000x-rgb').value)">Buy Now</button>
+                <button class="add-to-cart-btn" onclick="openAddToCartModal('Corsair iCUE 4000X RGB', 129.99, document.getElementById('corsair-icue-4000x-rgb').value)">Add to Cart</button>
+              </div>
+              <button class="review-btn" style="margin-top: 10px;" onclick="openReviewModal('Corsair iCUE 4000X RGB')">Write Review</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4 mb-4">
+          <div class="product-card h-100">
+            <img src="images/case3.jpg" alt="Lian Li PC-011 Dynamic">
+            <h3>Lian Li PC-011 Dynamic</h3>
+            <p>$199.99</p>
+            <div class="rating-display">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span class="review-count">(0 reviews)</span>
+            </div>
+            <div class="quantity-control">
+              <button onclick="decreaseQuantity('lian-li-pc-011-dynamic')">-</button>
+              <input type="number" id="lian-li-pc-011-dynamic" value="1" min="1" style="width: 40px; text-align: center;">
+              <button onclick="increaseQuantity('lian-li-pc-011-dynamic')">+</button>
+            </div>
+            <div class="action-buttons">
+              <div style="display: flex; justify-content: center; gap: 10px;">
+                <button class="buy-now-btn" onclick="openBuyNowModal('Lian Li PC-011 Dynamic', 199.99, document.getElementById('lian-li-pc-011-dynamic').value)">Buy Now</button>
+                <button class="add-to-cart-btn" onclick="openAddToCartModal('Lian Li PC-011 Dynamic', 199.99, document.getElementById('lian-li-pc-011-dynamic').value)">Add to Cart</button>
+              </div>
+              <button class="review-btn" style="margin-top: 10px;" onclick="openReviewModal('Lian Li PC-011 Dynamic')">Write Review</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- View More Products Button -->
+  <div class="text-center my-4">
+    <button id="viewMoreButton" class="view-more-btn" onclick="viewMoreProducts()">View More Products</button>
+</div>
+  
+  <!-- Additional Products Section (Initially Hidden) -->
+  <div id="additional-products" style="display: none;">
+    <div class="category-section mb-5">
+        <h2 class="category-title mb-4">Other Devices</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="product-card h-100">
+                    <img src="images/keyboard.jpg" alt="Keyboard with Mouse">
+                    <h3>Keyboard with Mouse</h3>
+                    <p>$299.99</p>
+                    <div class="rating-display">
+                        <div class="stars">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-regular fa-star"></i>
+                        </div>
+                        <span class="review-count">(0 reviews)</span>
+                    </div>
+                    <div class="quantity-control">
+                        <button onclick="decreaseQuantity('keyboard-with-mouse')">-</button>
+                        <input type="number" id="keyboard-with-mouse" value="1" min="1" style="width: 40px; text-align: center;">
+                        <button onclick="increaseQuantity('keyboard-with-mouse')">+</button>
+                    </div>
+                    <div class="action-buttons">
+                        <div style="display: flex; justify-content: center; gap: 10px;">
+                            <button class="buy-now-btn" onclick="openBuyNowModal('Keyboard with Mouse', 299.99, document.getElementById('keyboard-with-mouse').value)">Buy Now</button>
+                            <button class="add-to-cart-btn" onclick="openAddToCartModal('Keyboard with Mouse', 299.99, document.getElementById('keyboard-with-mouse').value)">Add to Cart</button>
+                        </div>
+                        <button class="review-btn" onclick="openReviewModal('Keyboard with Mouse')">Write Review</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="product-card h-100">
+                    <img src="images/motherboard.jpg" alt="Motherboard">
+                    <h3>Motherboard</h3>
+                    <p>$199.99</p>
+                    <div class="rating-display">
+                        <div class="stars">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-regular fa-star"></i>
+                        </div>
+                        <span class="review-count">(0 reviews)</span>
+                    </div>
+                    <div class="quantity-control">
+                        <button onclick="decreaseQuantity('motherboard')">-</button>
+                        <input type="number" id="motherboard" value="1" min="1" style="width: 40px; text-align: center;">
+                        <button onclick="increaseQuantity('motherboard')">+</button>
+                    </div>
+                    <div class="action-buttons">
+                        <div style="display: flex; justify-content: center; gap: 10px;">
+                            <button class="buy-now-btn" onclick="openBuyNowModal('Motherboard', 199.99, document.getElementById('motherboard').value)">Buy Now</button>
+                            <button class="add-to-cart-btn" onclick="openAddToCartModal('Motherboard',199.99, document.getElementById('motherboard').value)">Add to Cart</button>
+                        </div>
+                        <button class="review-btn" onclick="openReviewModal('Motherboard')">Write Review</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="product-card h-100">
+                    <img src="images/webcam.jpg" alt="Webcam">
+                    <h3>Webcam</h3>
+                    <p>$79.99</p>
+                    <div class="rating-display">
+                        <div class="stars">
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-solid fa-star"></i>
+                            <i class="fa-regular fa-star"></i>
+                        </div>
+                        <span class="review-count">(0 reviews)</span>
+                    </div>
+                    <div class="quantity-control">
+                        <button onclick="decreaseQuantity('webcam')">-</button>
+                        <input type="number" id="webcam" value="1" min="1" style="width: 40px; text-align: center;">
+                        <button onclick="increaseQuantity('webcam')">+</button>
+                    </div>
+                    <div class="action-buttons">
+                        <div style="display: flex; justify-content: center; gap: 10px;">
+                            <button class="buy-now-btn" onclick="openBuyNowModal('Webcam', 79.99, document.getElementById('webcam').value)">Buy Now</button>
+                            <button class="add-to-cart-btn" onclick="openAddToCartModal('Webcam', 79.99, document.getElementById('webcam').value)">Add to Cart</button>
+                        </div>
+                        <button class="review-btn" onclick="openReviewModal('Webcam')">Write Review</button>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="product-card h-100">
+                        <img src="images/microphone.jpg" alt="Headphone">
+                        <h3>Headphone</h3>
+                        <p>$199</p>
+                        <div class="rating-display">
+                            <div class="stars">
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-solid fa-star"></i>
+                                <i class="fa-regular fa-star"></i>
+                            </div>
+                            <span class="review-count">(0 reviews)</span>
+                        </div>
+                        <div class="quantity-control">
+                            <button onclick="decreaseQuantity('headphone')">-</button>
+                            <input type="number" id="headphone" value="1" min="1" style="width: 40px; text-align: center;">
+                            <button onclick="increaseQuantity('headphone')">+</button>
+                        </div>
+                        <div class="action-buttons">
+                            <div style="display: flex; justify-content: center; gap: 10px;">
+                                <button class="buy-now-btn" onclick="openBuyNowModal('Headphone', 399, document.getElementById('headphone').value)">Buy Now</button>
+                                <button class="add-to-cart-btn" onclick="openAddToCartModal('Headphone', 399, document.getElementById('headphone').value)">Add to Cart</button>
+                            </div>
+                            <button class="review-btn" onclick="openReviewModal('Headphone')">Write Review</button>
+                        </div>
+                    </div>
+                </div>
+               
+                    <div class="col-md-4 mb-4">
+                        <div class="product-card h-100">
+                            <img src="images/joystick.jpg" alt="Joystick">
+                            <h3>Joystick</h3>
+                            <p>$45.99</p>
+                            <div class="rating-display">
+                                <div class="stars">
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-solid fa-star"></i>
+                                    <i class="fa-regular fa-star"></i>
+                                </div>
+                                <span class="review-count">(0 reviews)</span>
+                            </div>
+                            <div class="quantity-control">
+                                <button onclick="decreaseQuantity('joystick')">-</button>
+                                <input type="number" id="joystick" value="1" min="1" style="width: 40px; text-align: center;">
+                                <button onclick="increaseQuantity('joystick')">+</button>
+                            </div>
+                            <div class="action-buttons">
+                                <div style="display: flex; justify-content: center; gap: 10px;">
+                                    <button class="buy-now-btn" onclick="openBuyNowModal('Joystick', 45.99, document.getElementById('joystick').value)">Buy Now</button>
+                                    <button class="add-to-cart-btn" onclick="openAddToCartModal('Joystick', 45.99, document.getElementById('joystick').value)">Add to Cart</button>
+                                </div>
+                                <button class="review-btn" onclick="openReviewModal('Joystick')">Write Review</button>
+                            </div>
+                        </div>
+                    </div>
+                                <div class="col-md-4 mb-4">
+                                    <div class="product-card h-100">
+                                        <img src="images/monitor.jpg" alt="Monitor">
+                                        <h3>Monitor</h3>
+                                        <p>$1,799.99</p>
+                                        <div class="rating-display">
+                                            <div class="stars">
+                                                <i class="fa-solid fa-star"></i>
+                                                <i class="fa-solid fa-star"></i>
+                                                <i class="fa-solid fa-star"></i>
+                                                <i class="fa-solid fa-star"></i>
+                                                <i class="fa-regular fa-star"></i>
+                                            </div>
+                                            <span class="review-count">(0 reviews)</span>
+                                        </div>
+                                        <div class="quantity-control">
+                                            <button onclick="decreaseQuantity('monitor')">-</button>
+                                            <input type="number" id="monitor" value="1" min="1" style="width: 40px; text-align: center;">
+                                            <button onclick="increaseQuantity('monitor')">+</button>
+                                        </div>
+                                        <div class="action-buttons">
+                                            <div style="display: flex; justify-content: center; gap: 10px;">
+                                                <button class="buy-now-btn" onclick="openBuyNowModal('Monitor', 1799.99, document.getElementById('monitor').value)">Buy Now</button>
+                                                <button class="add-to-cart-btn" onclick="openAddToCartModal('Monitor', 1799.99, document.getElementById('monitor').value)">Add to Cart</button>
+                                            </div>
+                                            <button class="review-btn" onclick="openReviewModal('Monitor')">Write Review</button>
+                                        </div>
+                                    </div>
+                                </div>
+                          </div>
+                     </div>
+               </div>
+  
+</section>
+
+<!-- Confirmation Modal -->
+<div id="confirmationModal" class="confirmation-modal">
+  <div class="modal-content">
+      <h3>Purchase Confirmed!</h3>
+      <p>Your purchase has been successfully confirmed.</p>
+      <button id="closeModalButton">Close</button>
+  </div>
+</div>
+
+
+   <!-- Buy Now Modal -->
+<div id="buyNowModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeBuyNowModal()">&times;</span>
+    <h2>Complete Your Purchase</h2>
+
+    <!-- FORM START -->
+    <form id="purchaseForm" onsubmit="return confirmPurchase(event)">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
+
+        <label for="payment-method">Payment Method</label>
+        <select id="payment-method" name="payment-method" required>
+          <option value="credit-card">Credit Card</option>
+          <option value="paypal">PayPal</option>
+          <option value="paymaya">PayMaya</option>
+          <option value="gcash">Gcash</option>
+          <option value="cash-on-delivery">Cash on Delivery</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="delivery-option">Delivery Option</label>
+        <select id="delivery-option" name="delivery-option" required>
+          <option value="standard">Standard Delivery</option>
+          <option value="express">Express Delivery</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Delivery Address</label>
+        <input type="text" class="form-control" id="address" placeholder="Enter your delivery address" required>
+      </div>
+
+      <div class="form-group">
+        <p>Total: $<span id="total-amount"></span></p>
+      </div>
+
+      <button type="submit">Confirm Purchase</button>
+    </form>
+  </div>
+</div>
+  <div id="confirmationMessage" class="confirmation-message">
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content" style="width: 500px; max-width: 90%;">
+            <span class="close" onclick="closeReviewModal()">&times;</span>
+            <h2 style="color: #1E3A8A; text-align: center; margin-bottom: 25px;">Write a Review</h2>
+            <div class="star-rating" style="text-align: center; font-size: 28px; margin-bottom: 20px;">
+                <i class="fa-regular fa-star" data-rating="1" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                <i class="fa-regular fa-star" data-rating="2" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                <i class="fa-regular fa-star" data-rating="3" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                <i class="fa-regular fa-star" data-rating="4" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                <i class="fa-regular fa-star" data-rating="5" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+            </div>
+            <div id="ratingError" style="display: none; color: #d32f2f; margin: 10px 0; text-align: center; font-size: 14px; padding: 8px; background-color: #ffebee; border-radius: 4px;"></div>
+            <textarea id="reviewText" placeholder="Share your experience..." 
+                style="width: 100%; padding: 15px; border-radius: 8px; border: 1px solid #ddd; 
+                min-height: 150px; margin-bottom: 20px; font-family: inherit;"></textarea>
+            <button onclick="submitReview()" 
+                style="background-color: #1E3A8A; color: white; padding: 12px 25px; 
+                border-radius: 5px; border: none; cursor: pointer; width: 100%; 
+                font-size: 16px; transition: all 0.3s;">
+                Submit Review
+            </button>
+        </div>
+    </div>
+
+
+    <!-- Review Confirmation Modal -->
+    <div id="reviewConfirmationModal" class="confirmation-modal">
+        <div class="modal-content">
+            <h3>Review Submitted!</h3>
+            <p>Thank you for your review. Your feedback helps other customers.</p>
+            <button onclick="closeReviewConfirmation()">Close</button>
+        </div>
+    </div>
+
+    <!-- Add to Cart Modal -->
+    <div id="addToCartModal" class="modal">
+        <div class="modal-content" style="text-align: center; padding: 30px;">
+            <i class="fas fa-check-circle" style="font-size: 50px; color: #4CAF50; margin-bottom: 20px;"></i>
+            <h2 style="color: #4CAF50;">Added to Cart</h2>
+            <p>Item successfully added to your cart</p>
+            <p>Quantity: <span id="cart-quantity"></span></p>
+            <p>Total: $<span id="cart-total"></span></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2025 NextGen Hardware | <a href="privacy-policy.html">Privacy Policy</a> | <a href="terms-conditions.html">Terms & Conditions</a></p>
+    </footer>
+    <script>
+      // Sample product data for search suggestions
+      const products = [
+          {name: 'Intel Core i9-13900K', category: 'Processors'},
+          {name: 'AMD Ryzen 9 7950X', category: 'Processors'},
+          {name: 'Intel Core i7-13700K', category: 'Processors'},
+          {name: 'NVIDIA GeForce RTX 4090', category: 'Graphics Cards'},
+          {name: 'AMD Radeon RX 7900 XTX', category: 'Graphics Cards'},
+          {name: 'NVIDIA GeForce RTX 3080 Ti', category: 'Graphics Cards'},
+          {name: 'NZXT H510 Elite', category: 'PC Case'},
+          {name: 'Corsair iCUE 4000X RGB', category: 'PC Case'},
+          {name: 'Lian Li PC-011 Dynamic', category: 'PC Case'},
+          {name: 'Keyboard with Mouse', category: 'Other Devices'},
+          {name: 'Motherboard', category: 'Other Devices'},
+          {name: 'Webcam', category: 'Other Devices'},
+          {name: 'Headphone', category: 'Other Devices'},
+          {name: 'Joystick', category: 'Other Devices'},
+          {name: 'Monitor', category: 'Other Devices'}
+      ];
+    
+      // Search function for both modal and product card filtering
+      function searchProducts() {
+          const query = document.querySelector('.search-bar input').value.toLowerCase();
+          const searchModal = document.getElementById('search-modal');
+          const productCards = document.querySelectorAll('.product-card');
+    
+          // Clear previous search suggestions
+          searchModal.innerHTML = '';
+    
+          // Filter product cards based on the search query
+          productCards.forEach(card => {
+              const title = card.querySelector('h3').textContent.toLowerCase();
+              card.style.display = title.includes(query) ? 'block' : 'none';
+          });
+    
+          if (query.length > 0) {
+              const matches = products.filter(p =>
+                  p.name.toLowerCase().includes(query) ||
+                  p.category.toLowerCase().includes(query)
+              );
+    
+              if (matches.length > 0) {
+                  matches.forEach(product => {
+                      const suggestion = document.createElement('div');
+                      suggestion.className = 'search-suggestion';
+    
+                      suggestion.innerHTML = `
+                          <div style="font-weight: 500;">${product.name}</div>
+                          <div style="font-size: 0.8rem; color: #666;">${product.category}</div>
+                      `;
+    
+                      suggestion.onclick = () => {
+                          localStorage.setItem('searchQuery', product.name); // Store search query
+                          window.location.href = 'products.html'; // Redirect to products page
+                      };
+    
+                      searchModal.appendChild(suggestion);
+                  });
+                  searchModal.style.display = 'block';
+              } else {
+                  searchModal.style.display = 'none';
+              }
+          } else {
+              searchModal.style.display = 'none';
+          }
+      }
+    
+      // Close modal when clicking outside
+      document.addEventListener('click', (e) => {
+          const searchModal = document.getElementById('search-modal');
+          if (!e.target.closest('.search-bar') && !e.target.closest('#search-modal')) {
+              searchModal.style.display = 'none';
+          }
+      });
+    
+      let cartCount = 0;
+      let totalAmount = 0;
+    
+      // Function to update and persist cart count
+      function updateCartCount() {
+          const cart = JSON.parse(localStorage.getItem('cart')) || [];
+          cartCount = cart.length;
+          localStorage.setItem('cartCount', cartCount);
+          
+          // Update all cart count displays
+          const cartCountElements = document.querySelectorAll('#cart-count');
+          cartCountElements.forEach(el => {
+              el.textContent = cartCount;
+          });
+      }
+
+      // Initialize cart count on page load
+      function initCartCount() {
+          const savedCount = localStorage.getItem('cartCount');
+          if (savedCount !== null) {
+              cartCount = parseInt(savedCount);
+              const cartCountElements = document.querySelectorAll('#cart-count');
+              cartCountElements.forEach(el => {
+                  el.textContent = cartCount;
+              });
+          } else {
+              updateCartCount();
+          }
+      }
+    
+function openBuyNowModal(productName, productPrice, quantity) {
+    console.log('Buy Now clicked:', {productName, productPrice, quantity});
+    totalAmount = productPrice * quantity;
+    document.getElementById('total-amount').textContent = totalAmount.toFixed(2);
+    const modal = document.getElementById('buyNowModal');
+    modal.style.display = 'flex';
+    
+    // Close when clicking outside modal content
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+        }
+    });
+}
+    
+      function closeBuyNowModal() {
+          document.getElementById('buyNowModal').style.display = 'none';
+      }
+    
+    // Updated openAddToCartModal Function to count unique products
+function openAddToCartModal(productName, productPrice, quantity) {
+    console.log('Add to Cart clicked:', {productName, productPrice, quantity});
+    totalAmount = productPrice * quantity;
+    
+    // Get product image from the clicked product card
+    const productCard = event.target.closest('.product-card');
+    const imgSrc = productCard.querySelector('img').src;
+    
+    const product = {
+        name: productName,
+        price: `$${productPrice.toFixed(2)}`,
+        quantity: parseInt(quantity),
+        imgSrc: imgSrc
+    };
+
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    
+    // Check if product already exists in cart
+    const existingProductIndex = cart.findIndex(item => item.name === productName);
+    
+    if (existingProductIndex !== -1) {
+        // Product exists - increase quantity but don't increment cart count
+        cart[existingProductIndex].quantity += parseInt(quantity);
+    } else {
+        // Product doesn't exist - add new entry and increment cart count
+        cart.push(product);
+        cartCount = cart.length;
+        localStorage.setItem('cartCount', cartCount);
+    }
+    
+    // Update cart in storage
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    // Update cart count display
+    document.getElementById('cart-count').textContent = cartCount || 0;
+    
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Show modal and set up auto-close and click-outside behavior
+    const modal = document.getElementById('addToCartModal');
+    document.getElementById('cart-quantity').textContent = quantity;
+    document.getElementById('cart-total').textContent = totalAmount.toFixed(2);
+    modal.style.display = 'flex';
+    
+    // Auto-close after 2 seconds
+    const autoCloseTimer = setTimeout(() => {
+        modal.style.display = 'none';
+    }, 2000);
+
+    // Close when clicking outside modal content
+    modal.addEventListener('click', function(e) {
+        if (e.target === modal) {
+            modal.style.display = 'none';
+            clearTimeout(autoCloseTimer);
+        }
+    });
+}
+
+      
+    
+      function closeAddToCartModal() {
+          document.getElementById('addToCartModal').style.display = 'none';
+      }
+    
+      function increaseQuantity(productId) {
+          let input = document.getElementById(productId);
+          input.value = parseInt(input.value) + 1;
+      }
+    
+      function decreaseQuantity(productId) {
+          let input = document.getElementById(productId);
+          if (input.value > 1) {
+              input.value = parseInt(input.value) - 1;
+          }
+      }
+    
+      // Confirm Purchase function
+      function showConfirmationModal() {
+          const modal = document.getElementById('confirmationModal');
+          modal.style.display = 'flex';
+    
+          const closeButton = document.getElementById('closeModalButton');
+          closeButton.addEventListener('click', () => {
+              modal.style.display = 'none';
+          });
+    
+          setTimeout(() => {
+              modal.style.display = 'none';
+          }, 5000);
+      }
+    
+      function confirmPurchase(event) {
+          event.preventDefault();
+          document.getElementById("purchaseForm").reset();
+    
+          showConfirmationModal();
+          closeBuyNowModal(); 
+    
+          return false;
+      }
+    
+      function logout() {
+          localStorage.removeItem('username');
+          localStorage.removeItem('email');
+          localStorage.removeItem('password');
+          window.location.href = 'auth.html'; 
+      }
+    
+function viewMoreProducts() {
+    const additionalProducts = document.getElementById('additional-products');
+    const viewMoreButton = document.getElementById('viewMoreButton');
+
+    if (additionalProducts.style.display === 'none') {
+        additionalProducts.style.display = 'block'; // Show additional products
+        viewMoreButton.style.display = 'none'; // Hide the button
+    }
+}
+
+
+      // Window.onload function
+      window.onload = function () {
+          updateCartCount(); // Ensure the cart count is updated on page load
+      };
+    </script>
+    <script src="reviews.js"></script>
+  </body>
+  </html>

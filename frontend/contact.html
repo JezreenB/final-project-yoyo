@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextGen Hardware - Contact</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #ebf1fc;
+            padding: 0;
+            margin: 0;
+        }
+
+        
+        /* Header */
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo a {
+            color: #ff7f50;
+            text-decoration: none;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin: 0 21px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: #ff7f50;
+        }
+
+         /* Header buttons container */
+         .header-buttons {
+            position: absolute;
+            right: 41px;
+            top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        /* Logout Button */
+        .logout-btn {
+            background-color: #d32f2f;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+         /* Cart Button */
+         .cart-btn {
+            background-color: #ff7f50;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        .cart-btn:hover {
+            background-color: #ff5722;
+        }
+
+        .logout-btn:hover {
+            background-color: #c62828;
+        }
+
+         /* Search Bar */
+         .search-bar {
+            max-width: 600px;
+            margin: 15px auto;
+            padding: 10px;
+            border-radius: 30px;
+            border: 2px solid #ff7f50;
+            display: flex;
+            justify-content: space-between;
+            background-color: white;
+        }
+
+        .search-bar input {
+            width: 86%;
+            padding: 8px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+        }
+
+        
+        .search-bar button {
+            background-color: #ff7f50;
+            padding: 8px 8px;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+
+        .search-bar button:hover {
+            background-color: #ff5722;
+        }
+
+         /* Search Modal */
+         #search-modal {
+           position: fixed;
+           top: 180px;
+           left: 50%;
+           transform: translateX(-50%);
+           width: 600px;
+           max-height: 400px;
+           overflow-y: auto;
+           padding: 10px;
+           background-color: white;
+           border-radius: 8px;
+           box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+           z-index: 1000;
+           display: none;
+        }
+
+         .search-suggestion {
+          padding: 12px 20px;
+          border-bottom: 1px solid #eee;
+          cursor: pointer;
+          color: #333;
+          text-align: justify;
+          transition: background 0.2s;
+        }
+
+         .search-suggestion:hover {
+          background: #f5f5f5;
+        }
+        
+        .contact-section {
+            padding: 60px 15px;
+        }
+
+        .contact-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+        }
+
+        .contact-card h2, .contact-card p, .contact-card label, .contact-card .form-control, .contact-card .btn {
+            color: white;
+        }
+
+        .contact-card .form-control {
+            background-color: white;
+            color: #333;
+            border: 2px solid #ff7f50;
+        }
+
+        .contact-card .form-control::placeholder {
+            color: #bbb;
+        }
+
+        .contact-info h4 {
+            margin-top: 25px;
+            color: white;
+        }
+
+        .contact-info p {
+            color: white;
+        }
+
+        .contact-info p i {
+            color: #ff7f50;
+            margin-right: 10px;
+        }
+
+        .social-icons a {
+            margin-right: 10px;
+            color: #ff7f50;
+            font-size: 20px;
+            transition: color 0.3s;
+        }
+
+        .social-icons a:hover {
+            color: #ff5722;
+        }
+
+        .btn-custom-orange {
+            background-color: #ff7f50;
+            border: none;
+            color: white;
+            display: inline-block;
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.3s ease;
+        }
+
+        .btn-custom-orange:hover {
+            background-color: #ff5722;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        footer a {
+            color:  #4895ef;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color:  #f72585;
+        }
+
+        /* Modal Enhancements */
+        .modal-content {
+            background-color: #2c3e50;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .modal-header {
+            border-bottom: 0;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .modal-body {
+            padding: 20px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .modal-body i {
+            font-size: 60px;
+            color: #4aea23;
+        }
+
+        .modal-footer {
+            border-top: 0;
+        }
+
+        .btn-custom-orange {
+            background-color: #ff7f50;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-custom-orange:hover {
+            background-color: #ff5722;
+        }
+
+        .btn-close {
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">
+        <a href="index.html">NextGen Hardware</a>
+    </div>
+    <nav>
+        <ul>
+            <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="about.html"><i class="fa-solid fa-user"></i> About</a></li>
+            <li><a href="products.html"><i class="fa-solid fa-box-open"></i> Products</a></li>
+            <li><a href="contact.html" class="active"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+            <li><a href="track-order.html"><i class="fa-solid fa-truck"></i> Track Order</a></li>
+        </ul>
+        <div class="header-buttons">
+            <button class="cart-btn" onclick="window.location.href='cart.html'">
+                <i class="fa-solid fa-cart-shopping"></i> Cart (<span id="cart-count">0</span>)
+            </button>
+            
+            <button class="logout-btn" onclick="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </nav>
+    <section class="search-bar">
+        <input type="text" placeholder="Search products..." oninput="searchProducts()">
+        <button>Search</button>
+        <!-- Modal for search suggestions -->
+        <div id="search-modal" class="search-modal"></div>
+    </section>
+</header>
+
+<section class="contact-section">
+    <div class="container">
+        <div class="row justify-content-center contact-card">
+            <div class="col-lg-5 col-md-12">
+                <h2 class="mb-4">Get in Touch</h2>
+                <p class="mb-4">Have questions, feedback, or need help? Fill out the form and we’ll get back to you as soon as possible.</p>
+                <form id="contact-form">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">Your Full Name</label>
+                        <input type="text" class="form-control" id="name" placeholder="Yasmien Mae Llona" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control" id="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="message" class="form-label">Your Message</label>
+                        <textarea class="form-control" id="message" rows="5" placeholder="Write your message..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-custom-orange px-4">Send Message</button>
+                </form>
+            </div>
+
+            <div class="col-lg-4 col-md-12 mt-5 mt-lg-8 contact-info text-center">
+                <h4>Customer Support</h4>
+                <p><i class="fa-solid fa-phone"></i> +63 912 345 6789</p>
+                <p><i class="fa-solid fa-envelope"></i> support@nextgenhardware.com</p>
+
+                <h4>Business Hours</h4>
+                <p><i class="fa-solid fa-clock"></i> Mon - Fri: 9:00 AM to 6:00 PM</p>
+                <p><i class="fa-solid fa-clock"></i> Sat: 10:00 AM to 4:00 PM</p>
+
+                <h4>Follow Us</h4>
+                <div class="social-icons mt-2">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+        <p>&copy; 2025 NextGen Hardware | <a href="privacy-policy.html">Privacy Policy</a> | <a href="terms-conditions.html">Terms & Conditions</a></p>
+      </footer>
+
+<!-- Modal for message sent confirmation -->
+<div class="modal fade" id="messageSentModal" tabindex="-1" aria-labelledby="messageSentModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow-lg border-0" style="background: #2c3e50;">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-white" id="messageSentModalLabel">Message Sent</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center text-white">
+                <i class="fa-solid fa-check-circle" style="font-size: 60px; color: #11d82f;"></i>
+                <h4 class="mt-4">Your message has been successfully sent!</h4>
+                <p>We will get back to you as soon as possible.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-dark w-100" data-bs-dismiss="modal">Close</button>
+            </div>
+             </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+<script>
+     // Sample product data for search suggestions
+     const products = [
+          {name: 'Intel Core i9-13900K', category: 'Processors'},
+          {name: 'AMD Ryzen 9 7950X', category: 'Processors'},
+          {name: 'Intel Core i7-13700K', category: 'Processors'},
+          {name: 'NVIDIA GeForce RTX 4090', category: 'Graphics Cards'},
+          {name: 'AMD Radeon RX 7900 XTX', category: 'Graphics Cards'},
+          {name: 'NVIDIA GeForce RTX 3080 Ti', category: 'Graphics Cards'},
+          {name: 'NZXT H510 Elite', category: 'PC Case'},
+          {name: 'Corsair iCUE 4000X RGB', category: 'PC Case'},
+          {name: 'Lian Li PC-011 Dynamic', category: 'PC Case'},
+          {name: 'Keyboard with Mouse', category: 'Other Devices'},
+          {name: 'Motherboard', category: 'Other Devices'},
+          {name: 'Webcam', category: 'Other Devices'},
+          {name: 'Headphone', category: 'Other Devices'},
+          {name: 'Joystick', category: 'Other Devices'},
+          {name: 'Monitor', category: 'Other Devices'}
+   ];
+
+    function searchProducts() {
+    const query = document.querySelector('.search-bar input').value.toLowerCase();
+    const searchModal = document.getElementById('search-modal');
+    searchModal.innerHTML = ''; // Clear previous search results
+    
+    if (query.length > 0) {
+        const matches = products.filter(p => 
+            p.name.toLowerCase().includes(query) || 
+            p.category.toLowerCase().includes(query)
+        );
+        
+        if (matches.length > 0) {
+            matches.forEach(product => {
+                const suggestion = document.createElement('div');
+                suggestion.className = 'search-suggestion';
+                
+                // Explicitly show the product name and category
+                suggestion.innerHTML = `
+                    <div style="font-weight: 500;">${product.name}</div>
+                    <div style="font-size: 0.8rem; color: #666;">${product.category}</div>
+                `;
+                
+                // Add click behavior to redirect to the products page with search query
+                suggestion.onclick = () => {
+                    localStorage.setItem('searchQuery', product.name); // Store search query
+                    window.location.href = 'products.html'; // Redirect to products page
+                };
+                
+                // Append to the modal
+                searchModal.appendChild(suggestion);
+            });
+            searchModal.style.display = 'block'; // Show modal if matches are found
+        } else {
+            searchModal.style.display = 'none'; // Hide modal if no matches
+        }
+    } else {
+        searchModal.style.display = 'none'; // Hide modal if search query is empty
+    }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', (e) => {
+    const searchModal = document.getElementById('search-modal');
+    if (!e.target.closest('.search-bar') && !e.target.closest('#search-modal')) {
+        searchModal.style.display = 'none'; // Hide modal if clicked outside
+    }
+});
+
+
+   document.getElementById('contact-form').addEventListener('submit', function(e) {
+    e.preventDefault(); // Prevent the form from refreshing the page
+    
+    // Clear the text in the input fields
+    document.getElementById('name').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('message').value = '';
+    
+    // Show the modal
+    var myModal = new bootstrap.Modal(document.getElementById('messageSentModal'));
+    myModal.show();
+});
+
+    // Logout functionality (clears localStorage)
+    function logout() {
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('password');
+            window.location.href = 'auth.html'; // Redirect to login page
+        }
+
+
+        // Basic search function removed to avoid duplication
+      
+        // Function to update cart count (counts unique products only)
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cartCount = cart.length; // Count unique products
+            localStorage.setItem('cartCount', cartCount);
+            
+            // Update all cart count displays
+            const cartCountElements = document.querySelectorAll('#cart-count');
+            cartCountElements.forEach(el => {
+                el.textContent = cartCount;
+            });
+        }
+
+        // Initialize cart count on page load
+        function initCartCount() {
+            const savedCount = localStorage.getItem('cartCount');
+            if (savedCount !== null) {
+                const cartCountElements = document.querySelectorAll('#cart-count');
+                cartCountElements.forEach(el => {
+                    el.textContent = savedCount;
+                });
+            }
+        }
+
+        window.onload = function() {
+            initCartCount();
+        };
+    </script>
+
+
+</script>
+
+</body>
+</html>

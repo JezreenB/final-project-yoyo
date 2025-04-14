@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextGen Hardware - Home</title>
+    <style>
+
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            
+        }
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo a {
+            color: #ff7f50;
+            text-decoration: none;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-left: 21px;
+            margin-right: 21px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: #ff7f50;
+        }
+
+        .header-buttons {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .cart-btn {
+            background-color: #ff7f50;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        .cart-btn:hover {
+            background-color: #ff5722;
+        }
+
+        .logout-btn {
+            background-color: #d32f2f;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background-color: #c62828;
+        }
+
+        .search-bar {
+            max-width: 600px;
+            margin: 15px auto;
+            padding: 10px;
+            border-radius: 30px;
+            border: 2px solid #ff7f50;
+            display: flex;
+            justify-content: space-between;
+            background-color: white;
+        }
+
+        .search-bar input {
+            width: 86%;
+            padding: 8px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            background-color: #ff7f50;
+            padding: 8px 8px;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: #ff5722;
+        }
+
+        
+          /* Search Modal */
+          #search-modal {
+           position: fixed;
+           top: 180px;
+           left: 50%;
+           transform: translateX(-50%);
+           width: 600px;
+           max-height: 400px;
+           overflow-y: auto;
+           padding: 10px;
+           background-color: white;
+           border-radius: 8px;
+           box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+           z-index: 1000;
+           display: none;
+        }
+
+         .search-suggestion {
+          padding: 12px 20px;
+          border-bottom: 1px solid #eee;
+          cursor: pointer;
+          color: #333;
+          text-align: justify;
+          transition: background 0.2s;
+        }
+
+         .search-suggestion:hover {
+          background: #f5f5f5;
+        }
+
+
+        .hero {
+            background: url('images/bg.jpg') no-repeat center center/cover;
+            color: white;
+            padding: 120px 20px;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 40px;
+        }
+
+        .hero .btn {
+            background-color: #ff7f50;
+            padding: 12px 25px;
+            font-size: 18px;
+            color: white;
+            text-decoration: none;
+            border-radius: 30px;
+            transition: background-color 0.3s;
+        }
+
+        .hero .btn:hover {
+            background-color: #ff5722;
+        }
+
+        .featured-products {
+            text-align: center;
+            
+            padding: 50px 0;
+            background-color: #ebf1fc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .featured-products h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .products-grid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 0 10px;
+        }
+
+        .product-card {
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 270px;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .product-card h3 {
+            font-size: 20px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .product-card p {
+            font-size: 16px;
+            margin-top: 10px;
+            color: #ff7f50;
+        }
+
+        .product-card .btn {
+            background-color: #ff7f50;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .product-card .btn:hover {
+            background-color: #ff5722;
+        }
+
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+       
+        footer a {
+            color:  #4895ef;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color:  #f72585;
+        }
+        
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+
+            .products-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .product-card {
+                width: 80%;
+            }
+        }
+
+        .product-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            width: 300px;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        .product-modal img {
+            width: 100%;
+            border-radius: 10px;
+        }
+
+        .product-modal h3 {
+            margin-top: 15px;
+        }
+
+        .product-modal p {
+            font-size: 16px;
+            color: #ff7f50;
+            margin: 10px 0;
+        }
+
+        .product-modal .close-btn {
+            background-color: #d32f2f;
+            padding: 10px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .product-modal .close-btn:hover {
+            background-color: #c62828;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <a href="index.html">NextGen Hardware</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="about.html"><i class="fa-solid fa-user"></i> About</a></li>
+                <li><a href="products.html"><i class="fa-solid fa-box-open"></i> Products</a></li>
+                <li><a href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                <li><a href="track-order.html"><i class="fa-solid fa-truck"></i> Track Order</a></li>
+
+                <li class="header-buttons">
+                    <button class="cart-btn" onclick="window.location.href='cart.html'">
+                        <i class="fa-solid fa-cart-shopping"></i> Cart (<span id="cart-count">0</span>)
+                    </button>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </li>
+            </ul>
+        </nav>
+        <section class="search-bar">
+            <input type="text" placeholder="Search products..." oninput="searchProducts()">
+            <button>Search</button>
+            <!-- Modal for search suggestions -->
+            <div id="search-modal" class="search-modal"></div>
+        </section>
+    </header>
+
+    <section class="hero">
+        <div class="container" style="text-align: center;">
+            <h1>Upgrade Your Tech with NextGen Hardware</h1>
+            <p>Find the best computer hardware and accessories for gaming, work, and more!</p>
+            <a href="products.html" class="btn">Shop Now</a>
+        </div>
+    </section>
+
+    <section class="featured-products">
+        <div class="container" style="text-align: center; display: flex; justify-content: center; align-items: center; flex-direction: column;">
+            <h2 style="color: #3f37c9;">Featured Products</h2>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="product-card">
+                        <img src="images/processor1.jpg" alt="Processor">
+                        <h3> Intel Core i9-13900K</h3>
+                        <p>$1,299.99</p>
+                        <button class="btn" onclick="showProductDetails(' Intel Core i9-13900K', '$1,299.99', 'images/processor1.jpg')">View Product</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="product-card">
+                        <img src="images/gc1.jpg" alt="Graphics Card">
+                        <h3>NVIDIA GeForce RTX 4090</h3>
+                        <p>$199.99</p>
+                        <button class="btn" onclick="showProductDetails('NVIDIA GeForce RTX 4090', '$199.99', 'images/gc1.jpg')">View Product</button>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="product-card">
+                        <img src="images/case1.jpg" alt="PC Case">
+                        <h3>NZXT H510 Elite</h3>
+                        <p>$129.99</p>
+                        <button class="btn" onclick="showProductDetails('NZXT H510 Elite', '$129.99', 'images/case1.jpg')">View Product</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 NextGen Hardware | <a href="privacy-policy.html">Privacy Policy</a> | <a href="terms-conditions.html">Terms & Conditions</a></p>
+    </footer>
+
+    <div class="modal-overlay" onclick="closeProductModal()"></div>
+    <div class="product-modal" id="productModal">
+        <img id="modalImage" src="" alt="Product">
+        <h3 id="modalTitle"></h3>
+        <p id="modalPrice"></p>
+        <button class="close-btn" onclick="closeProductModal()">Close</button>
+    </div>
+
+    <script>
+        // Sample product data for search suggestions
+        const products = [
+          {name: 'Intel Core i9-13900K', category: 'Processors'},
+          {name: 'AMD Ryzen 9 7950X', category: 'Processors'},
+          {name: 'Intel Core i7-13700K', category: 'Processors'},
+          {name: 'NVIDIA GeForce RTX 4090', category: 'Graphics Cards'},
+          {name: 'AMD Radeon RX 7900 XTX', category: 'Graphics Cards'},
+          {name: 'NVIDIA GeForce RTX 3080 Ti', category: 'Graphics Cards'},
+          {name: 'NZXT H510 Elite', category: 'PC Case'},
+          {name: 'Corsair iCUE 4000X RGB', category: 'PC Case'},
+          {name: 'Lian Li PC-011 Dynamic', category: 'PC Case'},
+          {name: 'Keyboard with Mouse', category: 'Other Devices'},
+          {name: 'Motherboard', category: 'Other Devices'},
+          {name: 'Webcam', category: 'Other Devices'},
+          {name: 'Headphone', category: 'Other Devices'},
+          {name: 'Joystick', category: 'Other Devices'},
+          {name: 'Monitor', category: 'Other Devices'}
+        ];
+    
+        // Function to update cart count (counts unique products only)
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cartCount = cart.length; // Count unique products
+            localStorage.setItem('cartCount', cartCount);
+            
+            // Update all cart count displays
+            const cartCountElements = document.querySelectorAll('#cart-count');
+            cartCountElements.forEach(el => {
+                el.textContent = cartCount;
+            });
+        }
+
+        // Initialize cart count on page load
+        function initCartCount() {
+            const savedCount = localStorage.getItem('cartCount');
+            if (savedCount !== null) {
+                const cartCountElements = document.querySelectorAll('#cart-count');
+                cartCountElements.forEach(el => {
+                    el.textContent = savedCount;
+                });
+            }
+        }
+
+        window.onload = function() {
+            initCartCount();
+        };
+    
+        // Function to handle search product suggestions
+        function searchProducts() {
+            const query = document.querySelector('.search-bar input').value.toLowerCase();
+            const searchModal = document.getElementById('search-modal');
+            searchModal.innerHTML = ''; // Clear previous search results
+    
+            if (query.length > 0) {
+                const matches = products.filter(p =>
+                    p.name.toLowerCase().includes(query) ||
+                    p.category.toLowerCase().includes(query)
+                );
+    
+                if (matches.length > 0) {
+                    matches.forEach(product => {
+                        const suggestion = document.createElement('div');
+                        suggestion.className = 'search-suggestion';
+    
+                        // Explicitly show the product name and category
+                        suggestion.innerHTML = `
+                            <div style="font-weight: 500;">${product.name}</div>
+                            <div style="font-size: 0.8rem; color: #666;">${product.category}</div>
+                        `;
+    
+                        // Add click behavior to redirect to the products page with search query
+                        suggestion.onclick = () => {
+                            localStorage.setItem('searchQuery', product.name); // Store search query
+                            window.location.href = 'products.html'; // Redirect to products page
+                        };
+    
+                        // Append to the modal
+                        searchModal.appendChild(suggestion);
+                    });
+                    searchModal.style.display = 'block'; // Show modal if matches are found
+                } else {
+                    searchModal.style.display = 'none'; // Hide modal if no matches
+                }
+            } else {
+                searchModal.style.display = 'none'; // Hide modal if search query is empty
+            }
+        }
+    
+        // Close modal when clicking outside
+        document.addEventListener('click', (e) => {
+            const searchModal = document.getElementById('search-modal');
+            if (!e.target.closest('.search-bar') && !e.target.closest('#search-modal')) {
+                searchModal.style.display = 'none'; // Hide modal if clicked outside
+            }
+        });
+    
+        // Function to log out and clear localStorage
+        function logout() {
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('password');
+            window.location.href = 'auth.html';
+        }
+    
+        // Function to show product details in a modal
+        function showProductDetails(name, price, imgSrc) {
+            document.getElementById('modalTitle').textContent = name;
+            document.getElementById('modalPrice').textContent = price;
+            document.getElementById('modalImage').src = imgSrc;
+            document.getElementById('productModal').style.display = 'block';
+            document.querySelector('.modal-overlay').style.display = 'block';
+        }
+    
+        // Function to close the product modal
+        function closeProductModal() {
+            document.getElementById('productModal').style.display = 'none';
+            document.querySelector('.modal-overlay').style.display = 'none';
+        }
+    
+    
+    </script>
+    
+</body>
+</html>

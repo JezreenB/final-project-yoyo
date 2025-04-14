@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NextGen Hardware - Track Order</title>
+
+    <!-- Embedded CSS -->
+    <style>
+        /* General Styles */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+        
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #ef233c;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--dark);
+            background-color: #f5f7fa;
+        }
+
+        /* Header */
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo a {
+            color: #ff7f50;
+            text-decoration: none;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-left: 21px;
+            margin-right: 21px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: #ff7f50;
+        }
+
+        /* Header buttons container */
+        .header-buttons {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Cart Button */
+        .cart-btn {
+            background-color: #ff7f50;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        .cart-btn:hover {
+            background-color: #ff5722;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            background-color: #d32f2f;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background-color: #c62828;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            max-width: 600px;
+            margin: 15px auto;
+            padding: 10px;
+            border-radius: 30px;
+            border: 2px solid #ff7f50;
+            display: flex;
+            justify-content: space-between;
+            background-color: white;
+        }
+
+        .search-bar input {
+            width: 86%;
+            padding: 8px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            background-color: #ff7f50;
+            padding: 8px 8px;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: #ff5722;
+        }
+
+        /* Track Order Section */
+        .track-order-section {
+            padding: 80px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 70vh;
+        }
+
+        .track-order-section h1 {
+            font-size: 2.8rem;
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 40px;
+        }
+
+        .track-order-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .track-order-container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+        }
+
+        .track-form {
+            margin-bottom: 50px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--secondary);
+            font-size: 1.05rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+            outline: none;
+        }
+
+        .track-btn {
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .track-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(to right, var(--primary-light), var(--primary));
+        }
+
+        .track-btn:active {
+            transform: translateY(0);
+        }
+
+        .order-status {
+            margin-top: 40px;
+            padding: 30px;
+            border-radius: 12px;
+            background-color: white;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .status-header h3 {
+            color: var(--secondary);
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .status-timeline {
+            margin-top: 30px;
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .status-step {
+            position: relative;
+            padding-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .status-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .status-step::before {
+            content: '';
+            position: absolute;
+            left: -28px;
+            top: 0;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background-color: #e9ecef;
+            border: 4px solid white;
+            box-shadow: 0 0 0 2px #e9ecef;
+            z-index: 2;
+            transition: all 0.3s ease;
+        }
+
+        .status-step.active::before {
+            background-color: var(--success);
+            box-shadow: 0 0 0 2px var(--success);
+            transform: scale(1.1);
+        }
+
+        .status-step.completed::before {
+            background-color: var(--success);
+            box-shadow: 0 0 0 2px var(--success);
+        }
+
+        .status-step::after {
+            content: '';
+            position: absolute;
+            left: -19px;
+            top: 18px;
+            width: 2px;
+            height: 100%;
+            background-color: #e9ecef;
+            z-index: 1;
+        }
+
+        .status-step:last-child::after {
+            display: none;
+        }
+
+        .status-step.completed::after {
+            background-color: var(--success);
+        }
+
+        .status-step h4 {
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .status-step p {
+            color: #6c757d;
+            margin: 5px 0;
+            font-size: 0.95rem;
+        }
+
+        .status-date {
+            font-size: 0.9rem;
+            color: var(--primary-light);
+            font-weight: 500;
+        }
+
+        .recent-orders {
+            margin-top: 50px;
+        }
+
+        .recent-orders h3 {
+            text-align: left;
+            margin-bottom: 25px;
+            color: var(--secondary);
+            font-size: 1.4rem;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+
+        .order-card {
+            background-color: white;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: left;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.03);
+        }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+            border-color: rgba(67, 97, 238, 0.2);
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .order-header h4 {
+            font-weight: 600;
+            color: var(--dark);
+            margin: 0;
+        }
+
+        .order-status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .status-processing {
+            background-color: rgba(248, 150, 30, 0.1);
+            color: var(--warning);
+        }
+
+        .status-shipped {
+            background-color: rgba(67, 97, 238, 0.1);
+            color: var(--primary);
+        }
+
+        .status-delivered {
+            background-color: rgba(76, 201, 240, 0.1);
+            color: var(--success);
+        }
+
+        .order-details {
+            display: flex;
+            gap: 25px;
+            margin-top: 15px;
+            align-items: center;
+        }
+
+        .order-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .order-img:hover {
+            transform: scale(1.05);
+        }
+
+        .order-info {
+            flex: 1;
+        }
+
+        .order-info h5 {
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .order-info p {
+            color: #6c757d;
+            margin: 5px 0;
+            font-size: 0.95rem;
+        }
+
+        .order-actions {
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .view-order-btn {
+            background: var(--primary);
+            color: white;
+            padding: 8px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-order-btn:hover {
+            background: var(--primary-light);
+            box-shadow: 0 4px 8px rgba(67, 97, 238, 0.2);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .track-order-section {
+                padding: 50px 15px;
+            }
+            
+            .track-order-container {
+                padding: 25px;
+            }
+            
+            .order-details {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .order-img {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--dark);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        footer a {
+            color: var(--primary-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: var(--accent);
+        }
+
+        /* Loading Animation */
+        .loading-spinner {
+            display: none;
+            width: 24px;
+            height: 24px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-left: 10px;
+        }
+
+        /* Search Modal */
+        #search-modal {
+           position: fixed;
+           top: 180px;
+           left: 50%;
+           transform: translateX(-50%);
+           width: 600px;
+           max-height: 400px;
+           overflow-y: auto;
+           background-color: white;
+           border-radius: 8px;
+           box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+           z-index: 1000;
+           display: none;
+        }
+
+          .search-suggestion {
+           padding: 12px 20px;
+           border-bottom: 1px solid #eee;
+           cursor: pointer;
+           color: #333;
+           text-align: justify;
+           transition: background 0.2s;
+}
+    .search-suggestion:hover {
+    background: #f5f5f5;
+}
+
+/* Cancel Order Button */
+.cancel-order-btn {
+    background: var(--danger);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancel-order-btn:hover {
+    background: #c62828;
+}
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <a href="index.html">NextGen Hardware</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="about.html"><i class="fa-solid fa-user"></i> About</a></li>
+                <li><a href="products.html"><i class="fa-solid fa-box-open"></i> Products</a></li>
+                <li><a href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                <li><a href="track-order.html" class="active"><i class="fa-solid fa-truck"></i> Track Order</a></li>
+
+                <li class="header-buttons">
+                    <button class="cart-btn" onclick="window.location.href='cart.html'">
+                        <i class="fa-solid fa-cart-shopping"></i> Cart (<span id="cart-count">0</span>)
+                    </button>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </li>
+            </ul>
+        </nav>
+        <section class="search-bar">
+            <input type="text" placeholder="Search products..." oninput="searchProducts()">
+            <button>Search</button>
+            <!-- Modal for search suggestions -->
+            <div id="search-modal" class="search-modal"></div>
+        </section>
+    </header>
+
+    <!-- Track Order Section -->
+    <section class="track-order-section">
+        <div class="container">
+            <h1>Track Your Order</h1>
+            
+            <div class="track-order-container">
+                <div class="track-form">
+                    <h2>Enter Order Details</h2>
+                    <div class="form-group">
+                        <label for="order-number">Order Number</label>
+                        <input type="text" id="order-number" placeholder="e.g. NG-123456">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="email@example.com">
+                    </div>
+                    <button class="track-btn" onclick="trackOrder()">
+                        <i class="fa-solid fa-magnifying-glass"></i> Track Order
+                    </button>
+                </div>
+
+                <div id="order-status" class="order-status">
+                    <div class="status-header">
+                        <h3>Order #<span id="display-order-number">NG-123456</span></h3>
+                        <span class="order-status-badge status-shipped">Shipped</span>
+                    </div>
+                    
+                    <div class="order-summary">
+                        <p><strong>Estimated Delivery:</strong> <span id="delivery-date">June 15, 2023</span></p>
+                        <p><strong>Shipping Address:</strong> <span id="shipping-address">123 Main St, City, Country</span></p>
+                    </div>
+                    
+                    <div class="status-timeline">
+                        <div class="status-step completed">
+                            <h4>Order Placed</h4>
+                            <p class="status-date">June 5, 2023</p>
+                        </div>
+                        <div class="status-step completed">
+                            <h4>Order Processed</h4>
+                            <p class="status-date">June 6, 2023</p>
+                        </div>
+                        <div class="status-step active">
+                            <h4>Shipped</h4>
+                            <p class="status-date">June 8, 2023</p>
+                            <p>Carrier: NextGen Express</p>
+                            <p>Tracking #: NGE-987654321</p>
+                        </div>
+                        <div class="status-step">
+                            <h4>Out for Delivery</h4>
+                        </div>
+                        <div class="status-step">
+                            <h4>Delivered</h4>
+                </div>
+                <div class="order-actions" style="margin-top: 30px; text-align: center;">
+                    <button class="cancel-order-btn" onclick="cancelOrder()">
+                        <i class="fa-solid fa-ban"></i> Cancel Order
+                    </button>
+                </div>
+
+                <div class="recent-orders">
+                    <h3>Your Recent Orders</h3>
+                    
+                    <div class="order-card">
+                        <div class="order-header">
+                            <h4>Order #NG-789012</h4>
+                            <span class="order-status-badge status-delivered">Delivered</span>
+                        </div>
+                        <div class="order-details">
+                            <img src="images/case3.jpg" alt="Lian Li PC-011 Dynamic" class="order-img">
+                            <div class="order-info">
+                                <h5>Lian Li PC-011 Dynamic</h5>
+                                <p>Quantity: 1</p>
+                                <p>Total: $1,299.99</p>
+                                <p>Order Date: June 1, 2023</p>
+                            </div>
+                        </div>
+                        <div class="order-actions">
+                            <button class="view-order-btn" onclick="viewOrder('NG-789012')">View Details</button>
+                        </div>
+                    </div>
+                    
+                    <div class="order-card">
+                        <div class="order-header">
+                            <h4>Order #NG-345678</h4>
+                            <span class="order-status-badge status-processing">Processing</span>
+                        </div>
+                        <div class="order-details">
+                            <img src="images/gc2.jpg" alt="AMD Radeon RX 7900 XTX" class="order-img">
+                            <div class="order-info">
+                                <h5>AMD Radeon RX 7900 XTX</h5>
+                                <p>Quantity: 2</p>
+                                <p>Total: $399.98</p>
+                                <p>Order Date: June 10, 2023</p>
+                            </div>
+                        </div>
+                        <div class="order-actions">
+                            <button class="view-order-btn" onclick="viewOrder('NG-345678')">View Details</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Search Modal -->
+    <div id="search-modal"></div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 NextGen Hardware | <a href="privacy-policy.html">Privacy Policy</a> | <a href="terms-conditions.html">Terms & Conditions</a></p>
+    </footer>
+
+    <!-- Cancel Order Modal -->
+    <div class="modal fade" id="cancelOrderModal" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">Cancel Order</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body text-center">
+            <p class="mb-0">Are you sure you want to cancel this order?</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+            <button type="button" class="btn btn-danger" id="confirmCancel">Yes, Cancel Order</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+         // Sample product data for search suggestions
+         const products = [
+    {name: 'Intel Core i9-13900K', category: 'Processors'},
+    {name: 'AMD Ryzen 9 7950X', category: 'Processors'},
+    {name: 'Intel Core i7-13700K', category: 'Processors'},
+    {name: 'NVIDIA GeForce RTX 4090', category: 'Graphics Cards'},
+    {name: 'AMD Radeon RX 7900 XTX', category: 'Graphics Cards'},
+    {name: 'NVIDIA GeForce RTX 3080 Ti', category: 'Graphics Cards'},
+    {name: 'NZXT H510 Elite', category: 'PC Case'},
+    {name: 'Corsair iCUE 4000X RGB', category: 'PC Case'},
+    {name: 'Lian Li PC-011 Dynamic', category: 'PC Case'}
+   ];
+
+function searchProducts() {
+    const query = document.querySelector('.search-bar input').value.toLowerCase();
+    const searchModal = document.getElementById('search-modal');
+    searchModal.innerHTML = ''; // Clear previous search results
+    
+    if (query.length > 0) {
+        const matches = products.filter(p => 
+            p.name.toLowerCase().includes(query) || 
+            p.category.toLowerCase().includes(query)
+        );
+        
+        if (matches.length > 0) {
+            matches.forEach(product => {
+                const suggestion = document.createElement('div');
+                suggestion.className = 'search-suggestion';
+                
+                // Explicitly show the product name and category
+                suggestion.innerHTML = `
+                    <div style="font-weight: 500;">${product.name}</div>
+                    <div style="font-size: 0.8rem; color: #666;">${product.category}</div>
+                `;
+                
+                // Add click behavior to redirect to the products page with search query
+                suggestion.onclick = () => {
+                    localStorage.setItem('searchQuery', product.name); // Store search query
+                    window.location.href = 'products.html'; // Redirect to products page
+                };
+                
+                // Append to the modal
+                searchModal.appendChild(suggestion);
+            });
+            searchModal.style.display = 'block'; // Show modal if matches are found
+        } else {
+            searchModal.style.display = 'none'; // Hide modal if no matches
+        }
+    } else {
+        searchModal.style.display = 'none'; // Hide modal if search query is empty
+    }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', (e) => {
+    const searchModal = document.getElementById('search-modal');
+    if (!e.target.closest('.search-bar') && !e.target.closest('#search-modal')) {
+        searchModal.style.display = 'none'; // Hide modal if clicked outside
+    }
+});
+
+function cancelOrder() {
+    // Check if modals exist in DOM
+    if (!document.getElementById('cancelOrderModal')) {
+        // Add modals to DOM if they don't exist
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+    }
+    
+    // Show confirmation modal
+    const modal = new bootstrap.Modal(document.getElementById('cancelOrderModal'));
+    modal.show();
+    
+    // Handle confirm button click
+    document.getElementById('confirmCancel').addEventListener('click', function() {
+        modal.hide();
+        
+        // Show success alert
+        showAlert('Order cancellation request submitted', 'success');
+        
+        // Hide order status
+        document.getElementById('order-status').style.display = 'none';
+    });
+}
+        // Shared functions from products.html
+        let cartCount = 0;
+
+        function logout() {
+            localStorage.removeItem('username');
+            localStorage.removeItem('email');
+            localStorage.removeItem('password');
+            window.location.href = 'auth.html';
+        }
+
+        // Track Order specific functions
+        function trackOrder() {
+            const orderNumber = document.getElementById('order-number').value;
+            const email = document.getElementById('email').value;
+            const trackBtn = document.querySelector('.track-btn');
+            const originalBtnText = trackBtn.innerHTML;
+            
+            if (!orderNumber || !email) {
+                showAlert('Please enter both order number and email address', 'error');
+                return;
+            }
+            
+            // Show loading state
+            trackBtn.disabled = true;
+            trackBtn.innerHTML = 'Tracking... <div class="loading-spinner"></div>';
+            
+            // Simulate API call delay
+            setTimeout(() => {
+                // Show status section with sample data
+                document.getElementById('display-order-number').textContent = orderNumber;
+                document.getElementById('order-status').style.display = 'block';
+                
+                // Scroll to status section
+                document.getElementById('order-status').scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'center'
+                });
+                
+                // Reset button
+                trackBtn.disabled = false;
+                trackBtn.innerHTML = originalBtnText;
+                
+                showAlert('Order found! Showing tracking details', 'success');
+            }, 1500);
+        }
+
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            alert.style.position = 'fixed';
+            alert.style.top = '50%';
+            alert.style.left = '50%';
+            alert.style.transform = 'translate(-50%, -50%)';
+            alert.style.padding = '15px 25px';
+            alert.style.borderRadius = '8px';
+            alert.style.color = 'white';
+            alert.style.fontWeight = '500';
+            alert.style.boxShadow = '0 4px 12px rgba(0, 0, 0, 0.15)';
+            alert.style.zIndex = '1000';
+            alert.style.animation = 'slideIn 0.3s ease-out';
+            
+            if (type === 'error') {
+            alert.style.background = 'var(--danger)';
+            } else {
+            alert.style.background = 'var(--success)';
+            }
+            
+            document.body.appendChild(alert);
+            
+            setTimeout(() => {
+            alert.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => {
+                alert.remove();
+            }, 300);
+            }, 3000);
+        }
+
+        function viewOrder(orderNumber) {
+            // For demo, populate the tracking form with this order number
+            document.getElementById('order-number').value = orderNumber;
+            document.getElementById('email').focus();
+            
+            // Show status section immediately for demo
+            document.getElementById('display-order-number').textContent = orderNumber;
+            document.getElementById('order-status').style.display = 'block';
+            document.getElementById('order-status').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'center'
+            });
+            
+            showAlert(`Loaded order ${orderNumber} details`, 'success');
+        }
+
+        // Function to update cart count (counts unique products only)
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cartCount = cart.length; // Count unique products
+            localStorage.setItem('cartCount', cartCount);
+            
+            // Update all cart count displays
+            const cartCountElements = document.querySelectorAll('#cart-count');
+            cartCountElements.forEach(el => {
+                el.textContent = cartCount;
+            });
+        }
+
+        // Initialize cart count on page load
+        function initCartCount() {
+            const savedCount = localStorage.getItem('cartCount');
+            if (savedCount !== null) {
+                const cartCountElements = document.querySelectorAll('#cart-count');
+                cartCountElements.forEach(el => {
+                    el.textContent = savedCount;
+                });
+            }
+        }
+
+        window.onload = function() {
+            initCartCount();
+        };
+    </script>
+</body>
+</html>
