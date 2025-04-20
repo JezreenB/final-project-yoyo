@@ -15,7 +15,143 @@
             background-color: #f0f8ff; /* Soft blue background */
             color: #333;
         }
+        /* Add these keyframe animations */
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
 
+@keyframes scaleIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes fadeInUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Add these styles or modify existing ones */
+header {
+    animation: fadeInDown 1s ease forwards;
+}
+
+.logo a {
+    display: inline-block;
+    animation: scaleIn 1s ease forwards;
+}
+
+.logo a:hover {
+    animation: pulse 1.5s infinite;
+}
+
+.about-section h1 {
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 1s ease forwards;
+    animation-delay: 0.3s;
+}
+
+.about-content {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.about-content.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.about-image {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.section-header {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.section-header.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.feature-card {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.feature-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.divider {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.divider.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.value-card {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.value-card.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.value-card:hover {
+    transform: translateY(-5px) scale(1.03);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+}
         /* Header */
         header {
             background-color: #1a1a1a;
@@ -307,6 +443,24 @@
             font-size: 16px;
             color: #666;
         }
+        .about-image {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.about-image:hover {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+
+.logo a {
+    display: inline-block;
+    animation: scaleIn 1s ease forwards;
+}
+
+.logo a:hover {
+    animation: pulse 1.5s infinite;
+}
 
         /* Footer */
         footer {
@@ -325,6 +479,36 @@
         footer a:hover {
             color: #f72585;
         }
+        @keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.boxed-heading {
+  display: inline-block;
+  background-color: #fbfbfd;              
+  border: 3px solid #3f37c9;              /* deep blue border */
+  padding: 10px 30px;
+  border-radius: 20px;
+  color: #3f37c9;                         /* deep blue text */
+  font-weight: bold;
+  font-size: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  animation: fadeSlideUp 0.8s ease-out;
+}
+
+.boxed-heading:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
     </style>
 </head>
 <body>
@@ -361,8 +545,10 @@
     <!-- About Section -->
     <section class="about-section">
         <div class="about-container">
-            <h1>About NextGen Hardware</h1>
+            <div class="text-center">
+            <h1 class="boxed-heading">About NextGen Hardware</h1> </div>
             
+
             <div class="about-content">
                 <div class="about-text">
                     <div class="feature-card">
@@ -512,6 +698,37 @@
         window.onload = function() {
             initCartCount();
         };
+
+        // Intersection Observer for scroll animations
+const observerOptions = {
+    threshold: 0.1
+};
+
+const observer = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        }
+    });
+}, observerOptions);
+
+// Observe about-content, feature-cards, section-headers, dividers, value-cards
+const aboutContent = document.querySelector('.about-content');
+if (aboutContent) observer.observe(aboutContent);
+
+const featureCards = document.querySelectorAll('.feature-card');
+featureCards.forEach(card => observer.observe(card));
+
+const sectionHeaders = document.querySelectorAll('.section-header');
+sectionHeaders.forEach(header => observer.observe(header));
+
+const dividers = document.querySelectorAll('.divider');
+dividers.forEach(divider => observer.observe(divider));
+
+const valueCards = document.querySelectorAll('.value-card');
+valueCards.forEach(card => observer.observe(card));
+
     </script>
 </body>
 </html>
