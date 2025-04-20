@@ -297,6 +297,70 @@
         .btn-close {
             font-size: 24px;
         }
+        @keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes scaleIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Apply fadeInDown animation to header */
+header {
+    animation: fadeInDown 1s ease forwards;
+}
+
+/* Apply scaleIn animation to logo link */
+.logo a {
+    display: inline-block;
+    animation: scaleIn 1s ease forwards;
+}
+
+/* Pulse animation on logo hover */
+.logo a:hover {
+    animation: pulse 1.5s infinite;
+}
+
+/* Fade in animation for contact card */
+.contact-card {
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
     </style>
 </head>
 <body>
