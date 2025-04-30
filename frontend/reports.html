@@ -1,0 +1,1173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reports - Admin Panel</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #ff7f50;
+            --secondary-color: #1a1a1a;
+            --success-color: #1cc88a;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --sidebar-width: 250px;
+            --card-bg: #fff;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --card-shadow-hover: rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background-color: #f0f2f5;
+            position: fixed;
+            width: 100%;
+        }
+
+        /* Center the navbar brand text */
+        .navbar-brand {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        #sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--secondary-color);
+            transform: translateX(-100%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1001;
+            overflow-y: auto;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+           /* Sidebar link transition and animation */
+           .sidebar-link {
+            transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: #ff7f50;
+            background: rgba(255, 127, 80, 0.15);
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(255, 127, 80, 0.5);
+            border-radius: 8px;
+        }
+
+        /* Sidebar toggle button animation */
+        #sidebarToggle {
+            transition: transform 0.4s ease, color 0.4s ease;
+            color: white;
+        }
+
+        #sidebarToggle:hover {
+            transform: rotate(90deg) scale(1.1);
+            color: #ff7f50;
+        }
+        #sidebar::-webkit-scrollbar {
+            display: none;  /* Chrome, Safari and Opera */
+        }
+
+        #sidebar.active {
+            transform: translateX(0);
+        }
+        .sidebar-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: var(--primary-color);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        .nav-link, 
+        .nav-link:active,
+        .nav-link:focus,
+        .nav-link.active {
+            color: white !important;
+        }
+
+        .notification-icon {
+            color: white !important;
+            background: transparent !important;
+            border: none !important;
+            padding: 0.5rem;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .notification-icon:hover {
+            transform: scale(1.1);
+            color: #ff7f50 !important;
+        }
+
+        .notification-icon:focus,
+        .notification-icon:active {
+            color: white !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .notification-icon i {
+            font-size: 1.2rem;
+        }
+
+        #content {
+            transition: 0.3s;
+            height: 100vh;
+            padding-top: 60px; /* Height of navbar */
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+            padding-left: 0;
+            padding-right: 0;
+
+            /* Hide scrollbar but keep scrolling */
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none;  /* IE and Edge */
+        }
+        #content::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 999;
+        }
+
+        .nav-link, 
+        .nav-link:active,
+        .nav-link:focus,
+        .nav-link.active {
+            color: white !important;
+        }
+
+        .notification-icon {
+            color: white !important;
+            background: transparent !important;
+            border: none !important;
+            padding: 0.5rem;
+            position: relative;
+        }
+
+        .notification-icon:hover,
+        .notification-icon:focus,
+        .notification-icon:active {
+            color: white !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .notification-icon i {
+            font-size: 1.2rem;
+        }
+
+        /* Dropdown Menus */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            border-radius: 0.35rem;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-item i {
+            margin-right: 0.5rem;
+            width: 1rem;
+            text-align: center;
+        }
+
+        .profile-section {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Layout for report sections */
+        .report-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .report-section h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 280px;
+            width: 100%;
+        }
+
+        /* Filters and export */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 32px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .filters label {
+            font-weight: 600;
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+
+        .filters input[type="date"], .filters select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            min-width: 140px;
+        }
+
+        .generate-report-btn, .export-report-btn {
+            margin-left: auto;
+            background-color: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .generate-report-btn:hover, .export-report-btn:hover {
+            background-color: #e76b3c;
+        }
+
+        .generate-report-btn i, .export-report-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Table styles */
+        .table-container {
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .generate-report-btn:hover, .export-report-btn:hover {
+            background-color: #e76b3c;
+        }
+
+        .generate-report-btn i, .export-report-btn i {
+            font-size: 1.2rem;
+        }
+
+        /* Table styles */
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 700;
+            color: var(--secondary-color);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        tbody tr {
+            background: #fff;
+            box-shadow: 0 2px 8px var(--card-shadow);
+            border-radius: 12px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        tbody tr:hover {
+            box-shadow: 0 6px 20px var(--card-shadow-hover);
+        }
+
+        tbody tr td:first-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        tbody tr td:last-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #content.active {
+                margin-left: 0;
+            }
+            
+            #sidebar {
+                position: fixed;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .generate-report-btn, .export-report-btn {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        #sidebar {
+                position: fixed;
+            }
+            .btn-gradient-alive {
+    background: linear-gradient(45deg, #ff7f50, #ff5722, #ff7f50);
+    background-size: 200% 200%;
+    color: white;
+    font-weight: 600;
+    border: none;
+    border-radius: 0.375rem;
+    padding: 0.5rem 1rem;
+    text-decoration: none;
+    display: inline-block;
+    transition: background-position 3s ease infinite, transform 0.3s ease, box-shadow 0.3s ease;
+    animation: gradientAlive 3s ease infinite;
+}
+
+.btn-gradient-alive:hover {
+    background-position: 100% 0;
+    color: white;
+    text-decoration: none;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px rgba(255, 127, 80, 0.7);
+}
+
+@keyframes gradientAlive {
+    0% {
+        background-position: 0% 0%;
+    }
+    50% {
+        background-position: 100% 0%;
+    }
+    100% {
+        background-position: 0% 0%;
+    }
+}
+    </style>
+    <style>
+        /* Reuse stat-card styles from dashboard.html */
+        .stat-card {
+            background: linear-gradient(45deg, #f9f2b1, #ee774b, #000000);
+            color: white;
+            font-weight: 600;
+            transition: background 0.3s, color 0.3s;
+            background-size: 300% 300%;
+            animation: gradientShift 5s ease infinite;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            cursor: default;
+        }
+
+        .stat-card:hover {
+            background: linear-gradient(45deg, #000000, #ff7f50, #ffeb3b);
+            color: white;
+            background-size: 300% 300%;
+            animation: gradientShift 5s ease infinite;
+            box-shadow: 0 0 25px rgba(255, 127, 80, 0.8);
+            transform: scale(1.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        @keyframes gradientShift {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+    </style>
+    <style>
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .animated-header {
+            background: linear-gradient(270deg, #ff7f50, #ff5722, #ff7f50);
+            background-size: 600% 600%;
+            color: white;
+            font-weight: 700;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            animation: gradientShift 8s ease infinite;
+        }
+        .animated-header:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 127, 80, 0.7);
+        }
+        .animated-header th {
+            padding: 12px 16px;
+        }
+        
+    </style>
+    <style>
+        @keyframes slideDown {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .slide-down-navbar {
+            animation: slideDown 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="profile-section text-center text-white">
+            <img src="images/logo.png" alt="Admin Profile" class="profile-img mb-3" />
+            <h6 class="mb-0">Admin User</h6>
+            <small>Administrator</small>
+        </div>
+
+        <div class="mt-4">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+            <a href="products-admin.html" class="sidebar-link">
+                <i class="bi bi-box-seam"></i>
+                Products
+            </a>
+            <a href="orders-admin.html" class="sidebar-link">
+                <i class="bi bi-cart3"></i>
+                Orders
+            </a>
+            <a href="customers-admin.html" class="sidebar-link">
+                <i class="bi bi-people"></i>
+                Customers
+            </a>
+            <a href="reports.html" class="sidebar-link active">
+                <i class="bi bi-graph-up"></i>
+                Reports
+            </a>
+            <a href="settings.html" class="sidebar-link">
+                <i class="bi bi-gear"></i>
+                Settings
+            </a>
+            <a href="#" class="sidebar-link logout-button" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="overlay"></div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <button id="sidebarToggle" class="btn">
+                    <i class="bi bi-list fs-4 text-white"></i>
+                </button>
+
+                <div class="navbar-brand text-white">NextGen Hardware</div>
+
+                <div class="ms-auto d-flex align-items-center">
+                    <a href="index.html" class="btn btn-primary me-3 btn-gradient-alive">Go to Website</a>
+                    <!-- Notification Dropdown -->
+                    <div class="dropdown">
+                        <button
+                            class="btn position-relative notification-icon"
+                            type="button"
+                            id="notificationDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        >
+                            <i class="bi bi-bell fs-5"></i>
+                            <span
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                            >
+                                3
+                            </span>
+                        </button>
+                        <ul
+                            class="dropdown-menu dropdown-menu-end"
+                            aria-labelledby="notificationDropdown"
+                            style="min-width: 300px; background: white;"
+                        >
+                            <li>
+                                <a class="dropdown-item py-2" href="#"
+                                    ><i class="bi bi-truck text-primary me-2"></i>New order #1234
+                                    received</a
+                                >
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#"
+                                    ><i
+                                        class="bi bi-exclamation-circle text-warning me-2"
+                                    ></i
+                                    >Low stock alert: Product A</a
+                                >
+                            </li>
+                            <li>
+                                <a class="dropdown-item py-2" href="#"
+                                    ><i class="bi bi-check-circle text-success me-2"></i>Order
+                                    #1228 delivered</a
+                                >
+                            </li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li>
+                                <a class="dropdown-item text-center" href="#"
+                                    >View All Notifications</a
+                                >
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Reports Content -->
+        <div class="container-fluid p-4">
+            <!-- Filters and Export -->
+            <div class="filters mb-4">
+                <div>
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" />
+                </div>
+                <div>
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" />
+                </div>
+                <button class="generate-report-btn" id="generateReportBtn">
+                    <i class="bi bi-file-earmark-text"></i> Generate Report
+                </button>
+                <button class="export-report-btn btn btn-outline-primary ms-3" id="exportReportBtn">
+                    <i class="bi bi-download"></i> Export Report
+                </button>
+            </div>
+
+            <!-- KPI Summary -->
+            <div class="row mb-4 g-3">
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <h6>Total Sales</h6>
+                            <h3>$1,250,000</h3>
+                            <p class="mb-0">Year to Date</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <h6>New Customers</h6>
+                            <h3>1,450</h3>
+                            <p class="mb-0">Last 12 Months</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <h6>Profit Margin</h6>
+                            <h3>28%</h3>
+                            <p class="mb-0">Year to Date</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <h6>Inventory Status</h6>
+                            <h3>Low Stock: 12</h3>
+                            <p class="mb-0">Needs Restocking</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reports-grid">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6 d-flex flex-column">
+                            <div class="card flex-fill report-card">
+                                <div class="card-header report-card-header"><b>Monthly Revenue</b></div>
+                                <div class="card-body d-flex flex-column report-card-body">
+                                    <canvas id="salesOverTimeChart" class="chart-container flex-fill"></canvas>
+                                    <p class="mt-3 report-card-text">
+                                        Track your monthly revenue trends to identify peak sales periods and growth opportunities.
+                                    </p>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="col-md-6 d-flex flex-column">
+                            <div class="card flex-fill report-card">
+                                <div class="card-header report-card-header"><b>New Customer Acquisition</b></div>
+                                <div class="card-body d-flex flex-column report-card-body">
+                                    <canvas id="customerGrowthChart" class="chart-container flex-fill"></canvas>
+                                    <p class="mt-3 report-card-text">
+                                        Monitor the growth of your customer base over time to evaluate marketing effectiveness.
+                                    </p>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6 d-flex flex-column">
+                            <div class="card flex-fill report-card">
+                                <div class="card-header report-card-header"><b> Sales Distribution</b></div>
+                                <div class="card-body d-flex flex-column report-card-body">
+                                    <canvas id="salesByCategoryChart" class="chart-container flex-fill"></canvas>
+                                    <p class="p-3 report-card-text mb-4">
+                                        Visualize the contribution of each product category to your overall sales.
+                                    </p>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="col-md-6 d-flex flex-column">
+                            <div class="card table-container flex-fill report-card">
+                                <div class="card-header report-card-header"><b>Best Selling Products</b></div>
+                                <div class="card-body p-0 d-flex flex-column report-card-body">
+                                    <table class="table mb-0 flex-fill" id="bestSellingProductsTable">
+                                        <thead>
+                                        <tr class="animated-header">
+                                            <th style="background-color: #fb916a; border-color: #000000;">Product Name</th>
+                                            <th style="background-color: #fb916a; border-color: #000000;">Units Sold</th>
+                                            <th style="background-color: #fb916a; border-color: #000000;">Total Revenue</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Intel Core i9-13900K</td>
+                                                <td>320</td>
+                                                <td>$799,968</td>
+                                            </tr>
+                                            <tr>
+                                                <td>NVIDIA GeForce RTX 4090</td>
+                                                <td>210</td>
+                                                <td>$419,998</td>
+                                            </tr>
+                                            <tr>
+                                                <td>NZXT H510 Elite</td>
+                                                <td>150</td>
+                                                <td>$22,498</td>
+                                            </tr>
+                                            <tr>
+                                                <td>AMD Ryzen 9 7950X</td>
+                                                <td>280</td>
+                                                <td>$615,997</td>
+                                            </tr>
+                                            <tr>
+                                                <td>AMD Radeon RX 7900 XTX</td>
+                                                <td>190</td>
+                                                <td>$341,998</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p class="p-3 report-card-text mb-4 mt-auto">
+                                        The table above highlights your best selling products by units sold and total revenue generated.
+                                    </p>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     <!-- Footer -->
+     <footer style="position: fixed; bottom: 0; width: 100%; background-color: #1a1a1a; color: white; padding: 20px 0; text-align: center; z-index: 1050; box-shadow: 0 -2px 10px rgba(0,0,0,0.5);">
+        <p style="margin: 0;">&copy; 2025 NextGen Hardware | <a href="privacy-policy.html" style="color: #4895ef; text-decoration: none; transition: color 0.3s ease;">Privacy Policy</a> | <a href="terms-conditions.html" style="color: #4895ef; text-decoration: none; transition: color 0.3s ease;">Terms & Conditions</a></p>
+    </footer>
+
+    <style>
+        footer a:hover {
+            color:  #f72585;
+        }
+    </style>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.overlay');
+            const content = document.getElementById('content');
+
+            sidebarToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', function () {
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+
+            document.addEventListener('click', function (e) {
+                if (
+                    !sidebar.contains(e.target) &&
+                    !sidebarToggle.contains(e.target) &&
+                    !overlay.contains(e.target) &&
+                    window.innerWidth <= 768
+                ) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+
+            // Chart.js charts initialization
+            const salesOverTimeCtx = document.getElementById('salesOverTimeChart').getContext('2d');
+            const salesOverTimeChart = new Chart(salesOverTimeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Sales',
+                        data: [1200, 1900, 3000, 2500, 3200, 4000, 4200, 4500, 4800, 5000, 5200, 6000],
+                        backgroundColor: 'rgba(255, 127, 80, 0.2)',
+                        borderColor: 'rgba(255, 127, 80, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        }
+                    }
+                }
+            });
+
+            const salesByCategoryCtx = document.getElementById('salesByCategoryChart').getContext('2d');
+            const salesByCategoryChart = new Chart(salesByCategoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Processors', 'Graphics Cards', 'PC Case', 'Other Devices'],
+                    datasets: [{
+                        label: 'Sales by Category',
+                        data: [42, 25, 17, 16],
+                        backgroundColor: [
+                            'rgba(255, 127, 80, 0.8)',
+                            'rgba(102, 16, 242, 0.8)',
+                            'rgba(28, 200, 138, 0.8)',
+                            'rgba(255, 206, 86, 0.8)'
+                        ],
+                        borderColor: 'rgba(255, 255, 255, 1)',
+                        borderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                    }
+                }
+            });
+
+            const customerGrowthCtx = document.getElementById('customerGrowthChart').getContext('2d');
+            const gradient = customerGrowthCtx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(255, 99, 132, 0.8)'); // bright red
+            gradient.addColorStop(1, 'rgba(255, 159, 64, 0.8)'); // orange
+            const customerGrowthChart = new Chart(customerGrowthCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'New Customers',
+                        data: [30, 45, 60, 50, 70, 80, 90, 100, 110, 120, 130, 140],
+                        backgroundColor: gradient,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        }
+                    }
+                }
+            });
+
+            // Generate Report button click handler
+            document.getElementById('generateReportBtn').addEventListener('click', function () {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                if (!startDate || !endDate) {
+                    alert('Please select both start and end dates.');
+                    return;
+                }
+                if (startDate > endDate) {
+                    alert('Start date cannot be after end date.');
+                    return;
+                }
+                alert(`Generating report from ${startDate} to ${endDate}...`);
+                // Implement actual report generation logic here
+            });
+
+            // Export Report button click handler
+            document.getElementById('exportReportBtn').addEventListener('click', function () {
+                exportReport();
+            });
+
+            function exportReport() {
+                // Collect data from charts and table for export
+                let csvContent = "data:text/csv;charset=utf-8,";
+
+                // Export best selling products table
+                const table = document.getElementById('bestSellingProductsTable');
+                for (let row of table.rows) {
+                    let rowData = [];
+                    for (let cell of row.cells) {
+                        rowData.push(cell.innerText.replace(/,/g, ''));
+                    }
+                    csvContent += rowData.join(",") + "\r\n";
+                }
+
+                // Create a downloadable link and trigger download
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "best_selling_products_report.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        });
+
+        function logout() {
+            alert('Logging out...');
+            // Implement actual logout logic here
+        }
+
+         // Logout function with animated popup message and transition
+         function logout() {
+            showPopupMessage("Are you sure you want to log out?", function(confirmed) {
+                if (confirmed) {
+                    window.close();
+                    // If window.close() is blocked, redirect to logout page or home
+                    window.location.href = "auth.html"; // Adjust as needed
+                }
+            });
+        }
+
+        // Function to show popup message with animation and transition
+        function showPopupMessage(message, callback) {
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'popup-overlay';
+
+            // Create popup container
+            const popup = document.createElement('div');
+            popup.className = 'popup-message';
+
+            // Message text
+            const msg = document.createElement('p');
+            msg.textContent = message;
+            popup.appendChild(msg);
+
+            // Buttons container
+            const btnContainer = document.createElement('div');
+            btnContainer.className = 'popup-buttons';
+
+            // Yes button
+            const yesBtn = document.createElement('button');
+            yesBtn.textContent = 'Yes';
+            yesBtn.className = 'btn btn-primary';
+            yesBtn.onclick = () => {
+                closePopup();
+                callback(true);
+            };
+
+            // No button
+            const noBtn = document.createElement('button');
+            noBtn.textContent = 'No';
+            noBtn.className = 'btn btn-secondary';
+            noBtn.onclick = () => {
+                closePopup();
+                callback(false);
+            };
+
+            btnContainer.appendChild(yesBtn);
+            btnContainer.appendChild(noBtn);
+            popup.appendChild(btnContainer);
+            document.body.appendChild(overlay);
+            document.body.appendChild(popup);
+
+            // Animate popup and overlay
+            setTimeout(() => {
+                overlay.classList.add('show');
+                popup.classList.add('show');
+            }, 10);
+
+            // Close popup function
+            function closePopup() {
+                popup.classList.remove('show');
+                overlay.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(popup);
+                    document.body.removeChild(overlay);
+                }, 300);
+            }
+        }
+    </script>
+
+    <style>
+        /* Popup overlay */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1050;
+        }
+
+        .popup-overlay.show {
+            opacity: 1;
+        }
+
+        /* Popup message box */
+        .popup-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -60%) scale(0.8);
+            background-color: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 1051;
+            max-width: 320px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .popup-message.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .popup-message p {
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .popup-buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .popup-buttons .btn {
+            min-width: 80px;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        /* Popup confirmation buttons colors to orange theme */
+        .popup-buttons .btn-primary {
+            background-color: #ff7f50;
+            border-color: #ff7f50;
+            color: white;
+        }
+
+        .popup-buttons .btn-primary:hover {
+            background-color: #ff5722;
+            border-color: #ff5722;
+            color: white;
+        }
+
+        /* No button gray color */
+        .popup-buttons .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
+
+        .popup-buttons .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            color: white;
+        }
+    </style>
+    </script>
+
+    <style>
+        /* Logout button animation and transition */
+        .logout-button {
+            transition: color 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            color: #ff7f50;
+            background-color: rgba(255, 127, 80, 0.1);
+            transform: scale(1.05);
+        }
+
+        .logout-button:active {
+            transform: scale(0.95);
+            transition: transform 0.1s ease;
+        }
+    </style>
+    </script>
+    <style>
+        @keyframes slideUp {
+            0% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+        }
+        #content.slide-up {
+            animation: slideUp 0.5s forwards;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            if (window.location.pathname.endsWith('reports.html')) {
+                const reportsLink = document.querySelector('#sidebar a.sidebar-link[href="reports.html"]');
+                const content = document.getElementById('content');
+                if (reportsLink) {
+                    reportsLink.addEventListener('click', function (e) {
+                        e.preventDefault();
+                        content.classList.add('slide-up');
+                        content.addEventListener('animationend', () => {
+                            content.classList.remove('slide-up');
+                        }, { once: true });
+                    });
+                }
+            }
+        });
+    </script>
+</body>
+</html>
