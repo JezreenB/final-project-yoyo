@@ -23,7 +23,7 @@ NextGen Hardware is an advanced online marketplace designed to provide high-qual
 
 - **User-Friendly Interface:** A clean, intuitive design for easy navigation and product selection.
 - **Secure Transactions:** Encrypted payment gateways to ensure data security.
-- **Personalized Recommendations:** AI-driven suggestions based on browsing history and preferences.
+- **Personalized Recommendations:** AI-driven suggestions based on browsing history and preferences. *Note: This feature was removed.*
 - **Real-Time Order Tracking:** Enables users to monitor their purchases from confirmation to delivery.
 - **Product Reviews & Ratings:** Customers can leave feedback to help others make informed decisions.
 
