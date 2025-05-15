@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NextGen Hardware - Products</title>
+
+    <!-- Embedded CSS -->
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #060606;
+            
+        }
+
+        /* Header */
+        header {
+            background-color: #1a1a1a;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo a {
+            color: #ff7f50;
+            text-decoration: none;
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-left: 21px;
+            margin-right: 21px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: #ff7f50;
+        }
+
+        /* Header buttons container */
+        .header-buttons {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Cart Button */
+        .cart-btn {
+            background-color: #ff7f50;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        .cart-btn:hover {
+            background-color: #ff5722;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            background-color: #d32f2f;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background-color: #c62828;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            max-width: 600px;
+            margin: 15px auto;
+            padding: 10px;
+            border-radius: 30px;
+            border: 2px solid #ff7f50;
+            display: flex;
+            justify-content: space-between;
+            background-color: white;
+        }
+
+        .search-bar input {
+            width: 86%;
+            padding: 8px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            background-color: #ff7f50;
+            padding: 8px 8px;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: #ff5722;
+        }
+
+         /* Search Modal */
+         #search-modal {
+           position: fixed;
+           top: 180px;
+           left: 50%;
+           transform: translateX(-50%);
+           width: 600px;
+           max-height: 400px;
+           overflow-y: auto;
+           padding: 10px;
+           background-color: white;
+           border-radius: 8px;
+           box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+           z-index: 1000;
+           display: none;
+        }
+
+         .search-suggestion {
+          padding: 12px 20px;
+          border-bottom: 1px solid #eee;
+          cursor: pointer;
+          color: #333;
+          text-align: justify;
+          transition: background 0.2s;
+        }
+
+         .search-suggestion:hover {
+          background: #f5f5f5;
+        }
+        
+
+        /* Products Section */
+        .products-section {
+            padding: 60px 20px;
+            text-align: center;
+            background-color:  #ebf1fc;
+            border: 2px solid #3f37c9;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(63, 55, 201, 0.2);
+            animation: fadeInScale 0.8s ease forwards;
+        }
+
+        @keyframes fadeInScale {
+            0% {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .product-card {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s forwards;
+        }
+
+        .product-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+        .product-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .product-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+        .product-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+        .product-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+        .product-card:nth-child(6) {
+            animation-delay: 0.6s;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .products-section h1 {
+            font-size: 2.8rem;
+            color: #3f37c9;
+            font-weight: 700;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+          
+           .col-md-4 {
+            display: flex;
+            justify-content: center;
+            }
+
+        /* Category Section */
+        .category-section {
+            margin-bottom: 40px;
+        }
+
+        .category-title {
+            font-size: 36px;
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: #333;
+        }
+
+.products-grid {
+            display: flex !important;
+            justify-content: flex-start !important;
+            flex-wrap: wrap !important;
+            gap: 30px !important;
+            padding: 0 10px !important;
+        }
+
+        .product-card {
+            background-color: #fff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            
+            transition: transform 0.3s;
+        }
+
+        .product-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .product-card h3 {
+            font-size: 20px;
+            margin-top: 15px;
+            font-weight: 600;
+        }
+
+        .product-card p {
+            font-size: 16px;
+            margin-top: 10px;
+            color: #ff7f50;
+        }
+
+        .product-card .quantity-control {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .product-card .quantity-control button {
+            background-color: #1E3A8A;
+            color: white;
+            font-size: 18px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .product-card .quantity-control button:hover {
+            background-color: #1e2b7d;
+        }
+
+        /* Buy Now Button (Green) */
+       .buy-now-btn {
+        background-color: #28a745;  /* Green color */
+        padding: 10px 20px;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.buy-now-btn:hover {
+    background-color: #218838;  /* Darker green for hover */
+}
+
+.view-more-btn {
+    background: linear-gradient(90deg, #ff7f50, #ff5722); /* Gradient background */
+    color: white;
+    padding: 12px 24px; /* Increased padding for a larger button */
+    border: none;
+    border-radius: 30px; /* Rounded corners */
+    font-size: 18px; /* Larger font size */
+    font-weight: bold; /* Bold text */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition for hover effects */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2); /* Subtle shadow for depth */
+    text-transform: uppercase; /* Uppercase text for emphasis */
+}
+
+.view-more-btn:hover {
+    background: linear-gradient(90deg, #ff5722, #ff7f50); /* Reverse gradient on hover */
+    transform: translateY(-3px); /* Lift effect on hover */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3); /* Deeper shadow on hover */
+}
+
+.view-more-btn:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 0 0 4px rgba(255, 127, 80, 0.5); /* Focus ring */
+}
+/* Add to Cart Button (Orange) */
+.product-card .add-to-cart-btn {
+    background-color: #ff7f50;  /* Orange color for "Add to Cart" */
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 20px 5px 0 0;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.product-card .add-to-cart-btn:hover {
+    background-color: #ff5722;  /* Darker orange for hover */
+    transform: translateY(-2px);
+}
+
+/* Review Button (Blue) */
+.product-card .review-btn {
+    background-color: #1E3A8A;
+    padding: 10px 20px;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 20px 0 0 5px;
+    transition: all 0.3s;
+    border: none;
+    cursor: pointer;
+}
+
+.product-card .review-btn:hover {
+    background-color: #1e2b7d;
+    transform: translateY(-2px);
+}
+
+/* Button container */
+.product-card .action-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.product-card .action-buttons > div {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.product-card .review-btn {
+    margin-top: 0;
+    align-self: center;
+}
+/* Modal Styles */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    /* Removed display: flex to keep modals hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    position: relative;
+    background: white;
+    max-width: 500px;
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    /* Removed top, left, transform to allow flex centering */
+}
+
+#buyNowModal .modal-content {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+        .modal-content {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            width: 90%; /* Responsive width */
+            max-width: 400px; /* Maximum width */
+            position: relative;
+            margin: 20px auto;
+        }
+
+        @media (max-width: 480px) {
+            .product-card {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+            .quantity-control button {
+                padding: 12px 18px !important;
+            }
+            .action-buttons button {
+                padding: 12px 15px !important;
+                font-size: 14px !important;
+            }
+        }
+
+.modal-content h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.modal-content .close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #ff5722;
+}
+
+.modal-content .form-group {
+    margin-bottom: 15px;
+}
+
+.modal-content .form-group label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+.modal-content .form-group input, .modal-content .form-group select {
+    width: 100%; /* Adjusted to take full width of the container */
+    padding: 8px;
+    text-align: justify;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.modal-content button {
+    background-color: #ff3c00; 
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    width: 100%; 
+    font-size: 16px; 
+}
+
+.modal-content button:hover {
+    background-color: #e6481c; 
+}
+
+        /* Footer */
+        footer {
+            background-color: #333;
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+       
+        footer a {
+            color:  #4895ef;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color:  #f72585;
+        }
+
+/* Confirmation Modal styles */
+.confirmation-modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* display: flex; */ /* Removed to prevent always visible */
+    /* justify-content: center; */
+    /* align-items: center; */
+    z-index: 1000; /* Ensure it's on top when visible */
+}
+
+.confirmation-modal.show {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.confirmation-modal .modal-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 8px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Confirmation Modal specific styling */
+.confirmation-modal .modal-content h3 {
+    font-size: 24px;
+    color: #4CAF50; /* Green to indicate success */
+    margin-bottom: 15px;
+}
+
+.confirmation-modal .modal-content p {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+#closeModalButton {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#closeModalButton:hover {
+    background-color: #45a049;
+}
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.boxed-heading {
+  display: inline-block;
+  background-color: #fbfbfd;              
+  border: 3px solid #3f37c9;              /* deep blue border */
+  padding: 10px 30px;
+  border-radius: 20px;
+  color: #3f37c9;                         /* deep blue text */
+  font-weight: bold;
+  font-size: 2rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  animation: fadeSlideUp 0.8s ease-out;
+}
+
+.boxed-heading:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+
+
+    </style>
+  </head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <a href="index.html">NextGen Hardware</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="about.html"><i class="fa-solid fa-user"></i> About</a></li>
+                <li><a href="products.html" class="active"><i class="fa-solid fa-box-open"></i> Products</a></li>
+                <li><a href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                <li><a href="track-order.html"><i class="fa-solid fa-truck"></i> Track Order</a></li>
+
+                            <li class="header-buttons">
+                                <button class="cart-btn" onclick="window.location.href='cart.html'">
+                                    <i class="fa-solid fa-cart-shopping"></i> Cart (<span id="cart-count">0</span>)
+                                </button>
+                                <button class="logout-btn" onclick="logout()">
+                                    <i class="fa-solid fa-right-from-bracket"></i> Logout
+                                </button>
+                            </li>
+                        </ul>
+                    </nav>
+                    <section class="search-bar">
+                      <input type="text" placeholder="Search products..." oninput="searchProducts()" id="searchInput">
+                      <button id="searchButton">Search</button>
+                      <!-- Modal for search suggestions -->
+                      <div id="search-modal" class="search-modal"></div>
+
+<script>
+document.getElementById('searchButton').addEventListener('click', () => {
+    const input = document.getElementById('searchInput');
+    if (!input) return;
+    const query = input.value.trim();
+    if (!query) return;
+    const encodedQuery = encodeURIComponent(query);
+    window.location.href = `products.html?q=${encodedQuery}`;
+});
+</script>
+                  </section>
+                </header>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Products Section -->
+     <section class="products-section py-5" style="height: auto;">
+  <div class="container">
+    <h1 class="text-center mb-5 boxed-heading">Our Products</h1>
+
+    <!-- Division between product-section and category-section -->
+    <div style="position: relative; height: 3px; background-color: #3f37c9; margin: 40px;"></div>
+    
+    <div class="category-section mb-5">
+      <h2 class="category-title mb-4">Processors</h2>
+      <div class="row" id="processors-row"></div>
+    </div>
+
+    <div class="category-section mb-5">
+      <h2 class="category-title mb-4">Graphics Cards</h2>
+      <div class="row" id="graphics-cards-row"></div>
+    </div>
+
+    <div class="category-section mb-5">
+      <h2 class="category-title mb-4">PC Case</h2>
+      <div class="row" id="pc-case-row"></div>
+    </div>
+
+  <!-- Additional Products Section (Initially Hidden) -->
+  <div id="additional-products" style="display: none;">
+    <div class="category-section" style="text-align: center;">
+      <h2 class="category-title mb-4" style="text-align: center;">Other Devices</h2>
+      <div id="other-devices-row" class="row"></div>
+    </div>
+  </div>
+  <!-- View More Products Button -->
+  <div class="text-center my-4">
+    <button id="viewMoreButton" class="view-more-btn" onclick="viewMoreProducts()">View More Products</button>
+</div>
+</section>
+
+<!-- Confirmation Modal -->
+<div id="confirmationModal" class="confirmation-modal">
+  <div class="modal-content">
+      <span class="close" onclick="closeConfirmationModal()">&times;</span>
+      <h3>Purchase Confirmed!</h3>
+      <p>Your purchase has been successfully confirmed.</p>
+      <p><strong>Your Order Number:</strong> <span id="displayOrderNumber"></span></p>
+      <button id="closeModalButton" onclick="closeConfirmationModal()">Close</button>
+  </div>
+</div>
+
+   <!-- Buy Now Modal -->
+<div id="buyNowModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeBuyNowModal()">&times;</span>
+    <h2>Complete Your Purchase</h2>
+
+    <!-- FORM START -->
+    <form id="purchaseForm" onsubmit="return confirmPurchase(event)">
+      <div class="form-group">
+        <label for="fullName">Full Name</label>
+        <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Enter your full name" required>
+
+        <label for="payment-method">Payment Method</label>
+        <select id="payment-method" name="paymentMethod" required>
+          <option value="credit-card">Credit Card</option>
+          <option value="paypal">PayPal</option>
+          <option value="paymaya">PayMaya</option>
+          <option value="gcash">Gcash</option>
+          <option value="cash-on-delivery">Cash on Delivery</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="delivery-option">Delivery Option</label>
+        <select id="delivery-option" name="shippingMethod" required>
+          <option value="standard">Standard Delivery</option>
+          <option value="express">Express Delivery</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="address">Delivery Address</label>
+        <input type="text" class="form-control" id="address" name="deliveryAddress" placeholder="Enter your delivery address" required>
+      </div>
+
+      <div class="form-group">
+        <p>Total: $<span id="total-amount"></span></p>
+      </div>
+
+      <button type="submit">Confirm Purchase</button>
+    </form>
+  </div>
+</div>
+  <div id="confirmationMessage" class="confirmation-message">
+    </div>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content" style="width: 500px; max-width: 90%;">
+            <span class="close" onclick="closeReviewModal()">&times;</span>
+            <h2 style="color: #1E3A8A; text-align: center; margin-bottom: 25px;">Write a Review</h2>
+            <form id="reviewForm" onsubmit="submitReview(event)">
+            <div class="star-rating" style="text-align: center; font-size: 28px; margin-bottom: 20px;">
+                <i class="fa-regular fa-star" data-rating="1" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                <i class="fa-regular fa-star" data-rating="2" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                <i class="fa-regular fa-star" data-rating="3" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                <i class="fa-regular fa-star" data-rating="4" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                <i class="fa-regular fa-star" data-rating="5" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+            </div>
+            <div id="ratingError" style="display: none; color: #d32f2f; margin: 10px 0; text-align: center; font-size: 14px; padding: 8px; background-color: #ffebee; border-radius: 4px;"></div>
+            <textarea id="reviewText" name="reviewText" placeholder="Share your experience..." 
+                style="width: 100%; padding: 15px; border-radius: 8px; border: 1px solid #ddd; 
+                min-height: 150px; margin-bottom: 20px; font-family: inherit;" required></textarea>
+<button type="submit" class="btn btn-primary w-100">
+                Submit Review
+            </button>
+        </form>
+    </div>
+</div>
+
+    <!-- Review Confirmation Modal -->
+    <div id="reviewConfirmationModal" class="confirmation-modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeReviewConfirmation()">&times;</span>
+            <h3>Review Submitted!</h3>
+            <p>Thank you for your review. Your feedback helps other customers.</p>
+            <button onclick="closeReviewConfirmation()">Close</button>
+        </div>
+    </div>
+
+    <!-- Add to Cart Modal -->
+    <div id="addToCartModal" class="modal">
+        <div class="modal-content" style="text-align: center; padding: 30px;">
+            <span class="close" onclick="closeAddToCartModal()">&times;</span>
+            <i class="fas fa-check-circle" style="font-size: 50px; color: #4CAF50; margin-bottom: 20px;"></i>
+            <h2 style="color: #4CAF50;">Added to Cart</h2>
+            <p>Item successfully added to your cart</p>
+            <p>Quantity: <span id="cart-quantity"></span></p>
+            <p>Total: $<span id="cart-total"></span></p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+      <p>&copy; 2025 NextGen Hardware | <a href="privacy-policy.html">Privacy Policy</a> | <a href="terms-conditions.html">Terms & Conditions</a></p>
+    </footer>
+  <script>
+      // Clear search input on page load if no query parameter
+      document.addEventListener('DOMContentLoaded', () => {
+          const urlParams = new URLSearchParams(window.location.search);
+          if (!urlParams.has('q')) {
+              const searchInput = document.querySelector('.search-bar input');
+              if (searchInput) {
+                  searchInput.value = '';
+              }
+          }
+      });
+
+      // Sample product data for search suggestions
+      const products = [
+          {name: 'Intel Core i9-13900K', category: 'Processors'},
+          {name: 'AMD Ryzen 9 7950X', category: 'Processors'},
+          {name: 'Intel Core i7-13700K', category: 'Processors'},
+          {name: 'NVIDIA GeForce RTX 4090', category: 'Graphics Cards'},
+          {name: 'AMD Radeon RX 7900 XTX', category: 'Graphics Cards'},
+          {name: 'NVIDIA GeForce RTX 3080 Ti', category: 'Graphics Cards'},
+          {name: 'NZXT H510 Elite', category: 'PC Case'},
+          {name: 'Corsair iCUE 4000X RGB', category: 'PC Case'},
+          {name: 'Lian Li PC-011 Dynamic', category: 'PC Case'},
+          {name: 'Keyboard with Mouse', category: 'Other Devices'},
+          {name: 'Motherboard', category: 'Other Devices'},
+          {name: 'Webcam', category: 'Other Devices'},
+          {name: 'Headphone', category: 'Other Devices'},
+          {name: 'Joystick', category: 'Other Devices'},
+          {name: 'Monitor', category: 'Other Devices'}
+      ];
+    
+      // Search function for both modal and product card filtering
+      function searchProducts() {
+          const query = document.querySelector('.search-bar input').value.toLowerCase();
+          const searchModal = document.getElementById('search-modal');
+          const productCards = document.querySelectorAll('.product-card');
+    
+          // Clear previous search suggestions
+          searchModal.innerHTML = '';
+    
+          if (query.length === 0) {
+              // If input is cleared, reload all products to reset to normal state
+              loadProducts();
+              searchModal.style.display = 'none';
+              // Remove query parameter from URL without reloading
+              if (window.history.replaceState) {
+                  const url = new URL(window.location);
+                  url.searchParams.delete('q');
+                  window.history.replaceState({}, document.title, url.toString());
+              }
+              return;
+          }
+    
+          // Filter product cards based on the search query
+          productCards.forEach(card => {
+              const title = card.querySelector('h3').textContent.toLowerCase();
+              card.style.display = title.includes(query) ? 'block' : 'none';
+          });
+    
+          if (query.length > 0) {
+              const matches = products.filter(p =>
+                  p.name.toLowerCase().includes(query) ||
+                  p.category.toLowerCase().includes(query)
+              );
+    
+              if (matches.length > 0) {
+                  matches.forEach(product => {
+                      const suggestion = document.createElement('div');
+                      suggestion.className = 'search-suggestion';
+    
+                      suggestion.innerHTML = `
+                          <div style="font-weight: 500;">${product.name}</div>
+                          <div style="font-size: 0.8rem; color: #666;">${product.category}</div>
+                      `;
+    
+                      suggestion.onclick = () => {
+                          const encodedQuery = encodeURIComponent(product.name);
+                          window.location.href = `products.html?q=${encodedQuery}`;
+                      };
+    
+                      searchModal.appendChild(suggestion);
+                  });
+                  searchModal.style.display = 'block';
+              } else {
+                  searchModal.style.display = 'none';
+              }
+          } else {
+              searchModal.style.display = 'none';
+          }
+      }
+      
+      // New function to filter products on page load based on URL query parameter
+      function filterProductsByQuery() {
+          const urlParams = new URLSearchParams(window.location.search);
+          const query = urlParams.get('q');
+          const searchInput = document.querySelector('.search-bar input');
+          if (!query) return;
+          if (searchInput) {
+              searchInput.value = query;
+          }
+          const lowerQuery = query.toLowerCase();
+          const productCards = document.querySelectorAll('.product-card');
+          const categorySections = document.querySelectorAll('.category-section');
+          const categoryTitles = document.querySelectorAll('.category-title');
+          const rows = {
+              'Processors': document.getElementById('processors-row'),
+              'Graphics Cards': document.getElementById('graphics-cards-row'),
+              'PC Case': document.getElementById('pc-case-row'),
+              'Other Devices': document.getElementById('other-devices-row')
+          };
+    
+          // Track which categories have visible products
+          const visibleCategories = new Set();
+    
+          productCards.forEach(card => {
+              const title = card.querySelector('h3').textContent.toLowerCase();
+              if (title === lowerQuery) {
+                  card.style.display = 'block';
+                  // Mark category as visible
+                  const category = Object.keys(rows).find(cat => rows[cat].contains(card));
+                  if (category) visibleCategories.add(category);
+              } else {
+                  card.style.display = 'none';
+              }
+          });
+    
+          // Show or hide category sections based on visible products
+          Object.entries(rows).forEach(([category, row]) => {
+              if (visibleCategories.has(category)) {
+                  row.parentElement.style.display = 'block';
+              } else {
+                  row.parentElement.style.display = 'none';
+              }
+          });
+      }
+    
+      // Call filterProductsByQuery on page load
+      window.addEventListener('DOMContentLoaded', () => {
+          filterProductsByQuery();
+      });
+    
+      // Close modal when clicking outside
+      document.addEventListener('click', (e) => {
+          const searchModal = document.getElementById('search-modal');
+          if (!e.target.closest('.search-bar') && !e.target.closest('#search-modal')) {
+              searchModal.style.display = 'none';
+          }
+      });
+    
+      let cartCount = 0;
+      let totalAmount = 0;
+    
+      // Function to update and persist cart count
+      async function updateCartCount() {
+        try {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.log('No token found. Please log in.');
+                return;
+            }
+
+            const response = await fetch('http://localhost:3001/api/cart/count', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            
+            if (response.ok) {
+                const count = await response.json();
+                const cartBtn = document.querySelector('.cart-btn');
+                if (cartBtn) {
+                    // If count is an object with count property, use count.count
+                    const displayCount = typeof count === 'object' && count.count !== undefined ? count.count : count;
+                    cartBtn.textContent = `Cart (${displayCount})`;
+                }
+            } else {
+                console.error('Failed to get cart count:', response.statusText);
+                if (response.status === 401) {
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('loggedInUser');
+                    alert('Session expired. Please log in again.');
+                    window.location.href = 'auth.html';
+                }
+            }
+        } catch (error) {
+            console.error('Error updating cart count:', error);
+            alert('Failed to update cart count. Please make sure your backend server is running at http://localhost:3001');
+        }
+    }
+    
+async function loadProducts(searchQuery) {
+    try {
+        const response = await fetch('http://localhost:3001/api/products');
+        const products = await response.json();
+        
+        // Load processors
+        const processorSection = document.getElementById('processors-row');
+        const graphicsSection = document.getElementById('graphics-cards-row');
+        const caseSection = document.getElementById('pc-case-row');
+        const otherDevicesSection = document.getElementById('other-devices-row');
+
+        // Clear previous products
+        processorSection.innerHTML = '';
+        graphicsSection.innerHTML = '';
+        caseSection.innerHTML = '';
+        otherDevicesSection.innerHTML = '';
+
+        products.forEach(product => {
+            // If searchQuery is present, only render products matching the query exactly (case-insensitive)
+            if (searchQuery) {
+                if (product.name.toLowerCase() !== searchQuery.toLowerCase()) {
+                    return; // skip non-matching products
+                }
+            }
+            const productCard = createProductCard(product);
+            
+            switch (product.category.toLowerCase()) {
+                case 'processors':
+                    processorSection.appendChild(productCard);
+                    break;
+                case 'graphics cards':
+                    graphicsSection.appendChild(productCard);
+                    break;
+                case 'pc case':
+                    caseSection.appendChild(productCard);
+                    break;
+                default:
+                    otherDevicesSection.appendChild(productCard);
+                    break;
+            }
+        });
+
+        // Show or hide category sections based on whether they have products
+        const categorySections = [
+            {section: processorSection.parentElement, row: processorSection},
+            {section: graphicsSection.parentElement, row: graphicsSection},
+            {section: caseSection.parentElement, row: caseSection},
+            {section: otherDevicesSection.parentElement, row: otherDevicesSection}
+        ];
+        categorySections.forEach(({section, row}) => {
+            if (row.children.length > 0) {
+                section.style.display = 'block';
+            } else {
+                section.style.display = 'none';
+            }
+        });
+
+        // Call updateAllProductRatings after products are rendered
+        if (typeof updateAllProductRatings === 'function') {
+            updateAllProductRatings();
+        }
+
+        // Set search input value if searchQuery present, else clear input
+        const searchInput = document.querySelector('.search-bar input');
+        if (searchInput) {
+            if (searchQuery) {
+                searchInput.value = searchQuery;
+            } else {
+                searchInput.value = '';
+            }
+        }
+
+    } catch (error) {
+        console.error('Error loading products:', error);
+        alert('Failed to load products. Please make sure your backend server is running at http://localhost:3001');
+    }
+}
+
+function createProductCard(product) {
+    const productDiv = document.createElement('div');
+    productDiv.className = 'col-md-4 mb-4';
+    productDiv.setAttribute('data-product-id', product._id);
+    
+    productDiv.innerHTML = `
+        <div class="product-card h-100">
+            <img src="${product.image}" alt="${product.name}">
+            <h3>${product.name}</h3>
+            <p>$${product.price.toFixed(2)}</p>
+            <div class="rating-display">
+                <div class="stars">
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-solid fa-star"></i>
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span class="review-count">(${product.reviews?.length || 0} reviews)</span>
+            </div>
+            <div class="quantity-control">
+                <button aria-label="Decrease quantity" onclick="decreaseQuantity('${product._id}')">-</button>
+                <input type="number" id="${product._id}" name="quantity-${product._id}" value="1" min="1" style="width: 40px; text-align: center;" data-price="${product.price}">
+                <button aria-label="Increase quantity" onclick="increaseQuantity('${product._id}')">+</button>
+            </div>
+            <div class="action-buttons">
+                <div style="display: flex; justify-content: center; gap: 10px;">
+                    <button class="buy-now-btn" onclick="openBuyNowModal('${product.name}', ${product.price}, document.getElementById('${product._id}').value, '${product._id}')">Buy Now</button>
+                    <button class="add-to-cart-btn" onclick="addToCart('${product._id}', document.getElementById('${product._id}').value)">Add to Cart</button>
+                </div>
+<button class="review-btn" onclick="openReviewModal('${product._id}', '${product.name}')">Write Review</button>
+            </div>
+        </div>
+    `;
+    
+    return productDiv;
+}
+
+async function addToCart(productId, quantity) {
+    console.log('addToCart called with:', productId, quantity);
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert('You must be logged in to add items to the cart.');
+            return;
+        }
+        // Additional check for token validity could be added here if needed
+
+        const response = await fetch('http://localhost:3001/api/cart', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ productId, quantity: parseInt(quantity) })
+        });
+
+        if (!response.ok) throw new Error('Failed to add to cart');
+        
+        const result = await response.json();
+
+        // Show add to cart modal
+        const addToCartModal = document.getElementById('addToCartModal');
+        const cartQuantitySpan = document.getElementById('cart-quantity');
+        const cartTotalSpan = document.getElementById('cart-total');
+
+        cartQuantitySpan.textContent = quantity;
+        cartTotalSpan.textContent = (quantity * parseFloat(document.querySelector(`input[id="${productId}"]`).dataset.price || 0)).toFixed(2);
+
+        addToCartModal.style.display = 'flex';
+
+        updateCartCount();
+    } catch (error) {
+        console.error('Error adding to cart:', error);
+        alert('Failed to add product to cart. Please make sure your backend server is running at http://localhost:3001');
+    }
+}
+
+async function updateCartCount() {
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            console.log('No token found. Please log in.');
+            return;
+        }
+
+        const response = await fetch('http://localhost:3001/api/cart/count', {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        
+        if (response.ok) {
+            const count = await response.json();
+            const cartCountSpan = document.getElementById('cart-count');
+            if (cartCountSpan) {
+                // If count is an object with count property, use count.count
+                const displayCount = typeof count === 'object' && count.count !== undefined ? count.count : count;
+                cartCountSpan.textContent = displayCount;
+            }
+        } else {
+            console.error('Failed to get cart count:', response.statusText);
+            if (response.status === 401) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('loggedInUser');
+                alert('Session expired. Please log in again.');
+                window.location.href = 'auth.html';
+            }
+        }
+    } catch (error) {
+        console.error('Error updating cart count:', error);
+        alert('Failed to update cart count. Please make sure your backend server is running at http://localhost:3001');
+    }
+}
+
+function increaseQuantity(productId) {
+    const input = document.getElementById(productId);
+    input.value = parseInt(input.value) + 1;
+}
+
+function decreaseQuantity(productId) {
+    const input = document.getElementById(productId);
+    if (input.value > 1) {
+        input.value = parseInt(input.value) - 1;
+    }
+}
+
+function openBuyNowModal(productName, productPrice, quantity, productId) {
+    const modal = document.getElementById('buyNowModal');
+    const totalAmount = document.getElementById('total-amount');
+    
+    totalAmount.textContent = (productPrice * quantity).toFixed(2);
+    
+    modal.style.display = 'flex';
+    
+    // Save product info for purchase
+    localStorage.setItem('purchaseProduct', JSON.stringify({
+        name: productName,
+        price: productPrice,
+        quantity: quantity,
+        productId: productId
+    }));
+}
+
+    async function confirmPurchase(event) {
+        event.preventDefault();
+        
+        try {
+            const product = JSON.parse(localStorage.getItem('purchaseProduct'));
+            const formData = new FormData(event.target);
+            const formEntries = Object.fromEntries(formData);
+            console.log('Form entries:', formEntries);
+
+            // Prepare items array as expected by backend
+            const items = [{
+                productId: product.productId,
+                quantity: parseInt(product.quantity),
+                price: product.price
+            }];
+
+            const purchaseData = {
+                deliveryAddress: formEntries['deliveryAddress'],
+                paymentMethod: formEntries['paymentMethod'],
+                shippingMethod: formEntries['shippingMethod'],
+                items: items,
+                clearCart: false
+            };
+
+            console.log('Purchase data sent:', purchaseData);
+
+            const response = await fetch('http://localhost:3001/api/orders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(purchaseData)
+            });
+
+            if (response.ok) {
+                document.getElementById('buyNowModal').style.display = 'none';
+                document.getElementById('confirmationModal').classList.add('show');
+                localStorage.removeItem('purchaseProduct');
+            } else {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Purchase failed');
+            }
+        } catch (error) {
+            if (error.response) {
+                error.response.json().then(errData => {
+                    console.error('Error confirming purchase:', errData);
+                    alert('Failed to complete purchase: ' + (errData.message || error.message));
+                });
+            } else {
+                console.error('Error confirming purchase:', error);
+                alert('Failed to complete purchase: ' + error.message);
+            }
+        }
+    }
+
+function openReviewModal(productName, productId) {
+    console.log('openReviewModal called with productId:', productId);
+    const modal = document.getElementById('reviewModal');
+    modal.style.display = 'flex';
+    
+    // Save product info for review
+    localStorage.setItem('reviewProduct', JSON.stringify({
+        name: productName,
+        productId: productId
+    }));
+}
+
+async function submitReview(event) {
+    event.preventDefault();
+    
+    try {
+        const product = JSON.parse(localStorage.getItem('reviewProduct'));
+        console.log('submitReview productId:', product.productId);
+        const formData = new FormData(event.target);
+        const reviewData = {
+            ...Object.fromEntries(formData),
+            productId: product.productId
+        };
+
+        const response = await fetch('http://localhost:3001/api/reviews', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('token')}`
+            },
+            body: JSON.stringify(reviewData)
+        });
+
+        if (response.ok) {
+            document.getElementById('reviewModal').style.display = 'none';
+            document.getElementById('reviewConfirmationModal').style.display = 'flex';
+            localStorage.removeItem('reviewProduct');
+            
+            // Reload products to update review count
+            loadProducts();
+        } else {
+            throw new Error('Review submission failed');
+        }
+    } catch (error) {
+        console.error('Error submitting review:', error);
+        alert('Failed to submit review. Please make sure your backend server is running at http://localhost:3001');
+    }
+}
+
+function closeReviewModal() {
+    document.getElementById('reviewModal').style.display = 'none';
+}
+
+function viewMoreProducts() {
+    const additionalProducts = document.getElementById('additional-products');
+    const viewMoreButton = document.getElementById('viewMoreButton');
+    
+    if (additionalProducts.style.display === 'none') {
+        additionalProducts.style.display = 'block';
+        viewMoreButton.style.display = 'none';
+    }
+}
+
+function closeBuyNowModal() {
+    const modal = document.getElementById('buyNowModal');
+    modal.style.display = 'none';
+}
+
+    // Close modal when clicking outside modal content
+    window.onclick = function(event) {
+        const buyNowModal = document.getElementById('buyNowModal');
+        const confirmationModal = document.getElementById('confirmationModal');
+        const reviewConfirmationModal = document.getElementById('reviewConfirmationModal');
+        const addToCartModal = document.getElementById('addToCartModal');
+        if (event.target === buyNowModal) {
+            buyNowModal.style.display = 'none';
+        }
+        if (event.target === confirmationModal) {
+            confirmationModal.classList.remove('show');
+        }
+        if (event.target === reviewConfirmationModal) {
+            reviewConfirmationModal.style.display = 'none';
+        }
+        if (event.target === addToCartModal) {
+            addToCartModal.style.display = 'none';
+        }
+    }
+
+function closeConfirmationModal() {
+    const confirmationModal = document.getElementById('confirmationModal');
+    confirmationModal.classList.remove('show');
+}
+
+function closeReviewConfirmation() {
+    const reviewConfirmationModal = document.getElementById('reviewConfirmationModal');
+    reviewConfirmationModal.style.display = 'none';
+}
+
+function closeAddToCartModal() {
+    const addToCartModal = document.getElementById('addToCartModal');
+    addToCartModal.style.display = 'none';
+}
+
+
+// Window.onload function
+window.onload = async function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('q');
+    await loadProducts(searchQuery);
+    updateCartCount(); // Ensure the cart count is updated on page load
+};
+  </script>
+  <script>
+    // Logout function to clear user session and redirect to login page
+    function logout() {
+        localStorage.removeItem('token');
+        localStorage.removeItem('loggedInUser');
+        window.location.href = 'auth.html';
+    }
+  </script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  window.openBuyNowModal = function(productName, productPrice, quantity, productId) {
+      const modal = document.getElementById('buyNowModal');
+      const totalAmount = document.getElementById('total-amount');
+      totalAmount.textContent = (productPrice * quantity).toFixed(2);
+      modal.style.display = 'flex';
+      localStorage.setItem('purchaseProduct', JSON.stringify({
+          name: productName,
+          price: productPrice,
+          quantity: quantity,
+          productId: productId
+      }));
+  };
+
+  window.confirmPurchase = async function(event) {
+      event.preventDefault();
+      try {
+          const product = JSON.parse(localStorage.getItem('purchaseProduct'));
+          const formData = new FormData(event.target);
+          const formEntries = Object.fromEntries(formData);
+          const items = [{
+              productId: product.productId,
+              quantity: parseInt(product.quantity),
+              price: product.price
+          }];
+          const purchaseData = {
+              deliveryAddress: formEntries['deliveryAddress'],
+              paymentMethod: formEntries['paymentMethod'],
+              shippingMethod: formEntries['shippingMethod'],
+              items: items,
+              clearCart: false
+          };
+          const response = await fetch('http://localhost:3001/api/orders', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${localStorage.getItem('token')}`
+              },
+              body: JSON.stringify(purchaseData)
+          });
+          if (response.ok) {
+              const responseData = await response.json();
+              const orderNumber = responseData.orderNumber;
+              document.getElementById('buyNowModal').style.display = 'none';
+              const confirmationModal = document.getElementById('confirmationModal');
+              const orderNumberSpan = document.getElementById('displayOrderNumber');
+              if (orderNumberSpan) {
+                  orderNumberSpan.textContent = orderNumber;
+              }
+              confirmationModal.classList.add('show');
+          localStorage.removeItem('purchaseProduct');
+          
+          // Clear the purchase form inputs after successful purchase
+          const purchaseForm = document.getElementById('purchaseForm');
+          if (purchaseForm) {
+              purchaseForm.reset();
+          }
+      } else {
+          const errorData = await response.json();
+          throw new Error(errorData.message || 'Purchase failed');
+      }
+  } catch (error) {
+      console.error('Error confirming purchase:', error);
+      alert('Failed to complete purchase: ' + error.message);
+  }
+  };
+});
+</script>
+  <script src="reviews.js"></script>
+  </body>

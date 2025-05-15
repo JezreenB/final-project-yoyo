@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Test Products</title>
+</head>
+<body>
+<h1>Test Products</h1>
+<ul id="product-list"></ul>
+<script>
+async function fetchProducts() {
+  try {
+    const response = await fetch('http://localhost:3001/api/products');
+    if (!response.ok) {
+      throw new Error('Failed to fetch products');
+    }
+    const products = await response.json();
+    const list = document.getElementById('product-list');
+    list.innerHTML = '';
+    products.forEach(product => {
+      const li = document.createElement('li');
+      li.textContent = product.name + ' - $' + product.price.toFixed(2);
+      list.appendChild(li);
+    });
+  } catch (error) {
+    document.body.innerHTML += '<p>Error: ' + error.message + '</p>';
+  }
+}
+fetchProducts();
+</script>
+</body>
+</html>

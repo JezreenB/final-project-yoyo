@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff7f50;
+            --secondary-color: #1a1a1a;
+            --success-color: #1cc88a;
+            --sidebar-width: 250px;
+        }
+
+        /* Update colors to match index.html theme */
+        #sidebar {
+            background-color: #1a1a1a;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: #ff7f50;
+            background: rgba(255, 127, 80, 0.1);
+        }
+
+        .stat-card {
+            background: linear-gradient(45deg, #ff7f50, #ff5722);
+            color: white;
+        }
+
+        .stat-card:hover {
+            background: linear-gradient(45deg, #ff5722, #e64a19);
+        }
+
+        .navbar {
+            background-color: #1a1a1a;
+        }
+
+        /* Gradient alive animation for Go to Website button */
+        .btn-gradient-alive {
+            background: linear-gradient(45deg, #ff7f50, #ff5722, #ff7f50);
+            background-size: 200% 200%;
+            color: white;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.375rem;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-position 3s ease infinite, transform 0.3s ease, box-shadow 0.3s ease;
+            animation: gradientAlive 3s ease infinite;
+        }
+
+        .btn-gradient-alive:hover {
+            background-position: 100% 0;
+            color: white;
+            text-decoration: none;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 127, 80, 0.7);
+        }
+
+        .btn-gradient-alive:hover {
+            background-position: 100% 0;
+            color: white;
+            text-decoration: none;
+        }
+
+        @keyframes gradientAlive {
+            0% {
+                background-position: 0% 0%;
+            }
+            50% {
+                background-position: 100% 0%;
+            }
+            100% {
+                background-position: 0% 0%;
+            }
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+
+        /* Modal styles */
+        .modal-dialog {
+            margin: 1.75rem auto;
+        }
+
+        .small-modal {
+            max-width: 400px;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background-color: #ebf1fc;
+            position: fixed;
+            width: 100%;
+        }
+
+        /* Center the navbar brand text */
+        .navbar-brand {
+            position:absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .container-fluid {
+    position: relative; /* Ensure the navbar container is positioned relative */
+  }
+
+        #sidebar {
+            background-color: var(--secondary-color);
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            transform: translateX(-100%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1110;
+            overflow-y: auto;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+
+        /* Fade and slide animations for content and cards */
+        #content {
+            opacity: 0;
+            transform: translateY(20px);
+            animation-fill-mode: forwards;
+        }
+
+        #content.visible {
+            opacity: 1;
+            transform: translateY(0);
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .card {
+            opacity: 0;
+            transform: translateY(20px);
+            animation-fill-mode: forwards;
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.6s ease;
+            animation: cardFadeIn 0.6s ease forwards;
+        }
+
+        .card.visible {
+            opacity: 1;
+            transform: translateY(0);
+            animation: fadeSlideUp 0.6s ease forwards;
+        }
+
+        @keyframes cardFadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        /* Sidebar link transition and animation */
+        .sidebar-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: var(--primary-color);
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(255, 127, 80, 0.5);
+            border-radius: 8px;
+        }
+
+        /* Sidebar toggle button animation */
+        #sidebarToggle {
+            transition: transform 0.4s ease, color 0.4s ease;
+            color: white;
+        }
+
+        #sidebarToggle:hover {
+            transform: rotate(90deg) scale(1.1);
+            color: var(--primary-color);
+        }
+
+        /* Quick action buttons animation */
+        .btn-outline-primary, .btn-outline-success, .btn-outline-info {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn-outline-primary:hover, .btn-outline-success:hover, .btn-outline-info:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 14px rgba(255, 127, 80, 0.5);
+        }
+
+        /* Navbar brand pulse animation */
+        .navbar-brand {
+            animation: pulseBrand 3s ease-in-out infinite;
+        }
+
+        @keyframes pulseBrand {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.05);
+                opacity: 0.8;
+            }
+        }
+
+        /* Keyframe Animations */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideDown {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .slide-down-navbar {
+            animation: slideDown 0.6s ease forwards;
+        }
+
+        #sidebar::-webkit-scrollbar {
+            display: none;  /* Chrome, Safari and Opera */
+        }
+
+        #sidebar.active {
+            transform: translateX(0);
+        }
+
+        #content {
+            transition: 0.3s;
+            height: 100vh;
+            padding-top: 60px; /* Height of navbar */
+            padding-bottom: 80px; /* Added bottom padding to create margin before footer */
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1000;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 999;
+        }
+
+        .nav-link, 
+        .nav-link:active,
+        .nav-link:focus,
+        .nav-link.active {
+            color: white !important;
+        }
+
+        /* Dropdown Menus */
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            border-radius: 0.35rem;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-item i {
+            margin-right: 0.5rem;
+            width: 1rem;
+            text-align: center;
+        }
+
+        .profile-section {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: white;
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .sidebar-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: var(--primary-color);
+            background: rgba(255,255,255,0.1);
+        }
+
+        .sidebar-link i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        /* Updated stat card colors to yellow then orange to royal blue */
+        .stat-card {
+            background: linear-gradient(45deg, #f9f2b1, #ee774b, #000000);
+            color: white;
+            font-weight: 600;
+            transition: background 0.3s, color 0.3s;
+            background-size: 300% 300%;
+            animation: gradientShift 5s ease infinite;
+        }
+
+        .stat-card:hover {
+            background: linear-gradient(45deg, #000000, #ff7f50, #ffeb3b);
+            color: white;
+            background-size: 300% 300%;
+            animation: gradientShift 5s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        @media (max-width: 768px) {
+            #content.active {
+                margin-left: 0;
+            }
+            
+            #sidebar {
+                position: fixed;
+            }
+        }
+        /* Popup confirmation buttons colors to orange theme */
+        .popup-buttons .btn-primary {
+            background-color: #ff7f50;
+            border-color: #ff7f50;
+            color: white;
+        }
+
+        .popup-buttons .btn-primary:hover {
+            background-color: #ff5722;
+            border-color: #ff5722;
+            color: white;
+        }
+
+        /* No button gray color */
+        .popup-buttons .btn-secondary {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
+
+        .popup-buttons .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+            color: white;
+        }
+    </style>
+    <style>
+        /* Animation and effects for welcome message */
+        @keyframes welcomePulse {
+            0%, 100% {
+                text-shadow: 0 0 15px rgba(255, 127, 80, 0.8);
+                transform: scale(1);
+            }
+            50% {
+                text-shadow: 0 0 30px rgba(255, 127, 80, 1), 0 0 40px rgba(255, 127, 80, 0.7);
+                transform: scale(1.1);
+            }
+        }
+
+        .welcome-message {
+            animation: welcomePulse 3s ease-in-out infinite;
+            transition: text-shadow 0.3s ease, transform 0.3s ease;
+            cursor: default;
+        }
+
+        .welcome-message:hover {
+            text-shadow: 0 0 40px rgba(255, 127, 80, 1), 0 0 50px rgba(255, 127, 80, 0.7);
+            transform: scale(1.15);
+        }
+        /* Logout button animation and transition */
+        .logout-button {
+            transition: color 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            color: var(--primary-color);
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(133, 135, 150, 0.5);
+            border-radius: 8px;
+        }
+
+        .logout-button:active {
+            transform: scale(0.95);
+            transition: transform 0.1s ease;
+        }
+
+        .logout-button:hover {
+            color: var(--primary-color);
+            background-color: rgba(133, 135, 150, 0.1);
+            box-shadow: 0 0 8px rgba(133, 135, 150, 0.5);
+            transform: scale(1.05);
+            border-radius: 8px;
+        }
+
+        /* Center align recent orders table text */
+        .recent-orders-table th,
+        .recent-orders-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        /* Slide-up animation for content reload */
+        @keyframes slideUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+        }
+
+        .slide-up {
+            animation: slideUp 0.6s ease forwards;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div id="sidebar" style="padding-bottom: 60px;">
+        <div class="profile-section text-center text-white">
+            <img src="images/logo.png" alt="Admin Profile" class="profile-img mb-3">
+            <h6 class="mb-0">Admin User</h6>
+            <small>Administrator</small>
+        </div>
+        
+        <div class="mt-4">
+            <a href="dashboard.html" class="sidebar-link active">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+            <a href="products-admin.html" class="sidebar-link">
+                <i class="bi bi-box-seam"></i>
+                Products
+            </a>
+            <a href="orders-admin.html" class="sidebar-link">
+                <i class="bi bi-cart3"></i>
+                Orders
+            </a>
+            <a href="customers-admin.html" class="sidebar-link">
+                <i class="bi bi-people"></i>
+                Customers
+            </a>
+            <a href="reports.html" class="sidebar-link">
+                <i class="bi bi-graph-up"></i>
+                Reports
+            </a>
+            <a href="settings.html" class="sidebar-link">
+                <i class="bi bi-gear"></i>
+                Settings
+            </a>
+            <a href="#" class="sidebar-link" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="overlay"></div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg slide-down-navbar">
+            <div class="container-fluid position-relative">
+                <button id="sidebarToggle" class="btn position-absolute start-0">
+                    <i class="bi bi-list fs-4 text-white"></i>
+                </button>
+                
+                <div class="navbar-brand text-white position-absolute start-50 translate-middle-x zoom-animation">NextGen Hardware</div>
+
+            <style>
+                @keyframes zoomInOut {
+                    0%, 100% {
+                        transform: scale(1);
+                    }
+                    50% {
+                        transform: scale(1.2);
+                    }
+                }
+
+                .zoom-animation {
+                    animation: zoomInOut 2s infinite ease-in-out;
+                }
+            </style>
+
+                <div class="ms-auto d-flex align-items-center">
+                    <a href="index.html" class="btn btn-primary me-3 btn-gradient-alive">Go to Website</a>
+                </div>
+            </div>
+        </nav>
+
+        <script>
+        </script>
+
+            <!-- Dashboard Content -->
+            <div class="container-fluid p-4">
+                <!-- Welcome Message -->
+                <div class="mb-5 p-5" style="background-color: white; color: black; border-radius: 15px; box-shadow: 0 8px 20px rgba(255, 127, 80, 0.6); text-align: center;">
+                    <h1 class="welcome-message" style="font-size: 4.5rem; font-weight: 900; text-shadow: 0 0 15px rgba(255, 127, 80, 0.8); margin-bottom: 0.5rem; font-family: Brush Script MT, Brush Script Std, cursive;">Welcome back, Admin!</h1>
+                    <p style="font-size: 1.25rem; font-weight: 600; text-shadow: 0 0 10px rgba(255, 127, 80, 0.6); margin-bottom: 0;">Here's a quick overview of your dashboard and recent activity.</p>
+                </div>
+
+            <!-- Stats Row -->
+            <div class="row g-4 mb-4">
+                <div class="col-12 col-md-6 col-lg-3">
+            <div class="card stat-card report-card visible">
+                <div class="card-body text-center">
+                    <h6>Total Sales</h6>
+                    <h3 id="totalSales">$0</h3>
+                    <p class="mb-0"><i class="bi bi-arrow-up"></i> <span id="totalSalesChange">0%</span> increase</p>
+                </div>
+            </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+            <div class="card stat-card report-card visible">
+                <div class="card-body text-center">
+                    <h6>Orders</h6>
+                    <h3 id="ordersCount">0</h3>
+                    <p class="mb-0"><i class="bi bi-arrow-up"></i> <span id="ordersCountChange">0%</span> increase</p>
+                </div>
+            </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+            <div class="card stat-card report-card visible">
+                <div class="card-body text-center">
+                    <h6>Customers</h6>
+                    <h3 id="customersCount">0</h3>
+                    <p class="mb-0"><i class="bi bi-arrow-up"></i> <span id="customersCountChange">0%</span> increase</p>
+                </div>
+            </div>
+                </div>
+                <div class="col-12 col-md-6 col-lg-3">
+            <div class="card stat-card report-card visible">
+                <div class="card-body text-center">
+                    <h6>Average Order</h6>
+                    <h3 id="averageOrderValue">$0</h3>
+                    <p class="mb-0"><i class="bi bi-arrow-down"></i> <span id="averageOrderValueChange">0%</span> decrease</p>
+                </div>
+            </div>
+                </div>
+            </div>
+
+            <!-- Recent Orders -->
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Recent Orders</h5>
+                    <button class="btn btn-primary btn-sm" onclick="window.location.href='orders-admin.html'">View All</button>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover recent-orders-table">
+                            <thead>
+                                <tr>
+                                    <th>Order No.</th>
+                                    <th>Customer</th>
+                                    <th>Product</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recentOrdersTableBody">
+                                <!-- Recent orders will be dynamically inserted here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer style="position: fixed; bottom: 0; width: 100%; background-color: #1a1a1a; color: white; padding: 20px 0; text-align: center; z-index: 1050; box-shadow: 0 -2px 10px rgba(0,0,0,0.5);">
+        <p style="margin: 0;">&copy; 2025 NextGen Hardware | <a href="privacy-policy.html" style="color: #4895ef; text-decoration: none; transition: color 0.3s ease;">Privacy Policy</a> | <a href="terms-conditions.html" style="color: #4895ef; text-decoration: none; transition: color 0.3s ease;">Terms & Conditions</a></p>
+    </footer>
+
+    <style>
+        footer a:hover {
+            color:  #f72585;
+        }
+    </style>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <!-- Dashboard JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.overlay');
+            const content = document.getElementById('content');
+
+            sidebarToggle.addEventListener('click', function() {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', function() {
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && 
+                    !overlay.contains(e.target) && window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+
+            const observerOptions = {
+                threshold: 0.1
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, observerOptions);
+
+            if (content) observer.observe(content);
+
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => observer.observe(card));
+
+            // Add immediate reload on dashboard sidebar link click without animation delay
+            const dashboardLink = document.querySelector('#sidebar a.sidebar-link[href="dashboard.html"]');
+            if (dashboardLink) {
+                dashboardLink.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Dashboard link clicked. Reloading page immediately.');
+                    window.location.href = window.location.href;
+                });
+            }
+        });
+
+function logout() {
+       showPopupMessage("Are you sure you want to log out?", async function(confirmed) {
+           if (confirmed) {
+               try {
+                   const token = localStorage.getItem('token');
+                   const response = await fetch('/api/users/logout', {
+                       method: 'POST',
+                       headers: {
+                           'Authorization': 'Bearer ' + token,
+                           'Content-Type': 'application/json'
+                       }
+                   });
+                   if (response.ok) {
+                       localStorage.removeItem('token');
+                       window.location.href = "auth.html";
+                   } else {
+                       alert('Logout failed');
+                   }
+               } catch (error) {
+                   alert('Logout error: ' + error.message);
+               }
+           }
+       });
+   }
+
+        // Function to show popup message with animation and transition
+        function showPopupMessage(message, callback) {
+            // Create overlay
+            const overlay = document.createElement('div');
+            overlay.className = 'popup-overlay';
+
+            // Create popup container
+            const popup = document.createElement('div');
+            popup.className = 'popup-message';
+
+            // Message text
+            const msg = document.createElement('p');
+            msg.textContent = message;
+            popup.appendChild(msg);
+
+            // Buttons container
+            const btnContainer = document.createElement('div');
+            btnContainer.className = 'popup-buttons';
+
+            // Yes button
+            const yesBtn = document.createElement('button');
+            yesBtn.textContent = 'Yes';
+            yesBtn.className = 'btn btn-primary';
+            yesBtn.onclick = () => {
+                closePopup();
+                callback(true);
+            };
+
+            // No button
+            const noBtn = document.createElement('button');
+            noBtn.textContent = 'No';
+            noBtn.className = 'btn btn-secondary';
+            noBtn.onclick = () => {
+                closePopup();
+                callback(false);
+            };
+
+            btnContainer.appendChild(yesBtn);
+            btnContainer.appendChild(noBtn);
+            popup.appendChild(btnContainer);
+            document.body.appendChild(overlay);
+            document.body.appendChild(popup);
+
+            // Animate popup and overlay
+            setTimeout(() => {
+                overlay.classList.add('show');
+                popup.classList.add('show');
+            }, 10);
+
+            // Close popup function
+            function closePopup() {
+                popup.classList.remove('show');
+                overlay.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(popup);
+                    document.body.removeChild(overlay);
+                }, 300);
+            }
+        }
+    </script>
+
+    <style>
+        /* Popup overlay */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0,0,0,0.5);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 1050;
+        }
+
+        .popup-overlay.show {
+            opacity: 1;
+        }
+
+        /* Popup message box */
+        .popup-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -60%) scale(0.8);
+            background-color: white;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 1051;
+            max-width: 320px;
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .popup-message.show {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .popup-message p {
+            margin-bottom: 20px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .popup-buttons {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .popup-buttons .btn {
+            min-width: 80px;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+    </style>
+    </script>
+
+    <style>
+        /* Logout button animation and transition */
+        .logout-button {
+            transition: color 0.3s ease, background-color 0.3s ease, transform 0.2s ease;
+            cursor: pointer;
+        }
+
+        .logout-button:hover {
+            color: #ff7f50;
+            background-color: rgba(255, 127, 80, 0.1);
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(133, 135, 150, 0.5);
+            border-radius: 8px;
+        }
+
+        .logout-button:active {
+            transform: scale(0.95);
+            transition: transform 0.1s ease;
+        }
+
+        /* Center align recent orders table text */
+        .recent-orders-table th,
+        .recent-orders-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+    </style>
+
+    <script>
+        async function fetchDashboardData() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    console.error('No token found in localStorage');
+                    return;
+                }
+                const response = await fetch('/api/dashboard', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch dashboard data');
+                }
+                const data = await response.json();
+
+                // Update stats
+                document.getElementById('totalSales').textContent = `$${data.totalSales.toFixed(2)}`;
+                document.getElementById('ordersCount').textContent = data.ordersCount;
+                document.getElementById('customersCount').textContent = data.customersCount;
+                document.getElementById('averageOrderValue').textContent = `$${data.averageOrderValue.toFixed(2)}`;
+
+                // Update increase/decrease percentages
+                function updateChangeElement(id, change) {
+                    const el = document.getElementById(id);
+                    if (!el) return;
+                    el.textContent = `${Math.abs(change).toFixed(1)}%`;
+                    const icon = el.previousElementSibling;
+                    if (change > 0) {
+                        icon.className = 'bi bi-arrow-up';
+                        el.parentElement.style.color = 'white'; // changed to white for increase
+                    } else if (change < 0) {
+                        icon.className = 'bi bi-arrow-down';
+                        el.parentElement.style.color = 'white'; // changed to white for decrease
+                    } else {
+                        icon.className = '';
+                        el.parentElement.style.color = 'inherit';
+                    }
+                }
+
+                updateChangeElement('totalSalesChange', data.totalSalesChange);
+                updateChangeElement('ordersCountChange', data.ordersCountChange);
+                updateChangeElement('customersCountChange', data.customersCountChange);
+                updateChangeElement('averageOrderValueChange', data.averageOrderValueChange);
+
+                // Update recent orders table
+                const tbody = document.getElementById('recentOrdersTableBody');
+                tbody.innerHTML = '';
+                data.recentOrders.forEach(order => {
+                    const tr = document.createElement('tr');
+
+                    const orderNumberTd = document.createElement('td');
+                    orderNumberTd.textContent = `#${order.orderNumber}`;
+                    tr.appendChild(orderNumberTd);
+
+                    const customerTd = document.createElement('td');
+                    customerTd.textContent = order.customer;
+                    tr.appendChild(customerTd);
+
+                    const productsTd = document.createElement('td');
+                    productsTd.textContent = order.products;
+                    tr.appendChild(productsTd);
+
+                    const amountTd = document.createElement('td');
+                    amountTd.textContent = `$${order.amount.toFixed(2)}`;
+                    tr.appendChild(amountTd);
+
+                    const statusTd = document.createElement('td');
+                    const badgeSpan = document.createElement('span');
+                    badgeSpan.textContent = order.status;
+                    badgeSpan.classList.add('order-status-badge');
+                    switch (order.status.toLowerCase()) {
+                        case 'delivered':
+                            badgeSpan.classList.add('status-delivered');
+                            break;
+                        case 'processing':
+                            badgeSpan.classList.add('status-processing');
+                            break;
+                        case 'shipped':
+                            badgeSpan.classList.add('status-shipped');
+                            break;
+                        case 'cancelled':
+                            badgeSpan.classList.add('status-cancelled');
+                            break;
+                        case 'order placed':
+                            badgeSpan.classList.add('status-order-placed');
+                            break;
+                        case 'order processed':
+                            badgeSpan.classList.add('status-order-processed');
+                            break;
+                        case 'out for delivery':
+                            badgeSpan.classList.add('status-out-for-delivery');
+                            break;
+                        default:
+                            badgeSpan.classList.add('status-secondary');
+                    }
+                    statusTd.appendChild(badgeSpan);
+                    tr.appendChild(statusTd);
+
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('Error loading dashboard data:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchDashboardData();
+        });
+    </script>
+</body>
+</html>

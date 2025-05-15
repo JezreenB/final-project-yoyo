@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Reports - Admin Panel</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #ff7f50;
+            --secondary-color: #1a1a1a;
+            --success-color: #1cc88a;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+            --sidebar-width: 250px;
+            --card-bg: #fff;
+            --card-shadow: rgba(0, 0, 0, 0.1);
+            --card-shadow-hover: rgba(0, 0, 0, 0.2);
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            background-color: #f0f2f5;
+            position: fixed;
+            width: 100%;
+        }
+
+        .navbar-brand {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            animation: pulseBrand 3s ease-in-out infinite;
+        }
+        .container-fluid {
+            position: relative;
+        }
+
+        #sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background-color: var(--secondary-color);
+            transform: translateX(-100%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1110;
+            overflow-y: auto;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .sidebar-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: var(--primary-color);
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(255, 127, 80, 0.5);
+            border-radius: 8px;
+        }
+
+        .sidebar-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        #content {
+            transition: 0.3s;
+            height: 100vh;
+            padding-top: 60px;
+            padding-bottom: 80px;
+            overflow-y: auto;
+            position: relative;
+            z-index: 1;
+        }
+        #content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1000;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 999;
+        }
+
+        #sidebar.active {
+            transform: translateX(0);
+        }
+
+        .nav-link, 
+        .nav-link:active,
+        .nav-link:focus,
+        .nav-link.active {
+            color: white !important;
+        }
+
+        .notification-icon {
+            color: white !important;
+            background: transparent !important;
+            border: none !important;
+            padding: 0.5rem;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .notification-icon:hover {
+            transform: scale(1.1);
+            color: #ff7f50 !important;
+        }
+
+        .notification-icon:focus,
+        .notification-icon:active {
+            color: white !important;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .notification-icon i {
+            font-size: 1.2rem;
+        }
+
+        .dropdown-menu {
+            border: none;
+            box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+            border-radius: 0.35rem;
+        }
+
+        .dropdown-item {
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-item i {
+            margin-right: 0.5rem;
+            width: 1rem;
+            text-align: center;
+        }
+
+        .profile-section {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: white;
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .stat-card {
+            background: linear-gradient(45deg, #f9f2b1, #ee774b, #000000);
+            color: white;
+            font-weight: 600;
+            transition: background 0.3s, color 0.3s;
+            background-size: 300% 300%;
+            animation: gradientShift 5s ease infinite;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            cursor: default;
+        }
+
+        .stat-card:hover {
+            background: linear-gradient(45deg, #000000, #ff7f50, #ffeb3b);
+            color: white;
+            background-size: 300% 300%;
+            animation: gradientShift 5s ease infinite;
+            box-shadow: 0 0 25px rgba(255, 127, 80, 0.8);
+            transform: scale(1.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        @keyframes gradientShift {
+            0% {background-position: 0% 50%;}
+            50% {background-position: 100% 50%;}
+            100% {background-position: 0% 50%;}
+        }
+
+        .animated-header {
+            background: linear-gradient(270deg, #ff7f50, #ff5722, #ff7f50);
+            background-size: 600% 600%;
+            color: white;
+            font-weight: 700;
+            border-radius: 12px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            animation: gradientShift 8s ease infinite;
+        }
+
+        .animated-header:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(255, 127, 80, 0.7);
+        }
+
+        .animated-header th {
+            padding: 12px 16px;
+        }
+
+        @keyframes slideDown {
+            0% {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .slide-down-navbar {
+            animation: slideDown 0.6s ease forwards;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+            margin-bottom: 32px;
+            background: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+        }
+
+        .filters label {
+            font-weight: 600;
+            margin-right: 8px;
+            white-space: nowrap;
+        }
+
+        .filters input[type="date"], .filters select {
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            min-width: 140px;
+        }
+
+        .generate-report-btn, .export-report-btn {
+            margin-left: auto;
+            background-color: var(--primary-color);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-weight: 700;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .generate-report-btn:hover, .export-report-btn:hover {
+            background-color: #e76b3c;
+        }
+
+        .generate-report-btn i, .export-report-btn i {
+            font-size: 1.2rem;
+        }
+
+        .table-container {
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px var(--card-shadow);
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 12px;
+        }
+
+        th, td {
+            padding: 12px 16px;
+            text-align: left;
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #f8f9fa;
+            font-weight: 700;
+            color: var(--secondary-color);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        tbody tr {
+            background: #fff;
+            box-shadow: 0 2px 8px var(--card-shadow);
+            border-radius: 12px;
+            transition: box-shadow 0.3s ease;
+        }
+
+        tbody tr:hover {
+            box-shadow: 0 6px 20px var(--card-shadow-hover);
+        }
+
+        tbody tr td:first-child {
+            border-top-left-radius: 12px;
+            border-bottom-left-radius: 12px;
+        }
+
+        tbody tr td:last-child {
+            border-top-right-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        @media (max-width: 768px) {
+            #content.active {
+                margin-left: 0;
+            }
+            
+            #sidebar {
+                position: fixed;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .generate-report-btn, .export-report-btn {
+                margin-left: 0;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .reports-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div id="sidebar" style="z-index: 1110; overflow-y: auto;">
+        <div class="profile-section text-white text-center">
+            <img src="images/logo.png" alt="Admin Profile" class="profile-img mb-3" />
+            <h6 class="mb-0">Admin User</h6>
+            <small>Administrator</small>
+        </div>
+
+        <div class="mt-4" style="padding-bottom: 60px;">
+            <a href="dashboard.html" class="sidebar-link">
+                <i class="bi bi-speedometer2"></i>
+                Dashboard
+            </a>
+            <a href="products-admin.html" class="sidebar-link">
+                <i class="bi bi-box-seam"></i>
+                Products
+            </a>
+            <a href="orders-admin.html" class="sidebar-link">
+                <i class="bi bi-cart3"></i>
+                Orders
+            </a>
+            <a href="customers-admin.html" class="sidebar-link">
+                <i class="bi bi-people"></i>
+                Customers
+            </a>
+            <a href="reports.html" class="sidebar-link active">
+                <i class="bi bi-graph-up"></i>
+                Reports
+            </a>
+            <a href="settings.html" class="sidebar-link">
+                <i class="bi bi-gear"></i>
+                Settings
+            </a>
+<a href="#" class="sidebar-link logout-button" onclick="logout()">
+                <i class="bi bi-box-arrow-right"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+
+<script src="admin-logout.js"></script>
+
+    <div class="overlay"></div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <!-- Navbar -->
+        <nav class="navbar navbar-expand-lg slide-down-navbar">
+            <div class="container-fluid">
+                <button id="sidebarToggle" class="btn position-absolute start-0">
+                    <i class="bi bi-list fs-4 text-white"></i>
+                </button>
+
+                <div class="navbar-brand text-white position-absolute start-50 translate-middle-x zoom-animation">NextGen Hardware</div>
+
+                <div class="ms-auto d-flex align-items-center">
+                    <a href="index.html" class="btn btn-primary me-3 btn-gradient-alive">Go to Website</a>
+                    <!-- Notification Dropdown -->
+                    <div class="dropdown">
+                        <button
+                            class="btn position-relative notification-icon"
+                            type="button"
+                            id="notificationDropdown"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                        >
+                            <i class="bi bi-bell fs-5"></i>
+                            <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="display:none;">
+                                0
+                            </span>
+                        </button>
+                        <ul id="notificationList" class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown" style="min-width: 300px; background: white;">
+                            <li class="dropdown-item text-center">Loading notifications...</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Reports Content -->
+        <div class="container-fluid p-4">
+            <!-- Filters and Export -->
+            <div class="filters mb-4">
+                <div>
+                    <label for="startDate">Start Date:</label>
+                    <input type="date" id="startDate" />
+                </div>
+                <div>
+                    <label for="endDate">End Date:</label>
+                    <input type="date" id="endDate" />
+                </div>
+                <button class="generate-report-btn" id="generateReportBtn">
+                    <i class="bi bi-file-earmark-text"></i> Generate Report
+                </button>
+                <button class="export-report-btn btn btn-outline-primary ms-3" id="exportReportBtn">
+                    <i class="bi bi-download"></i> Export Report
+                </button>
+            </div>
+
+            <!-- KPI Summary -->
+            <div class="row mb-4 g-3" id="kpiSummaryRow">
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <h6>Total Sales</h6>
+                            <h3 id="totalSales">$0</h3>
+                            <p class="mb-0">Year to Date</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <h6>New Customers</h6>
+                            <h3 id="newCustomers">0</h3>
+                            <p class="mb-0">Last 12 Months</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <h6>Profit Margin</h6>
+                            <h3 id="profitMargin">0%</h3>
+                            <p class="mb-0">Year to Date</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card stat-card">
+                        <div class="card-body text-center">
+                            <h6>Inventory Status</h6>
+                            <h3 id="lowStockCount">Low Stock: 0</h3>
+                            <p class="mb-0">Needs Restocking</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="reports-grid">
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6 d-flex flex-column">
+                            <div class="card flex-fill report-card visible">
+                                <div class="card-header report-card-header"><b>Monthly Revenue</b></div>
+                                <div class="card-body d-flex flex-column report-card-body">
+                                    <canvas id="salesOverTimeChart" class="chart-container flex-fill"></canvas>
+                                    <p class="mt-3 report-card-text">
+                                        Track your monthly revenue trends to identify peak sales periods and growth opportunities.
+                                    </p>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="col-md-6 d-flex flex-column">
+                            <div class="card flex-fill report-card visible">
+                                <div class="card-header report-card-header"><b>New Customer Acquisition</b></div>
+                                <div class="card-body d-flex flex-column report-card-body">
+                                    <canvas id="customerGrowthChart" class="chart-container flex-fill"></canvas>
+                                    <p class="mt-3 report-card-text">
+                                        Monitor the growth of your customer base over time to evaluate marketing effectiveness.
+                                    </p>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <div class="col-md-6 d-flex flex-column">
+                            <div class="card flex-fill report-card visible">
+                                <div class="card-header report-card-header"><b> Sales Distribution</b></div>
+                                <div class="card-body d-flex flex-column report-card-body">
+                                    <canvas id="salesByCategoryChart" class="chart-container flex-fill"></canvas>
+                                    <p class="p-3 report-card-text mb-4">
+                                        Visualize the contribution of each product category to your overall sales.
+                                    </p>
+                                </div>
+                            </div>
+                    </div>
+                    <div class="col-md-6 d-flex flex-column">
+                            <div class="card table-container flex-fill report-card visible">
+                                <div class="card-header report-card-header"><b>Best Selling Products</b></div>
+                                <div class="card-body p-0 d-flex flex-column report-card-body">
+                                    <table class="table mb-0 flex-fill" id="bestSellingProductsTable">
+                                        <thead>
+                                        <tr class="animated-header">
+                                            <th style="background-color: #fb916a; border-color: #000000;">Product Name</th>
+                                            <th style="background-color: #fb916a; border-color: #000000;">Units Sold</th>
+                                            <th style="background-color: #fb916a; border-color: #000000;">Total Revenue</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Best selling products rows will be dynamically inserted here -->
+                                        </tbody>
+                                    </table>
+                                    <p class="p-3 report-card-text mb-4 mt-auto">
+                                        The table above highlights your best selling products by units sold and total revenue generated.
+                                    </p>
+                                </div>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+     <!-- Footer -->
+     <footer style="position: fixed; bottom: 0; width: 100%; background-color: #1a1a1a; color: white; padding: 20px 0; text-align: center; z-index: 1050; box-shadow: 0 -2px 10px rgba(0,0,0,0.5);">
+        <p style="margin: 0;">&copy; 2025 NextGen Hardware | <a href="privacy-policy.html" style="color: #4895ef; text-decoration: none; transition: color 0.3s ease;">Privacy Policy</a> | <a href="terms-conditions.html" style="color: #4895ef; text-decoration: none; transition: color 0.3s ease;">Terms & Conditions</a></p>
+    </footer>
+
+    <style>
+        footer a:hover {
+            color:  #f72585;
+        }
+    </style>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.overlay');
+            const content = document.getElementById('content');
+
+            sidebarToggle.addEventListener('click', function () {
+                sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+            });
+
+            overlay.addEventListener('click', function () {
+                if (sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+
+            document.addEventListener('click', function (e) {
+                if (
+                    !sidebar.contains(e.target) &&
+                    !sidebarToggle.contains(e.target) &&
+                    !overlay.contains(e.target) &&
+                    window.innerWidth <= 768
+                ) {
+                    sidebar.classList.remove('active');
+                    overlay.classList.remove('active');
+                }
+            });
+
+            // Chart.js charts initialization
+            const salesOverTimeCtx = document.getElementById('salesOverTimeChart').getContext('2d');
+            const salesByCategoryCtx = document.getElementById('salesByCategoryChart').getContext('2d');
+            const customerGrowthCtx = document.getElementById('customerGrowthChart').getContext('2d');
+
+            // Initialize charts with empty data
+            const salesOverTimeChart = new Chart(salesOverTimeCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'Sales',
+                        data: Array(12).fill(0),
+                        backgroundColor: 'rgba(255, 127, 80, 0.2)',
+                        borderColor: 'rgba(255, 127, 80, 1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        }
+                    }
+                }
+            });
+
+            const salesByCategoryChart = new Chart(salesByCategoryCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: 'Sales by Category',
+                        data: [],
+                        backgroundColor: [
+                            'rgba(255, 127, 80, 0.8)',
+                            'rgba(102, 16, 242, 0.8)',
+                            'rgba(28, 200, 138, 0.8)',
+                            'rgba(255, 206, 86, 0.8)'
+                        ],
+                        borderColor: 'rgba(255, 255, 255, 1)',
+                        borderWidth: 2,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'right',
+                        },
+                    }
+                }
+            });
+
+            const gradient = customerGrowthCtx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, 'rgba(255, 99, 132, 0.8)');
+            gradient.addColorStop(1, 'rgba(255, 159, 64, 0.8)');
+            const customerGrowthChart = new Chart(customerGrowthCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+                    datasets: [{
+                        label: 'New Customers',
+                        data: Array(12).fill(0),
+                        backgroundColor: gradient,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false,
+                        },
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                        }
+                    }
+                }
+            });
+
+            // Fetch and update KPI summary
+            async function fetchKpiSummary() {
+                try {
+                    const response = await fetch('/api/reports/kpi-summary');
+                    if (!response.ok) throw new Error('Failed to fetch KPI summary');
+                    const data = await response.json();
+                    document.getElementById('totalSales').textContent = `$${data.totalSales.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                    document.getElementById('newCustomers').textContent = data.newCustomers.toLocaleString();
+                    document.getElementById('profitMargin').textContent = `${data.profitMargin}%`;
+                    document.getElementById('lowStockCount').textContent = `Low Stock: ${data.lowStockCount}`;
+                } catch (error) {
+                    console.error('Error fetching KPI summary:', error);
+                }
+            }
+
+            // Fetch and update Monthly Revenue chart
+            async function fetchMonthlyRevenue() {
+                try {
+                    const response = await fetch('/api/reports/monthly-revenue');
+                    if (!response.ok) throw new Error('Failed to fetch monthly revenue');
+                    const data = await response.json();
+                    salesOverTimeChart.data.datasets[0].data = data;
+                    salesOverTimeChart.update();
+                } catch (error) {
+                    console.error('Error fetching monthly revenue:', error);
+                }
+            }
+
+            // Fetch and update Customer Growth chart
+            async function fetchCustomerGrowth() {
+                try {
+                    const response = await fetch('/api/reports/customer-growth');
+                    if (!response.ok) throw new Error('Failed to fetch customer growth');
+                    const data = await response.json();
+                    customerGrowthChart.data.datasets[0].data = data;
+                    customerGrowthChart.update();
+                } catch (error) {
+                    console.error('Error fetching customer growth:', error);
+                }
+            }
+
+            // Fetch and update Sales by Category chart
+            async function fetchSalesByCategory() {
+                try {
+                    const response = await fetch('/api/reports/sales-by-category');
+                    if (!response.ok) throw new Error('Failed to fetch sales by category');
+                    const data = await response.json();
+                    salesByCategoryChart.data.labels = data.map(item => item._id || 'Unknown');
+                    salesByCategoryChart.data.datasets[0].data = data.map(item => item.totalSales);
+                    salesByCategoryChart.update();
+                } catch (error) {
+                    console.error('Error fetching sales by category:', error);
+                }
+            }
+
+            // Fetch and update Best Selling Products table
+            async function fetchBestSellingProducts() {
+                try {
+                    const response = await fetch('/api/reports/best-selling-products');
+                    if (!response.ok) throw new Error('Failed to fetch best selling products');
+                    const data = await response.json();
+                    const tbody = document.querySelector('#bestSellingProductsTable tbody');
+                    tbody.innerHTML = '';
+                    data.forEach(product => {
+                        const tr = document.createElement('tr');
+                        const nameTd = document.createElement('td');
+                        nameTd.textContent = product.productName;
+                        const unitsSoldTd = document.createElement('td');
+                        unitsSoldTd.textContent = product.unitsSold.toLocaleString();
+                        const revenueTd = document.createElement('td');
+                        revenueTd.textContent = `$${product.totalRevenue.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                        tr.appendChild(nameTd);
+                        tr.appendChild(unitsSoldTd);
+                        tr.appendChild(revenueTd);
+                        tbody.appendChild(tr);
+                    });
+                } catch (error) {
+                    console.error('Error fetching best selling products:', error);
+                }
+            }
+
+            // Initial data fetch
+            async function fetchAllReportsData() {
+                await Promise.all([
+                    fetchKpiSummary(),
+                    fetchMonthlyRevenue(),
+                    fetchCustomerGrowth(),
+                    fetchSalesByCategory(),
+                    fetchBestSellingProducts()
+                ]);
+            }
+
+            fetchAllReportsData();
+
+            // Generate Report button click handler
+            document.getElementById('generateReportBtn').addEventListener('click', function () {
+                const startDate = document.getElementById('startDate').value;
+                const endDate = document.getElementById('endDate').value;
+                if (!startDate || !endDate) {
+                    alert('Please select both start and end dates.');
+                    return;
+                }
+                if (startDate > endDate) {
+                    alert('Start date cannot be after end date.');
+                    return;
+                }
+                alert(`Generating report from ${startDate} to ${endDate}...`);
+                // Implement actual report generation logic here
+            });
+
+            // Export Report button click handler
+            document.getElementById('exportReportBtn').addEventListener('click', function () {
+                exportReport();
+            });
+
+            function exportReport() {
+                let csvContent = "data:text/csv;charset=utf-8,";
+
+                const table = document.getElementById('bestSellingProductsTable');
+                for (let row of table.rows) {
+                    let rowData = [];
+                    for (let cell of row.cells) {
+                        rowData.push(cell.innerText.replace(/,/g, ''));
+                    }
+                    csvContent += rowData.join(",") + "\r\n";
+                }
+
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", "best_selling_products_report.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        });
+
+        async function logout() {
+            showPopupMessage("Are you sure you want to log out?", async function(confirmed) {
+                if (confirmed) {
+                    try {
+                        const token = localStorage.getItem('token');
+                        const response = await fetch('/api/users/logout', {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': 'Bearer ' + token,
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        if (response.ok) {
+                            localStorage.removeItem('token');
+                            window.location.href = "auth.html";
+                        } else {
+                            alert('Logout failed');
+                        }
+                    } catch (error) {
+                        alert('Logout error: ' + error.message);
+                    }
+                }
+            });
+        }
+
+        function showPopupMessage(message, callback) {
+            const overlay = document.createElement('div');
+            overlay.className = 'popup-overlay';
+
+            const popup = document.createElement('div');
+            popup.className = 'popup-message';
+
+            const msg = document.createElement('p');
+            msg.textContent = message;
+            popup.appendChild(msg);
+
+            const btnContainer = document.createElement('div');
+            btnContainer.className = 'popup-buttons';
+
+            const yesBtn = document.createElement('button');
+            yesBtn.textContent = 'Yes';
+            yesBtn.className = 'btn btn-primary';
+            yesBtn.onclick = () => {
+                closePopup();
+                callback(true);
+            };
+
+            const noBtn = document.createElement('button');
+            noBtn.textContent = 'No';
+            noBtn.className = 'btn btn-secondary';
+            noBtn.onclick = () => {
+                closePopup();
+                callback(false);
+            };
+
+            btnContainer.appendChild(yesBtn);
+            btnContainer.appendChild(noBtn);
+            popup.appendChild(btnContainer);
+            document.body.appendChild(overlay);
+            document.body.appendChild(popup);
+
+            setTimeout(() => {
+                overlay.classList.add('show');
+                popup.classList.add('show');
+            }, 10);
+
+            function closePopup() {
+                popup.classList.remove('show');
+                overlay.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(popup);
+                    document.body.removeChild(overlay);
+                }, 300);
+            }
+        }
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // New code to fetch notifications and update notification badge and list
+            async function fetchNotifications() {
+                const token = localStorage.getItem('token');
+                const notificationBadge = document.getElementById('notificationBadge');
+                const notificationList = document.getElementById('notificationList');
+
+                try {
+                    const response = await fetch('/api/notifications', {
+                        headers: {
+                            'Authorization': 'Bearer ' + token
+                        }
+                    });
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch notifications');
+                    }
+                    const data = await response.json();
+                    const notifications = data.notifications || [];
+
+                    // Update badge count
+                    if (notifications.length > 0) {
+                        notificationBadge.style.display = 'inline-block';
+                        notificationBadge.textContent = notifications.length;
+                    } else {
+                        notificationBadge.style.display = 'none';
+                    }
+
+                    // Clear existing list items
+                    notificationList.innerHTML = '';
+
+                    if (notifications.length === 0) {
+                        const li = document.createElement('li');
+                        li.className = 'dropdown-item text-center';
+                        li.textContent = 'No new notifications';
+                        notificationList.appendChild(li);
+                    } else {
+                        notifications.forEach(notification => {
+                            const li = document.createElement('li');
+                            li.className = 'dropdown-item py-2';
+                            li.innerHTML = `<i class="bi bi-info-circle me-2"></i>${notification.message}`;
+                            notificationList.appendChild(li);
+                        });
+                        const viewAllLi = document.createElement('li');
+                        viewAllLi.className = 'dropdown-item text-center';
+                        viewAllLi.innerHTML = '<a href="notifications.html">View All Notifications</a>';
+                        notificationList.appendChild(viewAllLi);
+                    }
+                } catch (error) {
+                    console.error(error);
+                    notificationBadge.style.display = 'none';
+                    notificationList.innerHTML = '<li class="dropdown-item text-center">Failed to load notifications</li>';
+                }
+            }
+
+            // Call fetchNotifications on page load
+            fetchNotifications();
+        });
+    </script>
+</body>
+</html>
