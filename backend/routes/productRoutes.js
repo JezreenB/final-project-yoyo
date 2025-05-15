@@ -16,16 +16,4 @@ router.post('/', authenticateToken, authenticateAdmin, productController.addProd
 // Delete product by id (admin only)
 router.delete('/:id', authenticateToken, authenticateAdmin, productController.deleteProduct);
 
-// Update product by id (admin only)
-router.put('/:id', authenticateToken, authenticateAdmin, productController.updateProduct);
-
-// Bulk delete products (admin only)
-router.post('/bulk-delete', authenticateToken, authenticateAdmin, productController.bulkDeleteProducts);
-
-// Bulk update stock (admin only)
-router.post('/bulk-update-stock', authenticateToken, authenticateAdmin, productController.bulkUpdateStock);
-
-// Bulk change category (admin only)
-router.post('/bulk-change-category', authenticateToken, authenticateAdmin, productController.bulkChangeCategory);
-
 module.exports = router;

@@ -67,6 +67,7 @@ exports.getCurrentUser = async (req, res) => {
     res.status(500).json({ message: 'Error fetching user profile' });
   }
 };
+<<<<<<< HEAD
 
   
 // Get user details by ID
@@ -184,3 +185,5 @@ exports.logout = (req, res) => {
   // Since JWT is stateless, logout can be handled on client side by deleting token
   res.json({ message: 'Logout successful' });
 };
+=======
+>>>>>>> cb24943cc1ae5541c634ca51e3a502a4657ce3ae

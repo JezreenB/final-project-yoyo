@@ -16,12 +16,15 @@ const orderSchema = new mongoose.Schema({
   shippingMethod: { type: String, required: true },
   orderDate: { type: Date, default: Date.now },
   items: [orderItemSchema],
+<<<<<<< HEAD
   statusNotes: [
     {
       note: { type: String },
       date: { type: Date, default: Date.now }
     }
   ]
+=======
+>>>>>>> cb24943cc1ae5541c634ca51e3a502a4657ce3ae
 });
 
 module.exports = mongoose.model('Order', orderSchema);
