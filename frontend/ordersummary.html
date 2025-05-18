@@ -700,6 +700,31 @@
             border-color: #e67347 !important;
             color: white !important;
         }
+        .btn-outline-primary.btn-sm:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+
+        /* Added CSS for boxed-heading */
+        .boxed-heading {
+            display: inline-block;
+            background-color: #fbfbfd;              
+            border: 3px solid #3f37c9;              /* deep blue border */
+            padding: 10px 30px;
+            border-radius: 20px;
+            color: #3f37c9;                         /* deep blue text */
+            font-weight: bold;
+            font-size: 2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .boxed-heading:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+        }
     </style>
 </head>
 <body>
