@@ -10,64 +10,56 @@ const http = require('http');
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+// Serve auth.html at the root URL
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'frontend/auth.html'));
+});
+
 // Check if environment variables are loaded
 if (!process.env.MONGO_URI) {
-    console.error('MongoDB URI is not defined in .env file');
-    process.exit(1);
+  console.error('MongoDB URI is not defined in .env file');
+  process.exit(1);
 }
 
 console.log('Connecting to MongoDB with URI:', process.env.MONGO_URI);
 connectDB();
 
-const userRoutes = require('./backend/routes/userRoutes');
-const settingsRoutes = require('./backend/routes/settingsRoutes');
-const productRoutes = require('./backend/routes/productRoutes');
-const cartRoutes = require('./backend/routes/cartRoutes');
-const orderRoutes = require('./backend/routes/orderRoutes');
-const reviewRoutes = require('./backend/routes/reviewRoutes');
-const contactRoutes = require('./backend/routes/contactRoutes');
-const dashboardRoutes = require('./backend/routes/dashboardRoutes');
-
-// Enable CORS for all origins temporarily for testing
+// --- MIDDLEWARE ---
 app.use(cors());
-
 app.use(bodyParser.json({ limit: '10mb' }));
 
-// Serve uploaded images statically (assuming uploads folder is now in root)
+// Serve uploaded images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Serve product images statically from frontend/images
+// Serve product images from frontend/images
 app.use('/images', express.static(path.join(__dirname, 'frontend/images')));
 
-// API routes
-app.use('/api/users', userRoutes);
-app.use('/api/settings', settingsRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/cart', cartRoutes);
-app.use('/api/orders', orderRoutes);
-app.use('/api/reviews', reviewRoutes);
-app.use('/api', contactRoutes);
-app.use('/api', dashboardRoutes);
+// --- API ROUTES ---
+app.use('/api/users', require('./backend/routes/userRoutes'));
+app.use('/api/settings', require('./backend/routes/settingsRoutes'));
+app.use('/api/products', require('./backend/routes/productRoutes'));
+app.use('/api/cart', require('./backend/routes/cartRoutes'));
+app.use('/api/orders', require('./backend/routes/orderRoutes'));
+app.use('/api/reviews', require('./backend/routes/reviewRoutes'));
+app.use('/api', require('./backend/routes/contactRoutes'));
+app.use('/api', require('./backend/routes/dashboardRoutes'));
 
-// Serve static files from the frontend directory
+// Serve static frontend assets
 app.use(express.static(path.join(__dirname, 'frontend')));
 
-const productsAdminPath = path.join(__dirname, 'frontend/products-admin.html');
-
-// Serve products-admin.html explicitly before catch-all route
+// Explicit route for products-admin.html
 app.get('/products-admin.html', (req, res) => {
-    res.sendFile(productsAdminPath);
+  res.sendFile(path.join(__dirname, 'frontend/products-admin.html'));
 });
 
-// Handle frontend routes except API routes
+// Catch-all for client-side routes (excluding /api)
 app.get(/^\/(?!api\/).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, 'frontend/index.html'));
+  res.sendFile(path.join(__dirname, 'frontend/index.html'));
 });
 
-// Create HTTP server with increased maxHeaderSize (32kb)
+// Create server with increased header size
 const server = http.createServer({ maxHeaderSize: 32768 }, app);
 
 server.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`);
 });
-
