@@ -1,51 +1,81 @@
 const Product = require('../models/Product');
+const path = require('path');
 
-// Get products
+const mongoose = require('mongoose');
+const Review = require('../models/Review');
+
+// Get products with review counts
 exports.getProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.aggregate([
+      {
+        $lookup: {
+          from: 'reviews',
+          localField: '_id',
+          foreignField: 'productId',
+          as: 'reviews'
+        }
+      },
+      {
+        $addFields: {
+          reviewCount: { $size: '$reviews' }
+        }
+      },
+      {
+        $project: {
+          reviews: 0 // exclude reviews array to reduce payload
+        }
+      }
+    ]);
+    console.log(`getProducts: Retrieved ${products.length} products`);
+    products.forEach(p => {
+      console.log(`Product ${p._id} has reviewCount: ${p.reviewCount}`);
+    });
     res.json(products);
   } catch (error) {
+    console.error('Failed to get products with review counts:', error);
     res.status(500).json({ message: 'Failed to get products' });
   }
 };
 
 // Add product (admin only - for simplicity no role check here)
 exports.addProduct = async (req, res) => {
-  const { name, category, price, stock, images } = req.body;
-  if (!name || !price || stock === undefined) {
-    return res.status(400).json({ message: 'Name, price, and stock are required' });
+  console.log('addProduct req.body:', req.body);
+  console.log('addProduct req.files:', req.files);
+  let { productName, category, price, stock } = req.body;
+
+  // Trim inputs and validate
+  productName = productName ? productName.trim() : '';
+  category = category ? category.trim() : '';
+  price = price ? price.toString().trim() : '';
+  stock = stock ? stock.toString().trim() : '';
+
+  const priceNum = parseFloat(price);
+  const stockNum = parseInt(stock, 10);
+
+  if (!productName || !category || !price || !stock) {
+    return res.status(400).json({ message: 'Product name, category, price, and stock are required' });
+  }
+  if (isNaN(priceNum) || isNaN(stockNum)) {
+    return res.status(400).json({ message: 'Price and stock must be valid numbers' });
   }
 
   try {
-    const product = new Product({ name, category, price, stock, images });
+    let images = [];
+    if (req.files && req.files.length > 0) {
+      images = req.files.map(file => {
+        // Store relative path for frontend usage
+        return '/uploads/products/' + path.basename(file.path);
+      });
+    }
+
+    const product = new Product({ name: productName, category, price: priceNum, stock: stockNum, images });
     await product.save();
+    console.log('Product saved with images:', product.images);
     res.status(201).json(product);
   } catch (error) {
+    console.error('Error in addProduct:', error);
     res.status(500).json({ message: 'Failed to add product' });
-  }
-};
-exports.updateProduct = async (req, res) => {
-  const id = req.params.id;
-  const { name, category, price, stock, images } = req.body;
-  if (!name || !price || stock === undefined) {
-    return res.status(400).json({ message: 'Name, price, and stock are required' });
-  }
-  try {
-    const product = await Product.findById(id);
-    if (!product) {
-      return res.status(404).json({ message: 'Product not found' });
-    }
-    product.name = name;
-    product.category = category;
-    product.price = price;
-    product.stock = stock;
-    product.images = images;
-    await product.save();
-    res.json({ message: 'Product updated' });
-  } catch (error) {
-    console.error('Error in updateProduct:', error);
-    res.status(500).json({ message: 'Failed to update product' });
   }
 };
 
@@ -83,16 +113,37 @@ exports.searchProducts = async (req, res) => {
 // Update product by id (admin only)
 exports.updateProduct = async (req, res) => {
   const id = req.params.id;
-  const { name, category, price, stock, images } = req.body;
-  if (!name || !price || stock === undefined) {
-    return res.status(400).json({ message: 'Name, price, and stock are required' });
+  const { productName, category, price, stock, existingImages } = req.body;
+  if (!productName || !category || !price || stock === undefined) {
+    return res.status(400).json({ message: 'Product name, category, price, and stock are required' });
   }
   try {
     const product = await Product.findById(id);
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
-    product.name = name;
+
+    let existingImagesArray = [];
+    if (existingImages) {
+      try {
+        existingImagesArray = JSON.parse(existingImages);
+      } catch (err) {
+        existingImagesArray = [];
+      }
+    }
+
+    let newImages = [];
+    if (req.files && req.files.length > 0) {
+      newImages = req.files.map(file => {
+        return '/uploads/products/' + path.basename(file.path);
+      });
+    }
+
+    // Use existingImagesArray as the source of truth for images to keep
+    // Append new uploaded images if any
+    const images = [...existingImagesArray, ...newImages];
+
+    product.name = productName;
     product.category = category;
     product.price = price;
     product.stock = stock;

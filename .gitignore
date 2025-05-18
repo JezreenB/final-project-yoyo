@@ -1,0 +1,27 @@
+# Node modules
+node_modules/
+backend/node_modules/
+
+# Environment variables
+*.env
+backend/.env
+
+# Uploads and media
+# Commented out to allow committing uploads folder for deployment
+# backend/uploads/
+
+# Logs
+logs/
+*.log
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Documentation and reports
+docs/
+lab_reports/
+
+# Package lock files (optional, depending on your preference)
+package-lock.json
+backend/package-lock.json

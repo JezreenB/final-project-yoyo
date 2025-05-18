@@ -18,23 +18,61 @@
             
         }
 
-        /* Header */
-        header {
-            background-color: #1a1a1a;
-            color: white;
-            padding: 20px 0;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+    /* Header */
+    @keyframes fadeInDown {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px);
         }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
 
-        .logo a {
-            color: #ff7f50;
-            text-decoration: none;
-            font-size: 32px;
-            font-weight: 700;
+    @keyframes scaleIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.8);
         }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    header {
+        background-color: #1a1a1a;
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        animation: fadeInDown 1s ease forwards;
+    }
+
+    .logo a {
+        color: #ff7f50;
+        text-decoration: none;
+        font-size: 32px;
+        font-weight: 700;
+        display: inline-block;
+        animation: scaleIn 1s ease forwards;
+    }
+
+    .logo a:hover {
+        animation: pulse 1.5s infinite;
+    }
 
         nav {
             margin-top: 10px;
@@ -364,23 +402,21 @@
     transform: translateY(-2px);
 }
 
-/* Review Button (Blue) */
-.product-card .review-btn {
-    background-color: #1E3A8A;
-    padding: 10px 20px;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    margin: 20px 0 0 5px;
-    transition: all 0.3s;
-    border: none;
-    cursor: pointer;
-}
-
-.product-card .review-btn:hover {
-    background-color: #1e2b7d;
-    transform: translateY(-2px);
-}
+        /* Review Button (Blue) */
+        .product-card .review-btn {
+            display: inline-block;
+            background-color: #1E3A8A;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 20px;
+        }
+        .product-card .review-btn:hover {
+            background-color: #16306b;
+        }
 
 /* Button container */
 .product-card .action-buttons {
@@ -395,11 +431,6 @@
     display: flex;
     gap: 10px;
     margin-bottom: 10px;
-}
-
-.product-card .review-btn {
-    margin-top: 0;
-    align-self: center;
 }
 /* Modal Styles */
 .modal {
@@ -434,6 +465,17 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+    scrollbar-width: none; /* Firefox */
+}
+#buyNowModal .modal-content::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none; /* Safari and Chrome */
 }
 
         .modal-content {
@@ -631,6 +673,7 @@
                 <li><a href="about.html"><i class="fa-solid fa-user"></i> About</a></li>
                 <li><a href="products.html" class="active"><i class="fa-solid fa-box-open"></i> Products</a></li>
                 <li><a href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                <li><a href="ordersummary.html"><i class="fa-solid fa-list"></i> Summary</a></li>
                 <li><a href="track-order.html"><i class="fa-solid fa-truck"></i> Track Order</a></li>
 
                             <li class="header-buttons">
@@ -732,6 +775,35 @@ document.getElementById('searchButton').addEventListener('click', () => {
           <option value="gcash">Gcash</option>
           <option value="cash-on-delivery">Cash on Delivery</option>
         </select>
+
+        <!-- Additional UI for payment methods -->
+        <div id="credit-card-info" style="display:none; margin-top: 15px;">
+          <label for="card-number">Card Number</label>
+          <input type="text" id="card-number" name="cardNumber" placeholder="1234 5678 9012 3456" pattern="\d{13,16}" title="Enter a valid card number" />
+          <label for="expiry-date" style="margin-top: 10px;">Expiry Date</label>
+          <input type="month" id="expiry-date" name="expiryDate" />
+          <label for="cvv" style="margin-top: 10px;">CVV</label>
+          <input type="password" id="cvv" name="cvv" placeholder="123" pattern="\d{3,4}" title="Enter a valid CVV" />
+        </div>
+
+        <div id="paypal-info" style="display:none; margin-top: 15px; text-align: center;">
+          <label for="paypal-email">PayPal Email</label>
+          <input type="email" id="paypal-email" name="paypalEmail" placeholder="Enter your PayPal email" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc;" required />
+        </div>
+
+        <div id="paymaya-info" style="display:none; margin-top: 15px; text-align: center;">
+          <label for="paymaya-phone">PayMaya Phone Number</label>
+          <input type="tel" id="paymaya-phone" name="paymayaPhone" placeholder="Enter your PayMaya phone number" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc;" />
+          <p style="margin-top: 10px;">Or scan the QR code below:</p>
+          <canvas id="paymaya-qr" style="width: 150px; height: 150px; margin-top: 10px;"></canvas>
+        </div>
+
+        <div id="gcash-info" style="display:none; margin-top: 15px; text-align: center;">
+          <label for="gcash-phone">GCash Phone Number</label>
+          <input type="tel" id="gcash-phone" name="gcashPhone" placeholder="Enter your GCash phone number" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc;" />
+          <p style="margin-top: 10px;">Or scan the QR code below:</p>
+          <canvas id="gcash-qr" style="width: 150px; height: 150px; margin-top: 10px;"></canvas>
+        </div>
       </div>
 
       <div class="form-group">
@@ -755,42 +827,103 @@ document.getElementById('searchButton').addEventListener('click', () => {
     </form>
   </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+<script>
+  // Show/hide payment method specific UI
+  document.getElementById('payment-method').addEventListener('change', function() {
+    const creditCardInfo = document.getElementById('credit-card-info');
+    const paypalInfo = document.getElementById('paypal-info');
+    const paymayaInfo = document.getElementById('paymaya-info');
+    const gcashInfo = document.getElementById('gcash-info');
+    const paypalEmailInput = document.getElementById('paypal-email');
+    const paymayaPhoneInput = document.getElementById('paymaya-phone');
+    const gcashPhoneInput = document.getElementById('gcash-phone');
+    const selected = this.value;
+
+    // Hide all initially
+    creditCardInfo.style.display = 'none';
+    paypalInfo.style.display = 'none';
+    paymayaInfo.style.display = 'none';
+    gcashInfo.style.display = 'none';
+
+    // Remove required attributes initially
+    if (paypalEmailInput) paypalEmailInput.required = false;
+    if (paymayaPhoneInput) paymayaPhoneInput.required = false;
+    if (gcashPhoneInput) gcashPhoneInput.required = false;
+
+    if (selected === 'credit-card') {
+      creditCardInfo.style.display = 'block';
+    } else if (selected === 'paypal') {
+      paypalInfo.style.display = 'block';
+      if (paypalEmailInput) paypalEmailInput.required = true;
+    } else if (selected === 'paymaya') {
+      paymayaInfo.style.display = 'block';
+      if (paymayaPhoneInput) paymayaPhoneInput.required = true;
+    } else if (selected === 'gcash') {
+      gcashInfo.style.display = 'block';
+      if (gcashPhoneInput) gcashPhoneInput.required = true;
+    }
+  });
+
+  // Trigger change event on page load to set initial state
+  document.addEventListener('DOMContentLoaded', function() {
+    const paymentSelect = document.getElementById('payment-method');
+    if (paymentSelect) {
+      paymentSelect.dispatchEvent(new Event('change'));
+    }
+
+    // Generate QR codes dynamically for PayMaya and GCash
+    const paymayaCanvas = document.getElementById('paymaya-qr');
+    const gcashCanvas = document.getElementById('gcash-qr');
+
+    // Replace these URLs with the actual payment URLs or data for QR codes
+    const paymayaData = 'https://www.paymaya.com/pay/your-merchant-id';
+    const gcashData = 'https://www.gcash.com/pay/your-merchant-id';
+
+    if (paymayaCanvas) {
+      QRCode.toCanvas(paymayaCanvas, paymayaData, { width: 150, height: 150 }, function (error) {
+        if (error) console.error('Error generating PayMaya QR code:', error);
+      });
+    }
+
+    if (gcashCanvas) {
+      QRCode.toCanvas(gcashCanvas, gcashData, { width: 150, height: 150 }, function (error) {
+        if (error) console.error('Error generating GCash QR code:', error);
+      });
+    }
+  });
+  </script>
+  <script>
+    // Function to close the confirmation modal
+    function closeConfirmationModal() {
+      const confirmationModal = document.getElementById('confirmationModal');
+      if (confirmationModal) {
+        confirmationModal.classList.remove('show');
+      }
+    }
+
+    // Close confirmation modal when clicking outside modal content
+    window.addEventListener('click', function(event) {
+      const confirmationModal = document.getElementById('confirmationModal');
+      if (confirmationModal && confirmationModal.classList.contains('show')) {
+        if (!event.target.closest('.modal-content') && event.target === confirmationModal) {
+          closeConfirmationModal();
+        }
+      }
+
+      // Close viewReviewsModal when clicking outside modal content
+      const viewReviewsModal = document.getElementById('viewReviewsModal');
+      if (viewReviewsModal && viewReviewsModal.style.display === 'flex') {
+        if (!event.target.closest('.modal-content') && event.target === viewReviewsModal) {
+          closeViewReviewsModal();
+        }
+      }
+    });
+  </script>
   <div id="confirmationMessage" class="confirmation-message">
     </div>
 
-    <!-- Review Modal -->
-    <div id="reviewModal" class="modal">
-        <div class="modal-content" style="width: 500px; max-width: 90%;">
-            <span class="close" onclick="closeReviewModal()">&times;</span>
-            <h2 style="color: #1E3A8A; text-align: center; margin-bottom: 25px;">Write a Review</h2>
-            <form id="reviewForm" onsubmit="submitReview(event)">
-            <div class="star-rating" style="text-align: center; font-size: 28px; margin-bottom: 20px;">
-                <i class="fa-regular fa-star" data-rating="1" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
-                <i class="fa-regular fa-star" data-rating="2" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
-                <i class="fa-regular fa-star" data-rating="3" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
-                <i class="fa-regular fa-star" data-rating="4" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
-                <i class="fa-regular fa-star" data-rating="5" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
-            </div>
-            <div id="ratingError" style="display: none; color: #d32f2f; margin: 10px 0; text-align: center; font-size: 14px; padding: 8px; background-color: #ffebee; border-radius: 4px;"></div>
-            <textarea id="reviewText" name="reviewText" placeholder="Share your experience..." 
-                style="width: 100%; padding: 15px; border-radius: 8px; border: 1px solid #ddd; 
-                min-height: 150px; margin-bottom: 20px; font-family: inherit;" required></textarea>
-<button type="submit" class="btn btn-primary w-100">
-                Submit Review
-            </button>
-        </form>
-    </div>
-</div>
-
-    <!-- Review Confirmation Modal -->
-    <div id="reviewConfirmationModal" class="confirmation-modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeReviewConfirmation()">&times;</span>
-            <h3>Review Submitted!</h3>
-            <p>Thank you for your review. Your feedback helps other customers.</p>
-            <button onclick="closeReviewConfirmation()">Close</button>
-        </div>
-    </div>
 
     <!-- Add to Cart Modal -->
     <div id="addToCartModal" class="modal">
@@ -924,7 +1057,7 @@ document.getElementById('searchButton').addEventListener('click', () => {
     
           productCards.forEach(card => {
               const title = card.querySelector('h3').textContent.toLowerCase();
-              if (title === lowerQuery) {
+              if (title.includes(lowerQuery)) {
                   card.style.display = 'block';
                   // Mark category as visible
                   const category = Object.keys(rows).find(cat => rows[cat].contains(card));
@@ -938,8 +1071,22 @@ document.getElementById('searchButton').addEventListener('click', () => {
           Object.entries(rows).forEach(([category, row]) => {
               if (visibleCategories.has(category)) {
                   row.parentElement.style.display = 'block';
+                  // If category is "Other Devices", also show the additional-products container
+                  if (category === 'Other Devices') {
+                      const additionalProducts = document.getElementById('additional-products');
+                      if (additionalProducts) {
+                          additionalProducts.style.display = 'block';
+                      }
+                  }
               } else {
                   row.parentElement.style.display = 'none';
+                  // If category is "Other Devices", hide the additional-products container
+                  if (category === 'Other Devices') {
+                      const additionalProducts = document.getElementById('additional-products');
+                      if (additionalProducts) {
+                          additionalProducts.style.display = 'none';
+                      }
+                  }
               }
           });
       }
@@ -961,42 +1108,7 @@ document.getElementById('searchButton').addEventListener('click', () => {
       let totalAmount = 0;
     
       // Function to update and persist cart count
-      async function updateCartCount() {
-        try {
-            const token = localStorage.getItem('token');
-            if (!token) {
-                console.log('No token found. Please log in.');
-                return;
-            }
 
-            const response = await fetch('http://localhost:3001/api/cart/count', {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-            
-            if (response.ok) {
-                const count = await response.json();
-                const cartBtn = document.querySelector('.cart-btn');
-                if (cartBtn) {
-                    // If count is an object with count property, use count.count
-                    const displayCount = typeof count === 'object' && count.count !== undefined ? count.count : count;
-                    cartBtn.textContent = `Cart (${displayCount})`;
-                }
-            } else {
-                console.error('Failed to get cart count:', response.statusText);
-                if (response.status === 401) {
-                    localStorage.removeItem('token');
-                    localStorage.removeItem('loggedInUser');
-                    alert('Session expired. Please log in again.');
-                    window.location.href = 'auth.html';
-                }
-            }
-        } catch (error) {
-            console.error('Error updating cart count:', error);
-            alert('Failed to update cart count. Please make sure your backend server is running at http://localhost:3001');
-        }
-    }
     
 async function loadProducts(searchQuery) {
     try {
@@ -1023,6 +1135,12 @@ async function loadProducts(searchQuery) {
                 }
             }
             const productCard = createProductCard(product);
+            
+            // Update review count dynamically from product.reviewCount
+            const reviewCountSpan = productCard.querySelector('.review-count');
+            if (reviewCountSpan) {
+                reviewCountSpan.textContent = `(${product.reviewCount || 0} reviews)`;
+            }
             
             switch (product.category.toLowerCase()) {
                 case 'processors':
@@ -1076,43 +1194,49 @@ async function loadProducts(searchQuery) {
     }
 }
 
-function createProductCard(product) {
-    const productDiv = document.createElement('div');
-    productDiv.className = 'col-md-4 mb-4';
-    productDiv.setAttribute('data-product-id', product._id);
-    
-    productDiv.innerHTML = `
-        <div class="product-card h-100">
-            <img src="${product.image}" alt="${product.name}">
-            <h3>${product.name}</h3>
-            <p>$${product.price.toFixed(2)}</p>
-            <div class="rating-display">
-                <div class="stars">
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-solid fa-star"></i>
-                    <i class="fa-regular fa-star"></i>
+    function createProductCard(product) {
+        const productDiv = document.createElement('div');
+        productDiv.className = 'col-md-4 mb-4';
+        productDiv.setAttribute('data-product-id', product._id);
+
+        // Use first image from images array if available, else default image
+        const imageUrl = (product.images && product.images.length > 0) ? product.images[0] : '/images/default-product.jpg';
+
+        productDiv.innerHTML = `
+            <div class="product-card h-100">
+                <img src="${imageUrl}" alt="${product.name}">
+                <h3>${product.name}</h3>
+                <p>$${product.price.toFixed(2)}</p>
+                <p class="stock-info" style="font-weight: 600; color: ${product.stock > 0 ? '#28a745' : '#dc3545'};">
+                    ${product.stock > 0 ? `In Stock: ${product.stock}` : 'Out of Stock'}
+                </p>
+                <div class="rating-display">
+                    <div class="stars">
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-solid fa-star"></i>
+                        <i class="fa-regular fa-star"></i>
+                    </div>
+                    <span class="review-count">(${product.reviewCount || 0} reviews)</span>
                 </div>
-                <span class="review-count">(${product.reviews?.length || 0} reviews)</span>
-            </div>
-            <div class="quantity-control">
-                <button aria-label="Decrease quantity" onclick="decreaseQuantity('${product._id}')">-</button>
-                <input type="number" id="${product._id}" name="quantity-${product._id}" value="1" min="1" style="width: 40px; text-align: center;" data-price="${product.price}">
-                <button aria-label="Increase quantity" onclick="increaseQuantity('${product._id}')">+</button>
-            </div>
-            <div class="action-buttons">
-                <div style="display: flex; justify-content: center; gap: 10px;">
-                    <button class="buy-now-btn" onclick="openBuyNowModal('${product.name}', ${product.price}, document.getElementById('${product._id}').value, '${product._id}')">Buy Now</button>
-                    <button class="add-to-cart-btn" onclick="addToCart('${product._id}', document.getElementById('${product._id}').value)">Add to Cart</button>
+                <div class="quantity-control">
+                    <button aria-label="Decrease quantity" onclick="decreaseQuantity('${product._id}')">-</button>
+                    <input type="number" id="${product._id}" name="quantity-${product._id}" value="1" min="1" style="width: 40px; text-align: center;" data-price="${product.price}">
+                    <button aria-label="Increase quantity" onclick="increaseQuantity('${product._id}')">+</button>
                 </div>
-<button class="review-btn" onclick="openReviewModal('${product._id}', '${product.name}')">Write Review</button>
+                <div class="action-buttons">
+                    <div style="display: flex; justify-content: center; gap: 10px;">
+                        <button class="buy-now-btn" onclick="openBuyNowModal('${product.name}', ${product.price}, document.getElementById('${product._id}').value, '${product._id}')">Buy Now</button>
+                        <button class="add-to-cart-btn" onclick="addToCart('${product._id}', document.getElementById('${product._id}').value)">Add to Cart</button>
+                    </div>
+<button class="review-btn" onclick="openViewReviewsModal('${product._id}', '${product.name}')">Reviews</button>
+                </div>
             </div>
-        </div>
-    `;
-    
-    return productDiv;
-}
+        `;
+
+        return productDiv;
+    }
 
 async function addToCart(productId, quantity) {
     console.log('addToCart called with:', productId, quantity);
@@ -1203,181 +1327,7 @@ function decreaseQuantity(productId) {
     }
 }
 
-function openBuyNowModal(productName, productPrice, quantity, productId) {
-    const modal = document.getElementById('buyNowModal');
-    const totalAmount = document.getElementById('total-amount');
-    
-    totalAmount.textContent = (productPrice * quantity).toFixed(2);
-    
-    modal.style.display = 'flex';
-    
-    // Save product info for purchase
-    localStorage.setItem('purchaseProduct', JSON.stringify({
-        name: productName,
-        price: productPrice,
-        quantity: quantity,
-        productId: productId
-    }));
-}
-
-    async function confirmPurchase(event) {
-        event.preventDefault();
-        
-        try {
-            const product = JSON.parse(localStorage.getItem('purchaseProduct'));
-            const formData = new FormData(event.target);
-            const formEntries = Object.fromEntries(formData);
-            console.log('Form entries:', formEntries);
-
-            // Prepare items array as expected by backend
-            const items = [{
-                productId: product.productId,
-                quantity: parseInt(product.quantity),
-                price: product.price
-            }];
-
-            const purchaseData = {
-                deliveryAddress: formEntries['deliveryAddress'],
-                paymentMethod: formEntries['paymentMethod'],
-                shippingMethod: formEntries['shippingMethod'],
-                items: items,
-                clearCart: false
-            };
-
-            console.log('Purchase data sent:', purchaseData);
-
-            const response = await fetch('http://localhost:3001/api/orders', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
-                body: JSON.stringify(purchaseData)
-            });
-
-            if (response.ok) {
-                document.getElementById('buyNowModal').style.display = 'none';
-                document.getElementById('confirmationModal').classList.add('show');
-                localStorage.removeItem('purchaseProduct');
-            } else {
-                const errorData = await response.json();
-                throw new Error(errorData.message || 'Purchase failed');
-            }
-        } catch (error) {
-            if (error.response) {
-                error.response.json().then(errData => {
-                    console.error('Error confirming purchase:', errData);
-                    alert('Failed to complete purchase: ' + (errData.message || error.message));
-                });
-            } else {
-                console.error('Error confirming purchase:', error);
-                alert('Failed to complete purchase: ' + error.message);
-            }
-        }
-    }
-
-function openReviewModal(productName, productId) {
-    console.log('openReviewModal called with productId:', productId);
-    const modal = document.getElementById('reviewModal');
-    modal.style.display = 'flex';
-    
-    // Save product info for review
-    localStorage.setItem('reviewProduct', JSON.stringify({
-        name: productName,
-        productId: productId
-    }));
-}
-
-async function submitReview(event) {
-    event.preventDefault();
-    
-    try {
-        const product = JSON.parse(localStorage.getItem('reviewProduct'));
-        console.log('submitReview productId:', product.productId);
-        const formData = new FormData(event.target);
-        const reviewData = {
-            ...Object.fromEntries(formData),
-            productId: product.productId
-        };
-
-        const response = await fetch('http://localhost:3001/api/reviews', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: JSON.stringify(reviewData)
-        });
-
-        if (response.ok) {
-            document.getElementById('reviewModal').style.display = 'none';
-            document.getElementById('reviewConfirmationModal').style.display = 'flex';
-            localStorage.removeItem('reviewProduct');
-            
-            // Reload products to update review count
-            loadProducts();
-        } else {
-            throw new Error('Review submission failed');
-        }
-    } catch (error) {
-        console.error('Error submitting review:', error);
-        alert('Failed to submit review. Please make sure your backend server is running at http://localhost:3001');
-    }
-}
-
-function closeReviewModal() {
-    document.getElementById('reviewModal').style.display = 'none';
-}
-
-function viewMoreProducts() {
-    const additionalProducts = document.getElementById('additional-products');
-    const viewMoreButton = document.getElementById('viewMoreButton');
-    
-    if (additionalProducts.style.display === 'none') {
-        additionalProducts.style.display = 'block';
-        viewMoreButton.style.display = 'none';
-    }
-}
-
-function closeBuyNowModal() {
-    const modal = document.getElementById('buyNowModal');
-    modal.style.display = 'none';
-}
-
-    // Close modal when clicking outside modal content
-    window.onclick = function(event) {
-        const buyNowModal = document.getElementById('buyNowModal');
-        const confirmationModal = document.getElementById('confirmationModal');
-        const reviewConfirmationModal = document.getElementById('reviewConfirmationModal');
-        const addToCartModal = document.getElementById('addToCartModal');
-        if (event.target === buyNowModal) {
-            buyNowModal.style.display = 'none';
-        }
-        if (event.target === confirmationModal) {
-            confirmationModal.classList.remove('show');
-        }
-        if (event.target === reviewConfirmationModal) {
-            reviewConfirmationModal.style.display = 'none';
-        }
-        if (event.target === addToCartModal) {
-            addToCartModal.style.display = 'none';
-        }
-    }
-
-function closeConfirmationModal() {
-    const confirmationModal = document.getElementById('confirmationModal');
-    confirmationModal.classList.remove('show');
-}
-
-function closeReviewConfirmation() {
-    const reviewConfirmationModal = document.getElementById('reviewConfirmationModal');
-    reviewConfirmationModal.style.display = 'none';
-}
-
-function closeAddToCartModal() {
-    const addToCartModal = document.getElementById('addToCartModal');
-    addToCartModal.style.display = 'none';
-}
+    // Removed review modal related functions as per request
 
 
 // Window.onload function
@@ -1386,6 +1336,10 @@ window.onload = async function () {
     const searchQuery = urlParams.get('q');
     await loadProducts(searchQuery);
     updateCartCount(); // Ensure the cart count is updated on page load
+    // Apply filtering and visibility toggling after products are loaded
+    if (searchQuery) {
+        filterProductsByQuery();
+    }
 };
   </script>
   <script>
@@ -1395,13 +1349,93 @@ window.onload = async function () {
         localStorage.removeItem('loggedInUser');
         window.location.href = 'auth.html';
     }
+
+    // Function to toggle additional products visibility
+    function viewMoreProducts() {
+        const additionalProducts = document.getElementById('additional-products');
+        const viewMoreButton = document.getElementById('viewMoreButton');
+        if (additionalProducts.style.display === 'none' || additionalProducts.style.display === '') {
+            additionalProducts.style.display = 'block';
+            viewMoreButton.textContent = 'View Less Products';
+        } else {
+            additionalProducts.style.display = 'none';
+            viewMoreButton.textContent = 'View More Products';
+        }
+    }
+
+    // Function to close Buy Now modal
+    function closeBuyNowModal() {
+        const modal = document.getElementById('buyNowModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Function to close Add to Cart modal
+    function closeAddToCartModal() {
+        const modal = document.getElementById('addToCartModal');
+        if (modal) {
+            modal.style.display = 'none';
+        }
+    }
+
+    // Global click event listener to close Buy Now and Add to Cart modals when clicking outside modal content
+    window.addEventListener('click', function(event) {
+        const buyNowModal = document.getElementById('buyNowModal');
+        const addToCartModal = document.getElementById('addToCartModal');
+
+        if (buyNowModal && buyNowModal.style.display === 'flex') {
+            if (!event.target.closest('.modal-content') && event.target === buyNowModal) {
+                closeBuyNowModal();
+            }
+        }
+
+        if (addToCartModal && addToCartModal.style.display === 'flex') {
+            if (!event.target.closest('.modal-content') && event.target === addToCartModal) {
+                closeAddToCartModal();
+            }
+        }
+    }
+    );
+
+    // Listen for review updates from other tabs/pages and update product ratings
+    if (typeof BroadcastChannel !== 'undefined') {
+        const channel = new BroadcastChannel('review-updates');
+        channel.addEventListener('message', (event) => {
+            console.log('Received review update message:', event.data);
+            if (typeof updateAllProductRatings === 'function') {
+                updateAllProductRatings(); // Update ratings without reloading products
+            } else {
+                console.warn('updateAllProductRatings function not found');
+            }
+        });
+    }
   </script>
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  window.openBuyNowModal = function(productName, productPrice, quantity, productId) {
+  window.openBuyNowModal = async function(productName, productPrice, quantity, productId) {
       const modal = document.getElementById('buyNowModal');
       const totalAmount = document.getElementById('total-amount');
       totalAmount.textContent = (productPrice * quantity).toFixed(2);
+
+      // Fetch user profile data to prefill Full Name and Address
+      try {
+          const response = await fetch('http://localhost:3001/api/users/me', {
+              headers: {
+                  'Authorization': 'Bearer ' + localStorage.getItem('token')
+              }
+          });
+          if (response.ok) {
+              const userData = await response.json();
+              const fullNameInput = document.getElementById('fullName');
+              const addressInput = document.getElementById('address');
+              if (fullNameInput) fullNameInput.value = userData.fullName || '';
+              if (addressInput) addressInput.value = userData.address || '';
+          }
+      } catch (error) {
+          console.error('Failed to fetch user profile:', error);
+      }
+
       modal.style.display = 'flex';
       localStorage.setItem('purchaseProduct', JSON.stringify({
           name: productName,
@@ -1441,29 +1475,110 @@ document.addEventListener('DOMContentLoaded', () => {
               const responseData = await response.json();
               const orderNumber = responseData.orderNumber;
               document.getElementById('buyNowModal').style.display = 'none';
+              localStorage.removeItem('purchaseProduct');
+              
+              // Clear the purchase form inputs after successful purchase
+              const purchaseForm = document.getElementById('purchaseForm');
+              if (purchaseForm) {
+                  purchaseForm.reset();
+              }
+
+              // Handle payment method specific post-purchase flow
+          if (purchaseData.paymentMethod === 'paypal') {
+              // Redirect to PayPal payment page (example URL, replace with actual)
+              const paypalEmail = formEntries['paypalEmail'];
+              const paypalUrl = 'https://www.paypal.com/signin';
+              window.location.href = paypalUrl;
+          } else if (purchaseData.paymentMethod === 'paymaya') {
+              // Redirect to PayMaya payment page (example URL, replace with actual)
+              const paymayaUrl = 'https://www.paymaya.com/';
+              window.location.href = paymayaUrl;
+          } else if (purchaseData.paymentMethod === 'gcash') {
+              // Redirect to GCash payment page (example URL, replace with actual)
+              const gcashUrl = 'https://www.gcash.com/';
+              window.location.href = gcashUrl;
+          } else {
+              // For credit card and cash on delivery, show confirmation modal
               const confirmationModal = document.getElementById('confirmationModal');
               const orderNumberSpan = document.getElementById('displayOrderNumber');
               if (orderNumberSpan) {
                   orderNumberSpan.textContent = orderNumber;
               }
               confirmationModal.classList.add('show');
-          localStorage.removeItem('purchaseProduct');
-          
-          // Clear the purchase form inputs after successful purchase
-          const purchaseForm = document.getElementById('purchaseForm');
-          if (purchaseForm) {
-              purchaseForm.reset();
           }
-      } else {
-          const errorData = await response.json();
-          throw new Error(errorData.message || 'Purchase failed');
+          } else {
+              const errorData = await response.json();
+              throw new Error(errorData.message || 'Purchase failed');
+          }
+      } catch (error) {
+          console.error('Error confirming purchase:', error);
+          alert('Failed to complete purchase: ' + error.message);
       }
-  } catch (error) {
-      console.error('Error confirming purchase:', error);
-      alert('Failed to complete purchase: ' + error.message);
-  }
   };
 });
 </script>
-  <script src="reviews.js"></script>
+<!-- View Reviews Modal -->
+<div id="viewReviewsModal" class="modal">
+    <div class="modal-content" style="max-height: 80vh; overflow-y: auto;">
+        <span class="close" onclick="closeViewReviewsModal()">&times;</span>
+        <h2 style="color: #1E3A8A; text-align: center; margin-bottom: 25px;">Reviews for <span id="viewReviewsProductName"></span></h2>
+        <div id="reviewsContainer" style="max-height: 60vh; overflow-y: auto;">
+            <!-- Reviews will be dynamically inserted here -->
+        </div>
+    </div>
+</div>
+
+<script>
+async function openViewReviewsModal(productId, productName) {
+    const modal = document.getElementById('viewReviewsModal');
+    const productNameSpan = document.getElementById('viewReviewsProductName');
+    const reviewsContainer = document.getElementById('reviewsContainer');
+
+    productNameSpan.textContent = productName;
+    reviewsContainer.innerHTML = '<p>Loading reviews...</p>';
+    modal.style.display = 'flex';
+
+    try {
+        const response = await fetch(`http://localhost:3001/api/reviews/${productId}`);
+        if (!response.ok) {
+            reviewsContainer.innerHTML = '<p>Failed to load reviews.</p>';
+            return;
+        }
+        const reviews = await response.json();
+        if (reviews.length === 0) {
+            reviewsContainer.innerHTML = '<p>No reviews yet for this product.</p>';
+            return;
+        }
+
+        // Build reviews HTML
+        const reviewsHtml = reviews.map(review => {
+            const stars = Array(5).fill(0).map((_, i) => {
+                return i < review.rating ? '<i class="fa-solid fa-star" style="color:#FFD700;"></i>' : '<i class="fa-regular fa-star" style="color:#FFD700;"></i>';
+            }).join('');
+            const userName = review.userId?.fullName || 'Anonymous';
+            const reviewText = review.text || '';
+            return `
+                <div style="border-bottom: 1px solid #ddd; padding: 10px 0;">
+                    <strong>${userName}</strong>
+                    <div>${stars}</div>
+                    <p style="white-space: pre-wrap;">${reviewText}</p>
+                </div>
+            `;
+        }).join('');
+
+        reviewsContainer.innerHTML = reviewsHtml;
+    } catch (error) {
+        reviewsContainer.innerHTML = '<p>Error loading reviews.</p>';
+        console.error('Error fetching reviews:', error);
+    }
+}
+
+function closeViewReviewsModal() {
+    const modal = document.getElementById('viewReviewsModal');
+    modal.style.display = 'none';
+    document.getElementById('reviewsContainer').innerHTML = '';
+}
+</script>
+
   </body>
+  </html>

@@ -180,8 +180,8 @@
         }
 
         .btn-primary:hover {
-            background-color: #ff5722;
-            border-color: #ff5722;
+            background-color: #007bff;
+            border-color: #007bff;
         }
 
         .product-image-preview {
@@ -234,10 +234,9 @@
             }
         }
 
-        .sidebar-link:hover,
-        .sidebar-link.active {
+         .sidebar-link:hover, .sidebar-link.active {
             color: var(--primary-color);
-            background: rgba(255, 127, 80, 0.15);
+            background: rgba(255,255,255,0.1);
             transform: scale(1.05);
             box-shadow: 0 0 8px rgba(255, 127, 80, 0.5);
             border-radius: 8px;
@@ -467,10 +466,6 @@
                     <i class="bi bi-people"></i>
                     Customers
                 </a>
-                <a href="reports.html" class="sidebar-link">
-                    <i class="bi bi-graph-up"></i>
-                    Reports
-                </a>
                 <a href="settings.html" class="sidebar-link">
                     <i class="bi bi-gear"></i>
                     Settings
@@ -496,7 +491,7 @@
                 <div class="navbar-brand text-white position-absolute start-50 translate-middle-x zoom-animation">NextGen Hardware</div>
 
                 <div class="ms-auto d-flex align-items-center">
-                    <a href="index.html" class="btn btn-primary me-3 btn-gradient-alive">Go to Website</a>
+<a href="index.html" class="btn btn-primary me-3 btn-gradient-alive" title="Preview the storefront as customers see it.">Go to Website</a>
                 </div>
             </div>
         </nav>
@@ -696,24 +691,23 @@
 <input type="number" id="stock" name="stock" class="form-control" required min="0">
                             </div>
                             <div class="col-12">
-                                <label class="form-label" for="description">Description</label>
-<textarea id="description" name="description" class="form-control" rows="3" required></textarea>
-                            </div>
-                            <div class="col-12">
                                 <label class="form-label" for="image1">Product Images</label>
                                 <div class="d-flex gap-3">
                                     <div class="image-upload-preview">
-                                        <input type="file" id="image1" name="image1" accept="image/*" class="image-upload-input d-none" />
+                                        <input type="file" id="image1" name="images" accept="image/*" class="image-upload-input d-none" />
+                                        <img class="image-preview d-none" alt="Image Preview" />
                                         <span class="upload-placeholder d-flex align-items-center justify-content-center h-100">Click to upload</span>
                                         <button type="button" class="btn btn-sm btn-danger remove-image-btn d-none" aria-label="Remove image">&times;</button>
                                     </div>
                                     <div class="image-upload-preview">
-                                        <input type="file" id="image2" name="image2" accept="image/*" class="image-upload-input d-none" />
+                                        <input type="file" id="image2" name="images" accept="image/*" class="image-upload-input d-none" />
+                                        <img class="image-preview d-none" alt="Image Preview" />
                                         <span class="upload-placeholder d-flex align-items-center justify-content-center h-100">Click to upload</span>
                                         <button type="button" class="btn btn-sm btn-danger remove-image-btn d-none" aria-label="Remove image">&times;</button>
                                     </div>
                                     <div class="image-upload-preview">
-                                        <input type="file" id="image3" name="image3" accept="image/*" class="image-upload-input d-none" />
+                                        <input type="file" id="image3" name="images" accept="image/*" class="image-upload-input d-none" />
+                                        <img class="image-preview d-none" alt="Image Preview" />
                                         <span class="upload-placeholder d-flex align-items-center justify-content-center h-100">Click to upload</span>
                                         <button type="button" class="btn btn-sm btn-danger remove-image-btn d-none" aria-label="Remove image">&times;</button>
                                     </div>
@@ -743,11 +737,11 @@
                         <div class="row g-3">
                             <div class="col-md-6">
                                 <label class="form-label" for="editProductName">Product Name</label>
-<input type="text" id="editProductName" name="editProductName" class="form-control" required value="">
+<input type="text" id="editProductName" name="productName" class="form-control" required value="">
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label" for="editCategory">Category</label>
-<select id="editCategory" name="editCategory" class="form-select" required>
+<select id="editCategory" name="category" class="form-select" required>
                                     <option value="">Select Category</option>
                                     <option>Processors</option>
                                     <option>Graphics Cards</option>
@@ -759,28 +753,28 @@
                                 <label class="form-label" for="editPrice">Price</label>
                                 <div class="input-group">
                                     <span class="input-group-text">$</span>
-<input type="number" id="editPrice" name="editPrice" class="form-control" required step="0.01" value="">
+<input type="number" id="editPrice" name="price" class="form-control" required step="0.01" value="">
                                 </div>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label" for="editStock">Stock Quantity</label>
-<input type="number" id="editStock" name="editStock" class="form-control" required min="0" value="">
+<input type="number" id="editStock" name="stock" class="form-control" required min="0" value="">
                             </div>
                             <div class="col-12">
                                 <label class="form-label" for="editImage1">Product Images</label>
                                 <div class="d-flex gap-3">
                                     <div class="image-upload-preview">
-                                    <input type="file" id="editImage1" name="editImage1" accept="image/*" class="image-upload-input d-none" />
+                                    <input type="file" id="editImage1" name="images" accept="image/*" class="image-upload-input d-none" />
                                         <span class="upload-placeholder d-flex align-items-center justify-content-center h-100">Click to upload</span>
                                         <button type="button" class="btn btn-sm btn-danger remove-image-btn d-none" aria-label="Remove image">&times;</button>
                                     </div>
                                     <div class="image-upload-preview">
-                                    <input type="file" id="editImage2" name="editImage2" accept="image/*" class="image-upload-input d-none" />
+                                    <input type="file" id="editImage2" name="images" accept="image/*" class="image-upload-input d-none" />
                                         <span class="upload-placeholder d-flex align-items-center justify-content-center h-100">Click to upload</span>
                                         <button type="button" class="btn btn-sm btn-danger remove-image-btn d-none" aria-label="Remove image">&times;</button>
                                     </div>
                                     <div class="image-upload-preview">
-                                    <input type="file" id="editImage3" name="editImage3" accept="image/*" class="image-upload-input d-none" />
+                                    <input type="file" id="editImage3" name="images" accept="image/*" class="image-upload-input d-none" />
                                         <span class="upload-placeholder d-flex align-items-center justify-content-center h-100">Click to upload</span>
                                         <button type="button" class="btn btn-sm btn-danger remove-image-btn d-none" aria-label="Remove image">&times;</button>
                                     </div>

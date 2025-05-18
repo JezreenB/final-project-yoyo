@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         name: item.productId.name,
         price: item.productId.price,
         quantity: item.quantity,
-        imgSrc: item.productId.image || ''
+      imgSrc: (item.productId.images && item.productId.images.length > 0) ? item.productId.images[0] : ''
       }));
 
       // Update the UI with the fetched cart items
@@ -167,8 +167,27 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // Checkout button click handler
-  checkoutButton.addEventListener('click', () => {
+  checkoutButton.addEventListener('click', async () => {
     if (selectedIndices.size === 0) return;
+
+    // Fetch user profile data to prefill Full Name and Address
+    try {
+      const response = await fetch('http://localhost:3001/api/users/me', {
+        headers: {
+          'Authorization': 'Bearer ' + getAuthToken()
+        }
+      });
+      if (response.ok) {
+        const userData = await response.json();
+        const fullNameInput = document.getElementById('fullName');
+        const addressInput = document.getElementById('address');
+        if (fullNameInput) fullNameInput.value = userData.fullName || '';
+        if (addressInput) addressInput.value = userData.address || '';
+      }
+    } catch (error) {
+      console.error('Failed to fetch user profile:', error);
+    }
+
     $('#checkoutModal').modal('show');
   });
 
@@ -180,7 +199,7 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     const deliveryAddress = document.getElementById('address').value;
-    const paymentMethod = document.getElementById('paymentMethod').value;
+    const paymentMethod = document.getElementById('payment-method').value;
     const shippingMethod = document.getElementById('shippingMethod').value;
     const items = Array.from(selectedIndices).map(idx => ({
       productId: cart[idx].productId,
@@ -211,25 +230,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
       $('#checkoutModal').modal('hide');
 
-      // Show order number in the completePurchaseModal
-      const completeModalBody = document.querySelector('#completePurchaseModal .modal-body');
-      completeModalBody.innerHTML = `
-        <p>Your purchase has been successfully completed! Thank you for shopping with us.</p>
-        <p><strong>Your Order Number:</strong> <span id="displayOrderNumber">${orderNumber}</span></p>
-        <p>Please save this order number for tracking your order.</p>
-      `;
-
-      $('#completePurchaseModal').modal('show');
-      setTimeout(() => {
-        $('#completePurchaseModal').modal('hide');
-        // Reset modal body content to original after hiding
-        completeModalBody.innerHTML = 'Your purchase has been successfully completed! Thank you for shopping with us.';
-      }, 8000);
-
       // Remove ordered items from cart locally
       cart = cart.filter((item, idx) => !selectedIndices.has(idx));
       selectedIndices.clear();
       updateCartUI();
+
+      // Redirect or show modal based on payment method
+      const paymentRedirectUrls = {
+        'paypal': 'https://www.paypal.com/signin',
+        'gcash': 'https://www.gcash.com/',
+        'paymaya': 'https://www.paymaya.com/'
+      };
+
+      if (paymentMethod === 'cash-on-delivery') {
+        // Show order number modal for cash on delivery
+        const completeModalBody = document.querySelector('#completePurchaseModal .modal-body');
+        completeModalBody.innerHTML = `
+          <p>Your purchase has been successfully completed! Thank you for shopping with us.</p>
+          <p><strong>Your Order Number:</strong> <span id="displayOrderNumber">${orderNumber}</span></p>
+          <p>Please save this order number for tracking your order.</p>
+        `;
+
+        $('#completePurchaseModal').modal('show');
+        setTimeout(() => {
+          $('#completePurchaseModal').modal('hide');
+          // Reset modal body content to original after hiding
+          completeModalBody.innerHTML = 'Your purchase has been successfully completed! Thank you for shopping with us.';
+        }, 8000);
+      } else if (paymentRedirectUrls[paymentMethod]) {
+        // Redirect to payment provider for other payment methods
+        window.location.href = paymentRedirectUrls[paymentMethod];
+      }
 
     } catch (error) {
       console.error('Error placing order:', error);

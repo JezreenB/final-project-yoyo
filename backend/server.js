@@ -5,6 +5,7 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const connectDB = require('./config/db');
+const http = require('http');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -29,7 +30,13 @@ const contactRoutes = require('./routes/contactRoutes');
 // Enable CORS for all origins temporarily for testing
 app.use(cors());
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }));
+
+// Serve uploaded images statically
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+// Serve product images statically
+app.use('/images', express.static(path.join(__dirname, '../images')));
 
 // API routes
 app.use('/api/users', userRoutes);
@@ -41,14 +48,15 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api', contactRoutes);
 
 const dashboardRoutes = require('./routes/dashboardRoutes');
-const reportsRoutes = require('./routes/reportsRoutes');
+/* const reportsRoutes = require('./routes/reportsRoutes'); */
 app.use('/api', dashboardRoutes);
-app.use('/api', reportsRoutes);
+// Removed reportsRoutes to disable reports backend without affecting other routes
+// app.use('/api', reportsRoutes);
 
 // Serve static files from the frontend directory
-app.use(express.static(path.join(__dirname, '../')));
+app.use(express.static(path.join(__dirname, '../frontend')));
 
-const productsAdminPath = path.join(__dirname, '../products-admin.html');
+const productsAdminPath = path.join(__dirname, '../frontend/products-admin.html');
 
 // Serve products-admin.html explicitly before catch-all route
 app.get('/products-admin.html', (req, res) => {
@@ -57,9 +65,12 @@ app.get('/products-admin.html', (req, res) => {
 
 // Handle frontend routes except API routes
 app.get(/^\/(?!api\/).*/, (req, res) => {
-    res.sendFile(path.join(__dirname, '../index.html'));
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-app.listen(PORT, () => {
+// Create HTTP server with increased maxHeaderSize (32kb)
+const server = http.createServer({ maxHeaderSize: 32768 }, app);
+
+server.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });

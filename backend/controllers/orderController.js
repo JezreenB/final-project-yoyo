@@ -79,8 +79,20 @@ exports.placeOrder = async (req, res) => {
 // Get orders for user
 exports.getOrders = async (req, res) => {
   try {
-    const orders = await Order.find({ userId: req.user.id });
-    res.json(orders);
+    const orders = await Order.find({ userId: req.user.id }).populate('items.productId', 'name images');
+
+    // Add product.image field from product.images[0] for frontend compatibility
+    orders.forEach(order => {
+      order.items.forEach(item => {
+        if (item.productId && item.productId.images && item.productId.images.length > 0) {
+          item.productId.image = item.productId.images[0];
+        } else if (item.productId) {
+          item.productId.image = null;
+        }
+      });
+    });
+
+    res.json({ orders });
   } catch (error) {
     res.status(500).json({ message: 'Error getting orders' });
   }
@@ -90,8 +102,19 @@ exports.getOrders = async (req, res) => {
 exports.getOrderDetails = async (req, res) => {
   try {
     const orderNumber = req.params.orderNumber;
-    const order = await Order.findOne({ orderNumber, userId: req.user.id }).populate('items.productId');
-    if (!order) return res.status(404).json({ message: 'Order not found' });
+    const orderDoc = await Order.findOne({ orderNumber, userId: req.user.id }).populate('items.productId', 'name images');
+    if (!orderDoc) return res.status(404).json({ message: 'Order not found' });
+
+    const order = orderDoc.toObject();
+
+    // Add product.image field from product.images[0] for frontend compatibility
+    order.items.forEach(item => {
+      if (item.productId && item.productId.images && item.productId.images.length > 0) {
+        item.productId.image = item.productId.images[0];
+      } else if (item.productId) {
+        item.productId.image = null;
+      }
+    });
 
     console.log('Fetched order details:', JSON.stringify(order, null, 2)); // Debug log
 
@@ -108,13 +131,24 @@ exports.getAdminOrderDetails = async (req, res) => {
     let orderNumber = req.params.orderNumber;
     orderNumber = orderNumber.trim();
     console.log('getAdminOrderDetails called with orderNumber:', orderNumber);
-    const order = await Order.findOne({ orderNumber: { $regex: new RegExp(`^${orderNumber}$`, 'i') } })
-      .populate('items.productId')
+    const orderDoc = await Order.findOne({ orderNumber: { $regex: new RegExp(`^${orderNumber}$`, 'i') } })
+      .populate('items.productId', 'name images')
       .populate({ path: 'userId', select: 'fullName email address' });  // Correctly populate userId with user details
-    if (!order) {
+    if (!orderDoc) {
       console.log('Order not found for orderNumber:', orderNumber);
       return res.status(404).json({ message: 'Order not found' });
     }
+
+    const order = orderDoc.toObject();
+
+    // Add product.image field from product.images[0] for frontend compatibility
+    order.items.forEach(item => {
+      if (item.productId && item.productId.images && item.productId.images.length > 0) {
+        item.productId.image = item.productId.images[0];
+      } else if (item.productId) {
+        item.productId.image = null;
+      }
+    });
 
     console.log('Fetched admin order details:', JSON.stringify(order, null, 2)); // Debug log
 

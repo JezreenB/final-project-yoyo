@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Order Summary</title>
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" />
+    <!-- Font Awesome CDN for star icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" />
+    <style>
+        :root {
+            --primary-color: #ff7f50;
+            --secondary-color: #1a1a1a;
+            --success-color: #1cc88a;
+            --sidebar-width: 250px;
+        }
+
+        #sidebar {
+            background-color: var(--secondary-color);
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            transform: translateX(-100%);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1110;
+            overflow-y: auto;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+            padding-bottom: 60px;
+        }
+
+        #sidebar::-webkit-scrollbar {
+            display: none;  /* Chrome, Safari and Opera */
+        }
+
+        #sidebar.active {
+            transform: translateX(0);
+        }
+
+        .sidebar-link {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            transition: color 0.3s ease, background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .sidebar-link:hover, .sidebar-link.active {
+            color: var(--primary-color);
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
+            box-shadow: 0 0 8px rgba(255, 127, 80, 0.5);
+            border-radius: 8px;
+        }
+
+        .sidebar-link i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .profile-section {
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: white;
+        }
+
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #ebf1fc;
+        }
+
+        #content {
+            transition: 0.3s;
+            padding-bottom: 80px; /* Margin before footer */
+            position: relative;
+            z-index: 1;
+            margin-left: 0 !important;
+        }
+
+        @media (max-width: 768px) {
+            #content.active {
+                margin-left: 0 !important;
+            }
+            
+            #sidebar {
+                position: fixed;
+            }
+        }
+
+        @media (min-width: 768px) {
+            #content {
+                margin-left: 0 !important;
+            }
+        }
+
+        /* Ensure overlay covers entire viewport and sidebar is above content */
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            z-index: 1000;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .navbar {
+            background-color: var(--secondary-color);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 999;
+        }
+
+        .nav-link, 
+        .nav-link:active,
+        .nav-link:focus,
+        .nav-link.active {
+            color: white !important;
+        }
+
+        .navbar-brand {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            /* Removed animation */
+        }
+
+        .btn-gradient-alive {
+            background-color: #ff7f50 !important;
+            border-color: #ff7f50 !important;
+            color: white !important;
+        }
+        .btn-gradient-alive:hover {
+            background-color: #e67347 !important;
+            border-color: #e67347 !important;
+            color: white !important;
+        }
+
+        #sidebarToggle {
+            transition: transform 0.4s ease, color 0.4s ease;
+            color: white;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+        }
+
+        #sidebarToggle:hover {
+            transform: rotate(90deg) scale(1.1);
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        footer {
+            position: relative;
+            width: 100%;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            z-index: 1050;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.5);
+        }
+
+        footer a {
+            color: #4895ef;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #f72585;
+        }
+
+        /* Order summary styles */
+        .order-summary-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(255, 127, 80, 0.6);
+            padding: 2rem;
+            max-width: 900px;
+            margin: 2rem auto;
+            color: black;
+            position: relative;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .order-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .status-badge {
+            /* Removed absolute positioning */
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            color: white;
+            text-transform: capitalize;
+        }
+
+        .status-delivered {
+            background-color: #a8d5ba; /* pastel green */
+            color: #2f5233;
+        }
+
+        .status-processing {
+            background-color: #f9d5a7; /* pastel orange */
+            color: #6e4b1a;
+        }
+
+        .status-order-placed {
+            background-color: #fcefcf; /* pastel yellow */
+            color: #7a6e2e;
+        }
+
+        .status-order-processed {
+            background-color: #d0f5a9; /* pastel light green */
+            color: #3e6e2a;
+        }
+
+        .status-shipped {
+            background-color: #a9d0f5; /* pastel blue */
+            color: #2a3e6e;
+        }
+
+        .status-out-for-delivery {
+            background-color: #f7c6ff; /* pastel purple */
+            color: #5a2a6a;
+        }
+
+        .status-cancelled {
+            background-color: #f5b7b1; /* pastel pink */
+            color: #6e2a2a;
+        }
+
+        .ordered-items {
+            margin-top: 1rem;
+        }
+
+        .ordered-item {
+            border-bottom: 1px solid #ddd;
+            padding: 1rem 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ordered-item:last-child {
+            border-bottom: none;
+        }
+
+        .item-details {
+            flex-grow: 1;
+        }
+
+        .item-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .item-quantity,
+        .item-price {
+            font-size: 0.95rem;
+            color: #555;
+        }
+
+        .item-quantity {
+            margin-top: 0.25rem;
+        }
+
+        .product-image {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .btn-outline-primary.btn-sm {
+            padding: 0.375rem 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .btn-outline-primary.btn-sm:hover {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+    </style>
+    <style>
+    /* Header */
+    @keyframes fadeInDown {
+        0% {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        100% {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes scaleIn {
+        0% {
+            opacity: 0;
+            transform: scale(0.8);
+        }
+        100% {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    header {
+        background-color: #1a1a1a;
+        color: white;
+        padding: 20px 0;
+        text-align: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        animation: fadeInDown 1s ease forwards;
+    }
+
+    .logo a {
+        color: #ff7f50;
+        text-decoration: none;
+        font-size: 32px;
+        font-weight: 700;
+        display: inline-block;
+        animation: scaleIn 1s ease forwards;
+    }
+
+    .logo a:hover {
+        animation: pulse 1.5s infinite;
+    }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            text-align: center;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-left: 21px;
+            margin-right: 21px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav ul li a:hover, nav ul li a.active {
+            color: #ff7f50;
+        }
+
+        /* Header buttons container */
+        .header-buttons {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Cart Button */
+        .cart-btn {
+            background-color: #ff7f50;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        .cart-btn:hover {
+            background-color: #ff5722;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            background-color: #d32f2f;
+            padding: 10px 15px;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        .logout-btn:hover {
+            background-color: #c62828;
+        }
+
+        /* Search Bar */
+        .search-bar {
+            max-width: 600px;
+            margin: 15px auto;
+            padding: 10px;
+            border-radius: 30px;
+            border: 2px solid #ff7f50;
+            display: flex;
+            justify-content: space-between;
+            background-color: white;
+        }
+
+        .search-bar input {
+            width: 86%;
+            padding: 8px;
+            border: none;
+            border-radius: 30px;
+            font-size: 16px;
+        }
+
+        .search-bar button {
+            background-color: #ff7f50;
+            padding: 8px 8px;
+            border: none;
+            border-radius: 30px;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .search-bar button:hover {
+            background-color: #ff5722;
+        }
+
+        /* Search Modal */
+        #search-modal {
+            position: fixed;
+            top: 180px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            display: none;
+        }
+
+        .search-suggestion {
+            padding: 12px 20px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            color: #333;
+            text-align: justify;
+            transition: background 0.2s;
+        }
+
+        .search-suggestion:hover {
+            background: #f5f5f5;
+        }
+
+        /* Animations */
+        @keyframes scaleIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            position: relative;
+            background: white;
+            max-width: 500px;
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+        }
+
+        .modal-content h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-content .close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            cursor: pointer;
+            color: #ff5722;
+        }
+
+        .modal-content .form-group {
+            margin-bottom: 15px;
+        }
+
+        .modal-content .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .modal-content .form-group input, .modal-content .form-group select, .modal-content textarea {
+            width: 100%;
+            padding: 8px;
+            text-align: justify;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .modal-content textarea {
+            min-height: 150px;
+            margin-bottom: 20px;
+            font-family: inherit;
+        }
+
+        .modal-content button {
+            background-color: #ff3c00;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+        }
+
+        .modal-content button:hover {
+            background-color: #e6481c;
+        }
+
+        /* Confirmation Modal styles */
+        .confirmation-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .confirmation-modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .confirmation-modal .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .confirmation-modal .modal-content h3 {
+            font-size: 24px;
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .confirmation-modal .modal-content p {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        #closeModalButton {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #closeModalButton:hover {
+            background-color: #45a049;
+        }
+        .review-btn {
+            background-color: #1E3A8A;
+            color: white;
+            border: none;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .review-btn:hover {
+            background-color: #1e2b7d;
+            color: white;
+        }
+
+        /* Custom styles for Submit Review button active/focus states */
+        #reviewForm button[type="submit"]:active,
+        #reviewForm button[type="submit"]:focus {
+            background-color: #ff7f50 !important; /* coral orange shade */
+            border-color: #ff7f50 !important;
+            box-shadow: 0 0 8px rgba(255, 127, 80, 0.7);
+            outline: none;
+            color: white !important;
+        }
+
+        #reviewForm button[type="submit"]:hover {
+            background-color: #e67347 !important; /* slightly darker orange */
+            border-color: #e67347 !important;
+            color: white !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Content -->
+    <div id="content">
+    <!-- Header -->
+    <header>
+        <div class="logo">
+            <a href="index.html">NextGen Hardware</a>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="about.html"><i class="fa-solid fa-user"></i> About</a></li>
+                <li><a href="products.html"><i class="fa-solid fa-box-open"></i> Products</a></li>
+                <li><a href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                <li><a href="ordersummary.html" class="active"><i class="fa-solid fa-list"></i> Summary</a></li>
+                <li><a href="track-order.html"><i class="fa-solid fa-truck"></i> Track Order</a></li>
+
+                <li class="header-buttons">
+                    <button class="cart-btn" onclick="window.location.href='cart.html'">
+                        <i class="fa-solid fa-cart-shopping"></i> Cart (<span id="cart-count">0</span>)
+                    </button>
+                    <button class="logout-btn" onclick="logout()">
+                        <i class="fa-solid fa-right-from-bracket"></i> Logout
+                    </button>
+                </li>
+            </ul>
+        </nav>
+        <section class="search-bar">
+            <input type="text" placeholder="Search products..." oninput="searchProducts()" id="search-input">
+            <button id="search-button">Search</button>
+            <div id="search-modal" class="search-modal"></div>
+        </section>
+    </header>
+    <h1 class="boxed-heading mx-auto" style="display: table; margin-top: 50px; margin-bottom: 20px;">Order Summary</h1>
+        <!-- Order Summary Content -->
+        <div class="container-fluid p-4">
+            <div id="ordersContainer" class="order-summary-container">
+                <p id="loadingMessage">Loading orders...</p>
+                <p id="errorMessage" style="color: red; display: none;">Failed to load orders.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 NextGen Hardware | <a href="privacy-policy.html">Privacy Policy</a> | <a href="terms-conditions.html">Terms & Conditions</a></p>
+    </footer>
+
+    <!-- Bootstrap JS and Popper.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.overlay');
+
+            if (sidebarToggle && sidebar && overlay) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('active');
+                    overlay.classList.toggle('active');
+                });
+
+                overlay.addEventListener('click', function() {
+                    if (sidebar.classList.contains('active')) {
+                        sidebar.classList.remove('active');
+                        overlay.classList.remove('active');
+                    }
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && 
+                        !overlay.contains(e.target) && window.innerWidth <= 768) {
+                        sidebar.classList.remove('active');
+                        overlay.classList.remove('active');
+                    }
+                });
+            }
+        });
+
+        function logout() {
+            if (confirm("Are you sure you want to log out?")) {
+                localStorage.removeItem('token');
+                window.location.href = "auth.html";
+            }
+        }
+    </script>
+    <!-- Review Modal -->
+    <div id="reviewModal" class="modal">
+        <div class="modal-content" style="width: 500px; max-width: 90%;">
+            <span class="close" onclick="closeReviewModal()">&times;</span>
+            <h2 style="color: #1E3A8A; text-align: center; margin-bottom: 25px;">Write a Review</h2>
+            <form id="reviewForm" onsubmit="submitReview(event)">
+                <div class="star-rating" style="text-align: center; font-size: 28px; margin-bottom: 20px;">
+                    <i class="fa-regular fa-star" data-rating="1" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                    <i class="fa-regular fa-star" data-rating="2" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                    <i class="fa-regular fa-star" data-rating="3" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                    <i class="fa-regular fa-star" data-rating="4" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                    <i class="fa-regular fa-star" data-rating="5" style="cursor: pointer; margin: 0 5px; color: #FFD700;"></i>
+                </div>
+                <div id="ratingError" style="display: none; color: #d32f2f; margin: 10px 0; text-align: center; font-size: 14px; padding: 8px; background-color: #ffebee; border-radius: 4px;"></div>
+                <textarea id="reviewText" name="reviewText" placeholder="Share your experience..." 
+                    style="width: 100%; padding: 15px; border-radius: 8px; border: 1px solid #ddd; 
+                    min-height: 150px; margin-bottom: 20px; font-family: inherit;" required></textarea>
+                <button type="submit" class="btn btn-primary w-100">
+                    Submit Review
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Review Confirmation Modal -->
+    <div id="reviewConfirmationModal" class="confirmation-modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeReviewConfirmation()">&times;</span>
+            <h3>Review Submitted!</h3>
+            <p>Thank you for your review. Your feedback helps other customers.</p>
+            <button onclick="closeReviewConfirmation()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Additional review-related JS from products.html inline scripts not in reviews.js
+
+        function closeReviewModal() {
+            const modal = document.getElementById('reviewModal');
+            modal.style.display = 'none';
+            localStorage.removeItem('reviewProduct');
+            document.getElementById('reviewText').value = '';
+            document.getElementById('ratingError').style.display = 'none';
+        }
+
+    
+    </script>
+    <script src="reviews.js"></script>
+
+    <script>
+async function fetchOrders() {
+    const ordersContainer = document.getElementById('ordersContainer');
+    const loadingMessage = document.getElementById('loadingMessage');
+    const errorMessage = document.getElementById('errorMessage');
+
+    loadingMessage.style.display = 'block';
+    errorMessage.style.display = 'none';
+
+    try {
+        const token = localStorage.getItem('token'); // User token stored here
+        if (!token) {
+            throw new Error('User token not found. Please login.');
+        }
+
+        const response = await fetch('http://localhost:3001/api/orders', {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch orders');
+        }
+
+        const data = await response.json();
+        console.log('Fetched orders data:', data); // Added debug log
+        loadingMessage.style.display = 'none';
+
+        if (!data.orders || data.orders.length === 0) {
+            ordersContainer.innerHTML = '<p>No orders found.</p>';
+            return;
+        }
+
+        ordersContainer.innerHTML = '';
+
+        // Sort orders by orderDate descending (recent to old)
+        data.orders.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
+
+                const baseImagePath = 'images/';
+
+                data.orders.forEach(order => {
+                    const orderDiv = document.createElement('div');
+                    orderDiv.className = 'order-summary-container mb-4';
+
+                    const statusClass = getStatusClass(order.status);
+
+                    let itemsHtml = '';
+order.items.forEach(item => {
+    const productName = item.productId?.name || 'Unknown Product';
+    const quantity = item.quantity || 0;
+    const price = item.price ? `$${item.price.toFixed(2)}` : 'N/A';
+
+    // Use first image from images array or default image
+    let imageUrl = (item.productId?.images && item.productId.images.length > 0) ? item.productId.images[0] : 'default-product.jpg';
+
+    // Prepend baseImagePath if imageUrl is relative and does not start with http or /
+    if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+        imageUrl = baseImagePath + imageUrl;
+    }
+
+    // Check if order status is delivered (case insensitive)
+    const isDelivered = order.status.toLowerCase() === 'delivered';
+
+    itemsHtml += `
+        <div class="ordered-item d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                <img src="${imageUrl}" alt="${productName}" class="product-image me-3" />
+                <div>
+                    <div class="item-name">${productName}</div>
+                    <div class="item-quantity">Quantity: ${quantity}</div>
+                    <div class="item-price">${price}</div>
+                </div>
+            </div>
+            <button class="review-btn mt-2" onclick="openReviewModal('${item.productId?._id}')" ${isDelivered ? '' : 'disabled style="opacity: 0.5; cursor: not-allowed;"'}>Write a Review</button>
+        </div>
+    `;
+});
+
+            orderDiv.innerHTML = `
+                <div class="order-header position-relative d-flex align-items-center justify-content-between">
+                    <div class="order-number">Order #${order.orderNumber}</div>
+                    <div class="status-badge ${statusClass}">${order.status}</div>
+                </div>
+                <div class="ordered-items">
+                    ${itemsHtml}
+                </div>
+            `;
+
+            ordersContainer.appendChild(orderDiv);
+        });
+
+    } catch (error) {
+        loadingMessage.style.display = 'none';
+        errorMessage.style.display = 'block';
+        errorMessage.textContent = error.message;
+        console.error('Error fetching orders:', error);
+    }
+}
+
+        function getStatusClass(status) {
+            switch (status.toLowerCase()) {
+                case 'delivered':
+                    return 'status-delivered';
+                case 'processing':
+                    return 'status-processing';
+                case 'order placed':
+                    return 'status-order-placed';
+                case 'order processed':
+                    return 'status-order-processed';
+                case 'shipped':
+                    return 'status-shipped';
+                case 'out for delivery':
+                    return 'status-out-for-delivery';
+                case 'cancelled':
+                    return 'status-cancelled';
+                default:
+                    return '';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchOrders();
+        });
+    </script>
+    <script>
+        console.log('ordersummary.html script loaded');
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOMContentLoaded event fired in ordersummary.html');
+            updateCartCount();
+        });
+
+        async function updateCartCount() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    const cartCountElements = document.querySelectorAll('#cart-count');
+                    cartCountElements.forEach(el => {
+                        el.textContent = '0';
+                    });
+                    return;
+                }
+                const response = await fetch('http://localhost:3001/api/cart/count', {
+                    headers: {
+                        'Authorization': 'Bearer ' + token
+                    }
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    const count = data.count || 0;
+                    const cartCountElements = document.querySelectorAll('#cart-count');
+                    cartCountElements.forEach(el => {
+                        el.textContent = count;
+                    });
+                }
+            } catch (error) {
+                console.error('Error updating cart count:', error);
+            }
+        }
+    </script>
+
+    <script>
+        // Sample product data for search suggestions
+        const products = [
+          {name: 'Intel Core i9-13900K', category: 'Processors'},
+          {name: 'AMD Ryzen 9 7950X', category: 'Processors'},
+          {name: 'Intel Core i7-13700K', category: 'Processors'},
+          {name: 'NVIDIA GeForce RTX 4090', category: 'Graphics Cards'},
+          {name: 'AMD Radeon RX 7900 XTX', category: 'Graphics Cards'},
+          {name: 'NVIDIA GeForce RTX 3080 Ti', category: 'Graphics Cards'},
+          {name: 'NZXT H510 Elite', category: 'PC Case'},
+          {name: 'Corsair iCUE 4000X RGB', category: 'PC Case'},
+          {name: 'Lian Li PC-011 Dynamic', category: 'PC Case'},
+          {name: 'Keyboard with Mouse', category: 'Other Devices'},
+          {name: 'Motherboard', category: 'Other Devices'},
+          {name: 'Webcam', category: 'Other Devices'},
+          {name: 'Headphone', category: 'Other Devices'},
+          {name: 'Joystick', category: 'Other Devices'},
+          {name: 'Monitor', category: 'Other Devices'}
+        ];
+
+        function searchProducts() {
+            const query = document.getElementById('search-input').value.toLowerCase();
+            const searchModal = document.getElementById('search-modal');
+            searchModal.innerHTML = '';
+
+            if (query.length > 0) {
+                const matches = products.filter(p => 
+                    p.name.toLowerCase().includes(query) || 
+                    p.category.toLowerCase().includes(query)
+                );
+
+                if (matches.length > 0) {
+                    matches.forEach(product => {
+                        const suggestion = document.createElement('div');
+                        suggestion.className = 'search-suggestion';
+                        suggestion.innerHTML = `
+                            <div style="font-weight: 500;">${product.name}</div>
+                            <div style="font-size: 0.8rem; color: #666;">${product.category}</div>
+                        `;
+                        suggestion.onclick = () => {
+                            const encodedQuery = encodeURIComponent(product.name);
+                            window.location.href = `products.html?q=${encodedQuery}`;
+                        };
+                        searchModal.appendChild(suggestion);
+                    });
+                    searchModal.style.display = 'block';
+                } else {
+                    searchModal.style.display = 'none';
+                }
+            } else {
+                searchModal.style.display = 'none';
+            }
+        }
+
+        document.getElementById('search-button').addEventListener('click', () => {
+            const query = document.getElementById('search-input').value.trim();
+            if (query) {
+                const encodedQuery = encodeURIComponent(query);
+                window.location.href = `products.html?q=${encodedQuery}`;
+            }
+        });
+
+        document.getElementById('clear-search').addEventListener('click', () => {
+            const searchInput = document.getElementById('search-input');
+            searchInput.value = '';
+            document.getElementById('search-modal').style.display = 'none';
+            document.getElementById('clear-search').style.display = 'none';
+        });
+
+        document.getElementById('search-input').addEventListener('input', () => {
+            const clearSearch = document.getElementById('clear-search');
+            clearSearch.style.display = document.getElementById('search-input').value.length > 0 ? 'inline' : 'none';
+        });
+
+        document.addEventListener('click', (e) => {
+            const searchModal = document.getElementById('search-modal');
+            if (!e.target.closest('.search-bar') && !e.target.closest('#search-modal')) {
+                searchModal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

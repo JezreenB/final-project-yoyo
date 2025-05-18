@@ -279,14 +279,48 @@
                   />
                 </div>
                 <div class="form-group">
-                  <label for="paymentMethod">Payment Method</label>
-                  <select class="form-control" id="paymentMethod" required>
-                    <option value="creditCard">Credit Card</option>
+                  <label for="payment-method">Payment Method</label>
+                  <select id="payment-method" name="paymentMethod" class="form-control" required>
+                    <option value="credit-card">Credit Card</option>
                     <option value="paypal">PayPal</option>
                     <option value="paymaya">PayMaya</option>
                     <option value="gcash">Gcash</option>
-                    <option value="cashOnDelivery">Cash on Delivery</option>
+                    <option value="cash-on-delivery">Cash on Delivery</option>
                   </select>
+
+                  <div id="credit-card-info" style="display:none; margin-top: 15px;">
+                    <div class="form-group">
+                      <label for="card-number">Card Number</label>
+                      <input type="text" id="card-number" name="cardNumber" placeholder="1234 5678 9012 3456" pattern="\\d{13,16}" title="Enter a valid card number" class="form-control" />
+                    </div>
+                    <div class="form-group" style="margin-top: 10px;">
+                      <label for="expiry-date">Expiry Date</label>
+                      <input type="month" id="expiry-date" name="expiryDate" class="form-control" />
+                    </div>
+                    <div class="form-group" style="margin-top: 10px;">
+                      <label for="cvv">CVV</label>
+                      <input type="password" id="cvv" name="cvv" placeholder="123" pattern="\\d{3,4}" title="Enter a valid CVV" class="form-control" />
+                    </div>
+                  </div>
+
+                  <div id="paypal-info" style="display:none; margin-top: 15px;">
+                    <label for="paypal-email">PayPal Email</label>
+                    <input type="email" id="paypal-email" name="paypalEmail" placeholder="Enter your PayPal email" class="form-control" style="margin-top: 5px;" />
+                  </div>
+
+                  <div id="paymaya-info" style="display:none; margin-top: 15px; text-align: center;">
+                    <label for="paymaya-phone">PayMaya Phone Number</label>
+                    <input type="tel" id="paymaya-phone" name="paymayaPhone" placeholder="Enter your PayMaya phone number" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc;" />
+                    <p style="margin-top: 10px;">Or scan the QR code below:</p>
+                    <canvas id="paymaya-qr" style="width: 150px; height: 150px; margin-top: 10px;"></canvas>
+                  </div>
+
+                  <div id="gcash-info" style="display:none; margin-top: 15px; text-align: center;">
+                    <label for="gcash-phone">GCash Phone Number</label>
+                    <input type="tel" id="gcash-phone" name="gcashPhone" placeholder="Enter your GCash phone number" style="width: 100%; padding: 8px; margin-top: 5px; border-radius: 4px; border: 1px solid #ccc;" />
+                    <p style="margin-top: 10px;">Or scan the QR code below:</p>
+                    <canvas id="gcash-qr" style="width: 150px; height: 150px; margin-top: 10px;"></canvas>
+                  </div>
                 </div>
                 <div class="form-group">
                   <label for="shippingMethod">Shipping Method</label>
@@ -327,6 +361,73 @@
           </div>
         </div>
       </div>
+
+      <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+      <script>
+        // Show/hide payment method specific UI
+        document.getElementById('payment-method').addEventListener('change', function() {
+          const creditCardInfo = document.getElementById('credit-card-info');
+          const paypalInfo = document.getElementById('paypal-info');
+          const paymayaInfo = document.getElementById('paymaya-info');
+          const gcashInfo = document.getElementById('gcash-info');
+          const paypalEmailInput = document.getElementById('paypal-email');
+          const paymayaPhoneInput = document.getElementById('paymaya-phone');
+          const gcashPhoneInput = document.getElementById('gcash-phone');
+          const selected = this.value;
+
+          // Hide all initially
+          creditCardInfo.style.display = 'none';
+          paypalInfo.style.display = 'none';
+          paymayaInfo.style.display = 'none';
+          gcashInfo.style.display = 'none';
+
+          // Remove required attributes initially
+          if (paypalEmailInput) paypalEmailInput.required = false;
+          if (paymayaPhoneInput) paymayaPhoneInput.required = false;
+          if (gcashPhoneInput) gcashPhoneInput.required = false;
+
+          if (selected === 'credit-card') {
+            creditCardInfo.style.display = 'block';
+          } else if (selected === 'paypal') {
+            paypalInfo.style.display = 'block';
+            if (paypalEmailInput) paypalEmailInput.required = true;
+          } else if (selected === 'paymaya') {
+            paymayaInfo.style.display = 'block';
+            if (paymayaPhoneInput) paymayaPhoneInput.required = true;
+          } else if (selected === 'gcash') {
+            gcashInfo.style.display = 'block';
+            if (gcashPhoneInput) gcashPhoneInput.required = true;
+          }
+        });
+
+        // Trigger change event on page load to set initial state
+        document.addEventListener('DOMContentLoaded', function() {
+          const paymentSelect = document.getElementById('payment-method');
+          if (paymentSelect) {
+            paymentSelect.dispatchEvent(new Event('change'));
+          }
+
+          // Generate QR codes dynamically for PayMaya and GCash
+          const paymayaCanvas = document.getElementById('paymaya-qr');
+          const gcashCanvas = document.getElementById('gcash-qr');
+
+          // Replace these URLs with the actual payment URLs or data for QR codes
+          const paymayaData = 'https://www.paymaya.com/pay/your-merchant-id';
+          const gcashData = 'https://www.gcash.com/pay/your-merchant-id';
+
+          if (paymayaCanvas) {
+            QRCode.toCanvas(paymayaCanvas, paymayaData, { width: 150, height: 150 }, function (error) {
+              if (error) console.error('Error generating PayMaya QR code:', error);
+            });
+          }
+
+          if (gcashCanvas) {
+            QRCode.toCanvas(gcashCanvas, gcashData, { width: 150, height: 150 }, function (error) {
+              if (error) console.error('Error generating GCash QR code:', error);
+            });
+          }
+        });
+      </script>
 
       <!-- Complete Purchase Modal -->
       <div

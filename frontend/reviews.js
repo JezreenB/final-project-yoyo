@@ -120,6 +120,13 @@ async function submitReview(event) {
 
         updateProductRating(productId);
 
+        // Notify other tabs/pages about the review update
+        if (typeof BroadcastChannel !== 'undefined') {
+            const channel = new BroadcastChannel('review-updates');
+            channel.postMessage({ productId: productId });
+            channel.close();
+        }
+
         return true;
     } catch (error) {
         alert('Network error: ' + error.message);
@@ -131,8 +138,6 @@ async function submitReview(event) {
 async function updateProductRating(productId) {
     try {
           // Log the product ID to confirm we're fetching reviews for the correct product
-        console.log('Fetching reviews for productId:', productId);
-
          // Fetch reviews for the given productId from the backend API
         const response = await fetch(`http://localhost:3001/api/reviews/${productId}`);
 
@@ -144,7 +149,6 @@ async function updateProductRating(productId) {
 
         // Parse the response data (reviews) as JSON
         const reviews = await response.json();
-        console.log('Reviews fetched:', reviews); // Log the reviews data for debugging
 
          // Select the product container on the page using the productId
         const productContainer = document.querySelector(`[data-product-id="${productId}"]`);

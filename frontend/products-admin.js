@@ -42,6 +42,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const fileInput = previewDiv.querySelector('input[type="file"]');
         const placeholder = previewDiv.querySelector('.upload-placeholder');
         const removeBtn = previewDiv.querySelector('.remove-image-btn');
+        const imagePreview = previewDiv.querySelector('.image-preview');
 
         previewDiv.addEventListener('click', () => {
             fileInput.click();
@@ -51,16 +52,16 @@ document.addEventListener('DOMContentLoaded', function() {
             if (fileInput.files && fileInput.files[0]) {
                 const reader = new FileReader();
                 reader.onload = (e) => {
-                    placeholder.style.backgroundImage = `url(${e.target.result})`;
-                    placeholder.textContent = '';
-                    placeholder.style.backgroundSize = 'cover';
-                    placeholder.style.backgroundPosition = 'center';
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('d-none');
+                    placeholder.classList.add('d-none');
                     removeBtn.classList.remove('d-none');
                 };
                 reader.readAsDataURL(fileInput.files[0]);
             } else {
-                placeholder.style.backgroundImage = '';
-                placeholder.textContent = 'Click to upload';
+                imagePreview.src = '';
+                imagePreview.classList.add('d-none');
+                placeholder.classList.remove('d-none');
                 removeBtn.classList.add('d-none');
             }
         });
@@ -68,11 +69,13 @@ document.addEventListener('DOMContentLoaded', function() {
         removeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             fileInput.value = '';
-            placeholder.style.backgroundImage = '';
-            placeholder.textContent = 'Click to upload';
+            imagePreview.src = '';
+            imagePreview.classList.add('d-none');
+            placeholder.classList.remove('d-none');
             removeBtn.classList.add('d-none');
         });
     });
+
 
     // Setup image upload previews and click-to-upload for edit product modal
     const editImageUploadPreviews = document.querySelectorAll('#editProductModal .image-upload-preview');
@@ -105,6 +108,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         removeBtn.addEventListener('click', (e) => {
             e.stopPropagation();
+            // Remove the corresponding image from existingImages array if it exists
+            const bgImageUrl = placeholder.style.backgroundImage.slice(5, -2);
+            const index = existingImages.findIndex(img => img === bgImageUrl);
+            if (index !== -1) {
+                existingImages.splice(index, 1);
+            }
             fileInput.value = '';
             placeholder.style.backgroundImage = '';
             placeholder.textContent = 'Click to upload';
@@ -112,7 +121,55 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    async function fetchProducts(search = '', category = '') {
+    // Add event listener for edit buttons to populate edit modal fields including image previews
+    function setupEditButtons(products) {
+        const editButtons = document.querySelectorAll('.edit-product-btn');
+        editButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const productId = button.dataset.productId;
+                const product = products.find(p => p._id === productId);
+                if (!product) {
+                    alert('Product data not found');
+                    return;
+                }
+                currentEditProductId = productId;
+                // Populate form fields
+                editProductForm.editProductName.value = product.name || '';
+                editProductForm.editCategory.value = product.category || '';
+                editProductForm.editPrice.value = product.price != null ? product.price.toFixed(2) : '';
+                editProductForm.editStock.value = product.stock != null ? product.stock : '';
+
+                // Clear previous image previews
+                editImageUploadPreviews.forEach(previewDiv => {
+                    const placeholder = previewDiv.querySelector('.upload-placeholder');
+                    const removeBtn = previewDiv.querySelector('.remove-image-btn');
+                    const fileInput = previewDiv.querySelector('input[type="file"]');
+                    placeholder.style.backgroundImage = '';
+                    placeholder.textContent = 'Click to upload';
+                    removeBtn.classList.add('d-none');
+                    fileInput.value = '';
+                });
+
+                // Populate image previews if images exist
+                if (product.images && product.images.length > 0) {
+                    product.images.forEach((imgSrc, idx) => {
+                        if (idx < editImageUploadPreviews.length) {
+                            const previewDiv = editImageUploadPreviews[idx];
+                            const placeholder = previewDiv.querySelector('.upload-placeholder');
+                            const removeBtn = previewDiv.querySelector('.remove-image-btn');
+                            placeholder.style.backgroundImage = `url(${imgSrc})`;
+                            placeholder.textContent = '';
+                            placeholder.style.backgroundSize = 'cover';
+                            placeholder.style.backgroundPosition = 'center';
+                            removeBtn.classList.remove('d-none');
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    async function fetchProducts(search = '', category = '', stockStatus = '') {
         try {
             let url = '/api/products';
             if (search) {
@@ -126,10 +183,23 @@ document.addEventListener('DOMContentLoaded', function() {
             if (category) {
                 products = products.filter(p => p.category === category);
             }
+            if (stockStatus) {
+                products = products.filter(p => {
+                    if (stockStatus === 'In Stock') {
+                        return p.stock > 10;
+                    } else if (stockStatus === 'Low Stock') {
+                        return p.stock > 0 && p.stock <= 10;
+                    } else if (stockStatus === 'Out of Stock') {
+                        return p.stock === 0;
+                    }
+                    return true;
+                });
+            }
             renderProducts(products);
             setupCheckboxListeners();
             setupIndividualDeleteButtons();
             setupEditButtons(products);
+            updateBulkActionButtons(); // ensure UI state is updated after fetch
         } catch (error) {
             console.error('Error fetching products:', error);
             productsTableBody.innerHTML = '<tr><td colspan="8">Error loading products</td></tr>';
@@ -149,13 +219,14 @@ document.addEventListener('DOMContentLoaded', function() {
     confirmDeleteBtn.addEventListener('click', async () => {
         try {
             const token = localStorage.getItem('token');
+            const requestBody = { ids: selectedProductIds };
             const response = await fetch('/api/products/bulk-delete', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token
                 },
-                body: JSON.stringify({ ids: selectedProductIds })
+                body: JSON.stringify(requestBody)
             });
             if (!response.ok) {
                 throw new Error('Failed to delete products');
@@ -257,7 +328,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function renderProducts(products) {
         if (!products.length) {
-            productsTableBody.innerHTML = '<tr><td colspan="8">No products found</td></tr>';
+            productsTableBody.innerHTML = '<tr><td colspan="8" style="text-align:center;">No products found</td></tr>';
             return;
         }
         productsTableBody.innerHTML = '';
@@ -276,7 +347,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const tdImage = document.createElement('td');
             const img = document.createElement('img');
-            img.src = product.image ? getImageUrl(product.image) : '/images/default-product.jpg';
+            img.src = (product.images && product.images.length > 0) ? getImageUrl(product.images[0]) : '/images/default-product.jpg';
             img.alt = product.name;
             img.className = 'product-image-preview';
             tdImage.appendChild(img);
@@ -324,6 +395,7 @@ document.addEventListener('DOMContentLoaded', function() {
             editBtn.setAttribute('data-bs-target', '#editProductModal');
             editBtn.innerHTML = '<i class="bi bi-pencil"></i>';
             editBtn.dataset.productId = product._id;
+            editBtn.disabled = true; // disable edit button initially
             tdActions.appendChild(editBtn);
 
             const deleteBtn = document.createElement('button');
@@ -347,19 +419,37 @@ document.addEventListener('DOMContentLoaded', function() {
         bulkDeleteBtn.disabled = !hasSelection;
         bulkUpdateStockBtn.disabled = !hasSelection;
         bulkCategoryBtn.disabled = !hasSelection;
-        selectAllCheckbox.checked = document.querySelectorAll('.product-select').length === selectedCheckboxes.length;
+        const allCheckboxes = document.querySelectorAll('.product-select');
+        selectAllCheckbox.checked = allCheckboxes.length > 0 && allCheckboxes.length === selectedCheckboxes.length;
+
+        // Enable edit buttons only if exactly one product is selected
+        const editButtons = document.querySelectorAll('.edit-product-btn');
+        if (selectedCheckboxes.length === 1) {
+            editButtons.forEach(btn => {
+                btn.disabled = btn.dataset.productId !== selectedCheckboxes[0].dataset.productId;
+            });
+        } else {
+            editButtons.forEach(btn => {
+                btn.disabled = true;
+            });
+        }
     }
 
     function setupCheckboxListeners() {
         const productCheckboxes = document.querySelectorAll('.product-select');
         productCheckboxes.forEach(checkbox => {
+            checkbox.removeEventListener('change', updateBulkActionButtons); // remove previous to avoid duplicates
             checkbox.addEventListener('change', updateBulkActionButtons);
         });
-        selectAllCheckbox.addEventListener('change', function() {
-            const checked = this.checked;
-            productCheckboxes.forEach(cb => cb.checked = checked);
-            updateBulkActionButtons();
-        });
+        selectAllCheckbox.removeEventListener('change', selectAllChangeHandler);
+        selectAllCheckbox.addEventListener('change', selectAllChangeHandler);
+        updateBulkActionButtons();
+    }
+
+    function selectAllChangeHandler() {
+        const checked = this.checked;
+        const productCheckboxes = document.querySelectorAll('.product-select');
+        productCheckboxes.forEach(cb => cb.checked = checked);
         updateBulkActionButtons();
     }
 
@@ -422,58 +512,59 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Edit product form submission
+    let existingImages = [];
     editProductForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!currentEditProductId) {
             alert('No product selected for editing.');
             return;
         }
-        const formData = new FormData(editProductForm);
-        const productData = {
-            name: formData.get('editProductName'),
-            category: formData.get('editCategory'),
-            price: parseFloat(formData.get('editPrice')),
-            stock: parseInt(formData.get('editStock'), 10),
-            images: []
-        };
 
         // Basic validation
-        if (!productData.name || isNaN(productData.price) || isNaN(productData.stock)) {
+        if (!editProductForm.editProductName.value || isNaN(parseFloat(editProductForm.editPrice.value)) || isNaN(parseInt(editProductForm.editStock.value, 10))) {
             alert('Please fill in all required fields correctly.');
             return;
         }
 
-        // Collect images from the three file inputs
-        const imageFiles = [];
+        const formData = new FormData();
+        formData.append('productName', document.getElementById('editProductName').value);
+        formData.append('category', document.getElementById('editCategory').value);
+        formData.append('price', parseFloat(document.getElementById('editPrice').value));
+        formData.append('stock', parseInt(document.getElementById('editStock').value, 10));
+
+        // Determine if new images are uploaded
+        let newImagesUploaded = false;
         editImageUploadPreviews.forEach(previewDiv => {
             const fileInput = previewDiv.querySelector('input[type="file"]');
             if (fileInput.files && fileInput.files[0]) {
-                imageFiles.push(fileInput.files[0]);
+                newImagesUploaded = true;
             }
         });
 
-        if (imageFiles.length > 0) {
-            // Convert images to base64 strings (not recommended for production)
-            const base64Images = await Promise.all(imageFiles.map(file => {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                });
-            }));
-            productData.images = base64Images;
+        // Append existing images only if no new images uploaded
+        if (!newImagesUploaded) {
+            formData.append('existingImages', JSON.stringify(existingImages));
+        } else {
+            // If new images uploaded, do not send existingImages to replace old images
+            formData.append('existingImages', JSON.stringify([]));
         }
+
+        // Append image files from file inputs
+        editImageUploadPreviews.forEach(previewDiv => {
+            const fileInput = previewDiv.querySelector('input[type="file"]');
+            if (fileInput.files && fileInput.files[0]) {
+                formData.append('images', fileInput.files[0]);
+            }
+        });
 
         try {
             const token = localStorage.getItem('token');
             const response = await fetch(`/api/products/${currentEditProductId}`, {
                 method: 'PUT',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token
                 },
-                body: JSON.stringify(productData)
+                body: formData
             });
             if (!response.ok) {
                 const errorData = await response.json();
@@ -489,6 +580,56 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // Update existingImages when populating edit modal
+    function setupEditButtons(products) {
+        const editButtons = document.querySelectorAll('.edit-product-btn');
+        editButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const productId = button.dataset.productId;
+                const product = products.find(p => p._id === productId);
+                if (!product) {
+                    alert('Product data not found');
+                    return;
+                }
+                currentEditProductId = productId;
+                // Populate form fields
+                editProductForm.editProductName.value = product.name || '';
+                editProductForm.editCategory.value = product.category || '';
+                editProductForm.editPrice.value = product.price != null ? product.price.toFixed(2) : '';
+                editProductForm.editStock.value = product.stock != null ? product.stock : '';
+
+                // Clear previous image previews
+                editImageUploadPreviews.forEach(previewDiv => {
+                    const placeholder = previewDiv.querySelector('.upload-placeholder');
+                    const removeBtn = previewDiv.querySelector('.remove-image-btn');
+                    const fileInput = previewDiv.querySelector('input[type="file"]');
+                    placeholder.style.backgroundImage = '';
+                    placeholder.textContent = 'Click to upload';
+                    removeBtn.classList.add('d-none');
+                    fileInput.value = '';
+                });
+
+                // Populate image previews if images exist
+                existingImages = [];
+                if (product.images && product.images.length > 0) {
+                    existingImages = [...product.images];
+                    product.images.forEach((imgSrc, idx) => {
+                        if (idx < editImageUploadPreviews.length) {
+                            const previewDiv = editImageUploadPreviews[idx];
+                            const placeholder = previewDiv.querySelector('.upload-placeholder');
+                            const removeBtn = previewDiv.querySelector('.remove-image-btn');
+                            placeholder.style.backgroundImage = `url(${imgSrc})`;
+                            placeholder.textContent = '';
+                            placeholder.style.backgroundSize = 'cover';
+                            placeholder.style.backgroundPosition = 'center';
+                            removeBtn.classList.remove('d-none');
+                        }
+                    });
+                }
+            });
+        });
+    }
+
     searchInput.addEventListener('keyup', (e) => {
         if (e.key === 'Enter') {
             const search = searchInput.value.trim();
@@ -500,58 +641,30 @@ document.addEventListener('DOMContentLoaded', function() {
     filterButton.addEventListener('click', () => {
         const search = searchInput.value.trim();
         const category = categorySelect.value;
-        fetchProducts(search, category);
+        const stockStatus = document.getElementById('filterStatus').value;
+        fetchProducts(search, category, stockStatus);
     });
 
     // Add New Product form submission
     addProductForm.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const formData = new FormData(addProductForm);
-        const productData = {
-            name: formData.get('name'),
-            category: formData.get('category'),
-            price: parseFloat(formData.get('price')),
-            stock: parseInt(formData.get('stock'), 10),
-            images: [] // will be handled separately
-        };
 
         // Basic validation
-        if (!productData.name || isNaN(productData.price) || isNaN(productData.stock)) {
+        if (!addProductForm.productName.value || isNaN(parseFloat(addProductForm.price.value)) || isNaN(parseInt(addProductForm.stock.value, 10))) {
             alert('Please fill in all required fields correctly.');
             return;
         }
 
-        // Collect images from the three file inputs
-        const imageFiles = [];
-        imageUploadPreviews.forEach(previewDiv => {
-            const fileInput = previewDiv.querySelector('input[type="file"]');
-            if (fileInput.files && fileInput.files[0]) {
-                imageFiles.push(fileInput.files[0]);
-            }
-        });
-
-        if (imageFiles.length > 0) {
-            // Convert images to base64 strings (not recommended for production)
-            const base64Images = await Promise.all(imageFiles.map(file => {
-                return new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result);
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                });
-            }));
-            productData.images = base64Images;
-        }
+        const formData = new FormData(addProductForm);
 
         try {
             const token = localStorage.getItem('token');
             const response = await fetch('/api/products', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
                     'Authorization': 'Bearer ' + token
                 },
-                body: JSON.stringify(productData)
+                body: formData
             });
             if (!response.ok) {
                 throw new Error('Failed to add product');
@@ -559,6 +672,9 @@ document.addEventListener('DOMContentLoaded', function() {
             alert('Product added successfully.');
             addProductModal.hide();
             addProductForm.reset();
+
+            // Clear image previews
+            const imageUploadPreviews = document.querySelectorAll('#addProductModal .image-upload-preview');
             imageUploadPreviews.forEach(previewDiv => {
                 const placeholder = previewDiv.querySelector('.upload-placeholder');
                 const removeBtn = previewDiv.querySelector('.remove-image-btn');
@@ -568,12 +684,51 @@ document.addEventListener('DOMContentLoaded', function() {
                 const fileInput = previewDiv.querySelector('input[type="file"]');
                 fileInput.value = '';
             });
+
             fetchProducts();
         } catch (error) {
+            if (error.response) {
+                const errorText = await error.response.text();
+                console.error('Backend error response:', errorText);
+            }
             console.error('Error adding product:', error);
             alert('Error adding product.');
         }
     });
 
     fetchProducts();
+
+    // Reset Add Product modal when hidden to clear image previews and form inputs
+    addProductModalElement.addEventListener('hidden.bs.modal', () => {
+        addProductForm.reset();
+        const imageUploadPreviews = document.querySelectorAll('#addProductModal .image-upload-preview');
+        imageUploadPreviews.forEach(previewDiv => {
+            const placeholder = previewDiv.querySelector('.upload-placeholder');
+            const removeBtn = previewDiv.querySelector('.remove-image-btn');
+            const imagePreview = previewDiv.querySelector('.image-preview');
+            const fileInput = previewDiv.querySelector('input[type="file"]');
+            placeholder.style.backgroundImage = '';
+            // Fix: Ensure "Click to upload" text is shown when resetting add product modal
+            placeholder.textContent = 'Click to upload';
+            removeBtn.classList.add('d-none');
+            fileInput.value = '';
+            imagePreview.src = '';
+            imagePreview.classList.add('d-none');
+        });
+    });
+
+    // Reset Add Product modal when shown to ensure fresh state each time it opens
+    addProductModalElement.addEventListener('show.bs.modal', () => {
+        addProductForm.reset();
+        const imageUploadPreviews = document.querySelectorAll('#addProductModal .image-upload-preview');
+        imageUploadPreviews.forEach(previewDiv => {
+            const placeholder = previewDiv.querySelector('.upload-placeholder');
+            const removeBtn = previewDiv.querySelector('.remove-image-btn');
+            const fileInput = previewDiv.querySelector('input[type="file"]');
+            placeholder.style.backgroundImage = '';
+            placeholder.textContent = 'Click to upload';
+            removeBtn.classList.add('d-none');
+            fileInput.value = '';
+        });
+    });
 });

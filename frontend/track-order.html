@@ -707,6 +707,7 @@ header {
                 <li><a href="about.html"><i class="fa-solid fa-user"></i> About</a></li>
                 <li><a href="products.html"><i class="fa-solid fa-box-open"></i> Products</a></li>
                 <li><a href="contact.html"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+                <li><a href="ordersummary.html"><i class="fa-solid fa-list"></i> Summary</a></li>
                 <li><a href="track-order.html" class="active"><i class="fa-solid fa-truck"></i> Track Order</a></li>
 
                 <li class="header-buttons">
@@ -1077,14 +1078,13 @@ function cancelOrder() {
 
                         const img = document.createElement('img');
                         // Improved image URL handling with baseImagePath and fallback
-                        let imageUrl = product.image;
-                        if (!imageUrl) {
-                            imageUrl = baseImagePath + 'default-product.jpg'; // fallback image
-                        } else if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                        let imageUrl = (product.images && product.images.length > 0) ? product.images[0] : baseImagePath + 'default-product.jpg';
+                        if (!imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
                             if (!imageUrl.startsWith(baseImagePath)) {
                                 imageUrl = baseImagePath + imageUrl;
                             }
                         }
+                        console.log('Final imageUrl for product:', product.name, imageUrl); // Debug log
                         img.src = imageUrl;
                         img.alt = product.name || 'Product Image';
                         img.style.width = '80px';
