@@ -86,7 +86,7 @@ async function submitReview(event) {
     }
 
     try {
-        const response = await fetch('http://localhost:3001/api/reviews', {
+const response = await fetch('/api/reviews', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -139,7 +139,7 @@ async function updateProductRating(productId) {
     try {
           // Log the product ID to confirm we're fetching reviews for the correct product
          // Fetch reviews for the given productId from the backend API
-        const response = await fetch(`http://localhost:3001/api/reviews/${productId}`);
+const response = await fetch(`/api/reviews/${productId}`);
 
          // Check if the response is OK (status 200), if not, log an error
         if (!response.ok) {

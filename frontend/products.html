@@ -1112,7 +1112,7 @@ document.getElementById('searchButton').addEventListener('click', () => {
     
 async function loadProducts(searchQuery) {
     try {
-        const response = await fetch('http://localhost:3001/api/products');
+const response = await fetch('/api/products');
         const products = await response.json();
         
         // Load processors
@@ -1248,7 +1248,7 @@ async function addToCart(productId, quantity) {
         }
         // Additional check for token validity could be added here if needed
 
-        const response = await fetch('http://localhost:3001/api/cart', {
+const response = await fetch('/api/cart', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -1286,7 +1286,7 @@ async function updateCartCount() {
             return;
         }
 
-        const response = await fetch('http://localhost:3001/api/cart/count', {
+const response = await fetch('/api/cart/count', {
             headers: {
                 'Authorization': `Bearer ${token}`
             }
@@ -1420,7 +1420,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       // Fetch user profile data to prefill Full Name and Address
       try {
-          const response = await fetch('http://localhost:3001/api/users/me', {
+const response = await fetch('/api/users/me', {
               headers: {
                   'Authorization': 'Bearer ' + localStorage.getItem('token')
               }
@@ -1463,7 +1463,7 @@ document.addEventListener('DOMContentLoaded', () => {
               items: items,
               clearCart: false
           };
-          const response = await fetch('http://localhost:3001/api/orders', {
+const response = await fetch('/api/orders', {
               method: 'POST',
               headers: {
                   'Content-Type': 'application/json',
@@ -1539,7 +1539,7 @@ async function openViewReviewsModal(productId, productName) {
     modal.style.display = 'flex';
 
     try {
-        const response = await fetch(`http://localhost:3001/api/reviews/${productId}`);
+const response = await fetch(`/api/reviews/${productId}`);
         if (!response.ok) {
             reviewsContainer.innerHTML = '<p>Failed to load reviews.</p>';
             return;

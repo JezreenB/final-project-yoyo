@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
   async function fetchCartItems() {
     try {
        // Make a GET request to the server to fetch the cart items
-      const response = await fetch('http://localhost:3001/api/cart', {
+      const response = await fetch('/api/cart', {
         headers: {
           // Include the authentication token in the request headers for authorization
           'Authorization': 'Bearer ' + getAuthToken()
@@ -154,7 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // API call to remove cart item
   async function removeCartItem(cartItemId) {
     try {
-    const response = await fetch('http://localhost:3001/api/cart/' + cartItemId, {
+    const response = await fetch('/api/cart/' + cartItemId, {
       method: 'DELETE',
       headers: {
         'Authorization': 'Bearer ' + getAuthToken()
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Fetch user profile data to prefill Full Name and Address
     try {
-      const response = await fetch('http://localhost:3001/api/users/me', {
+      const response = await fetch('/api/users/me', {
         headers: {
           'Authorization': 'Bearer ' + getAuthToken()
         }
@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }));
 
     try {
-      const response = await fetch('http://localhost:3001/api/orders', {
+      const response = await fetch('/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

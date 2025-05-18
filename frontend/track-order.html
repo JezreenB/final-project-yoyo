@@ -1014,7 +1014,7 @@ function cancelOrder() {
                     return;
                 }
 
-                const response = await fetch(`http://localhost:3001/api/orders/${orderNumber}`, {
+const response = await fetch(`/api/orders/${orderNumber}`, {
                     headers: {
                         'Authorization': 'Bearer ' + token
                     }
@@ -1238,7 +1238,7 @@ function cancelOrder() {
                     });
                     return;
                 }
-                const response = await fetch('http://localhost:3001/api/cart/count', {
+const response = await fetch('/api/cart/count', {
                     headers: {
                         'Authorization': 'Bearer ' + token
                     }
@@ -1271,7 +1271,7 @@ function cancelOrder() {
       console.log('User not logged in');
       return null;
     }
-    const response = await fetch('http://localhost:3001/api/users/me', {
+const response = await fetch('/api/users/me', {
       headers: {
         'Authorization': 'Bearer ' + token
       }

@@ -584,7 +584,7 @@
                 if (!token) {
                     return 0;
                 }
-                const response = await fetch('http://localhost:3001/api/cart/count', {
+                const response = await fetch('/api/cart/count', {
                     headers: {
                         'Authorization': 'Bearer ' + token
                     }
